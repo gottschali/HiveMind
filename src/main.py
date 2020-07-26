@@ -2,6 +2,7 @@ import pygame
 from libhex import *
 from constants import *
 import drawing
+from pathlib import Path
 
 pygame.init()
 
@@ -24,7 +25,7 @@ class Block(pygame.sprite.Sprite):
 
         # Create an image of the block, and fill it with a color.
         # This could also be an image loaded from the disk.
-        self.image = pygame.image.load("assets/bee.png")
+        self.image = pygame.image.load(Path("assets/bee.png"))
         self.image = pygame.transform.scale(self.image, (40, 40))
 
         # Fetch the rectangle object that has the dimensions of the image
@@ -32,7 +33,7 @@ class Block(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
 
-playground = pygame.image.load("assets/background.jpg").convert()
+playground = pygame.image.load(Path("assets/background.jpg")).convert()
 
 stones = pygame.sprite.Group()
 
