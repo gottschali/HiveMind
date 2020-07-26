@@ -4,6 +4,8 @@ from constants import *
 import drawing
 from pathlib import Path
 
+# TODO annoying path handling -> should work cross platform
+
 pygame.init()
 
 # WIDTH = int(SCREEN_WIDTH / (RADIUS * sqrt(3)))
@@ -25,7 +27,7 @@ class Block(pygame.sprite.Sprite):
 
         # Create an image of the block, and fill it with a color.
         # This could also be an image loaded from the disk.
-        self.image = pygame.image.load(Path("assets/bee.png"))
+        self.image = pygame.image.load(str(Path("assets/bee.png").absolute()))
         self.image = pygame.transform.scale(self.image, (40, 40))
 
         # Fetch the rectangle object that has the dimensions of the image
@@ -33,7 +35,7 @@ class Block(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
 
-playground = pygame.image.load(Path("assets/background.jpg")).convert()
+playground = pygame.image.load(str(Path("assets/background.jpg").absolute())).convert()
 
 stones = pygame.sprite.Group()
 
