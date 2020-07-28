@@ -1,8 +1,9 @@
 import pygame
 from libhex import *
 from constants import *
+from utils import get_path
+import sprite
 import drawing
-from pathlib import Path
 
 # TODO annoying path handling -> should work cross platform
 
@@ -12,50 +13,35 @@ pygame.init()
 # HEIGHT = int(SCREEN_HEIGHT / RADIUS / 2)
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
-
-
-size = (SCREEN_WIDTH, SCREEN_HEIGHT)
-
-class Block(pygame.sprite.Sprite):
-
-    # Constructor. Pass in the color of the block,
-    # and its x and y position
-    def __init__(self, color=ORANGE, width=RADIUS, height=RADIUS):
-        # Call the parent class (Sprite) constructor
-        pygame.sprite.Sprite.__init__(self)
-
-        # Create an image of the block, and fill it with a color.
-        # This could also be an image loaded from the disk.
-        self.image = pygame.image.load(str(Path("assets/bee.png").absolute()))
-        self.image = pygame.transform.scale(self.image, (40, 40))
-
-        # Fetch the rectangle object that has the dimensions of the image
-        # Update the position of this object by setting the values of rect.x and rect.y
-        self.rect = self.image.get_rect()
-
-
-playground = pygame.image.load(str(Path("assets/background.jpg").absolute())).convert()
+playground = pygame.image.load(get_path("assets/background.jpg")).convert()
 
 stones = pygame.sprite.Group()
+
+
+# states: idle, selected
+IDLE = "IDLE"
+SELECTED = "SELECTED"
+WAITING = "WAITING"
+
+state = IDLE
+move_number = 0
+selected_stone = None
+board = {}
 
 while True:
     # Mainloop
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             quit()
+        # TODO new stones
         if event.type == pygame.MOUSEBUTTONUP:
             pixel = pygame.mouse.get_pos()
-            point = Point(pixel[0], pixel[1])
-            print(f"Pixel: {pixel}")
-            hex = Hex.from_pixel(point)
-            print(f"Hex: {hex}")
-            b = Block()
-
-            #b.rect.x, b.rect.y = round_pixel(pixel)
-            b.rect.x, b.rect.y = hex.to_pixel(3)
-
-            stones.add(b)
+            hex = Hex.from_pixel(Point(pixel[0], pixel[1]))
+            if state == SELECTED: # Drop a stone
+                b = sprite.Queen(hex)
+                stones.add(b)
+            else: # Select a stone
+                pass
 
     # Logic
     stones.update()
