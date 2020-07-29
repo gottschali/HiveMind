@@ -17,12 +17,26 @@ playground = pygame.image.load(get_path("assets/background.jpg")).convert()
 
 # stones = pygame.sprite.Group()
 
+<<<<<<< HEAD
+||||||| f37ee2e
+
+<<<<<<< HEAD
+=======
+
+>>>>>>> dbd34ba24013950f7a674e8ca26eb0268231f20c
 # states: idle, selected
 IDLE = "IDLE"
 SELECTED = "SELECTED"
 WAITING = "WAITING"
 
 size = (SCREEN_WIDTH, SCREEN_HEIGHT)
+
+
+playground = pygame.image.load(str(Path("src/assets/background.jpg").absolute())).convert()
+>>>>>>> 7732189011473c798b4e5351566f33d4383c621c
+=======
+playground = pygame.image.load(str(Path("src/assets/background.jpg").absolute())).convert()
+>>>>>>> dbd34ba24013950f7a674e8ca26eb0268231f20c
 
 state = IDLE
 move_number = 0
