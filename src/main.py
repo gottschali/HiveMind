@@ -29,6 +29,10 @@ move_number = 0
 selected_stone = None
 board = {}
 
+def add_stones(hex, cls):
+    c = cls(hex)
+    stones.add(c)
+
 while True:
     # Mainloop
     for event in pygame.event.get():
@@ -38,10 +42,14 @@ while True:
         if event.type == pygame.MOUSEBUTTONUP:
             pixel = pygame.mouse.get_pos()
             hex = Hex.from_pixel(Point(pixel[0], pixel[1]))
-            if state == SELECTED: # Drop a stone
-                b = sprite.Queen(hex)
-                stones.add(b)
-            else: # Select a stone
+            if state == IDLE:
+                if hex in board.keys(): # select
+                    state = SELECTED
+                    selected_stone = board[hex]
+            else if state == SELECTED:
+                # LEGIT MOVE -> make
+                # NOT LEGIT -> error
+                # PLAIN HEX -> clear selection
                 pass
 
     # Logic
