@@ -18,12 +18,10 @@ playground = pygame.image.load(get_path("assets/background.jpg")).convert()
 stones = pygame.sprite.Group()
 
 
-<<<<<<< HEAD
 # states: idle, selected
 IDLE = "IDLE"
 SELECTED = "SELECTED"
 WAITING = "WAITING"
-=======
 size = (SCREEN_WIDTH, SCREEN_HEIGHT)
 
 class Block(pygame.sprite.Sprite):
@@ -45,7 +43,6 @@ class Block(pygame.sprite.Sprite):
 
 
 playground = pygame.image.load(str(Path("src/assets/background.jpg").absolute())).convert()
->>>>>>> 7732189011473c798b4e5351566f33d4383c621c
 
 state = IDLE
 move_number = 0

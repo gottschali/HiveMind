@@ -8,6 +8,8 @@ screen = pygame.display.set_mode((600,600))
 
 ButtonList=[]
 
+playground = pygame.image.load(get_path("assets/background.jpg")).convert()
+
 ButtonList.append(Button(50,50,100,50,text="hello World",action=printArgs,args=["hi","hive"]))
 input_box1 = InputBox(100, 100, 140, 32)
 input_box2 = InputBox(100, 300, 140, 32)
