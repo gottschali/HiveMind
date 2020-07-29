@@ -40,7 +40,18 @@ stones = [sprite.Queen(Hex(2, 8), team=True, new=True),
               sprite.GrassHopper(Hex(2, 14), team=True, new=True),
               sprite.GrassHopper(Hex(2, 15), team=True, new=True),
               sprite.Beetle(Hex(2, 16), team=True, new=True),
-              sprite.Beetle(Hex(2, 17), team=True, new=True),]
+              sprite.Beetle(Hex(2, 17), team=True, new=True),
+
+              sprite.Queen(Hex(0, 8), team=False, new=True),
+              sprite.Ant(Hex(0, 9), team=False, new=True),
+              sprite.Ant(Hex(0, 10), team=False, new=True),
+              sprite.Ant(Hex(0, 11), team=False, new=True),
+              sprite.Spider(Hex(0, 12), team=False, new=True),
+              sprite.Spider(Hex(0, 13), team=False, new=True),
+              sprite.GrassHopper(Hex(0, 14), team=False, new=True),
+              sprite.GrassHopper(Hex(0, 15), team=False, new=True),
+              sprite.Beetle(Hex(0, 16), team=False, new=True),
+              sprite.Beetle(Hex(0, 17), team=False, new=True),]
 
 for stone in stones:
     board[stone.hex] = stone
