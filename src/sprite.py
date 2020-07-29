@@ -1,13 +1,14 @@
 import pygame
 from constants import *
 from utils import get_path
+from libhex import *
 
 
 class AbstractHiveStone(pygame.sprite.Sprite):
 
     image = "ant"
 
-    def __init__(self, hex, team=True):
+    def __init__(self, hex, team=True, new=True):
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
 
@@ -18,7 +19,11 @@ class AbstractHiveStone(pygame.sprite.Sprite):
         self.move(hex)
 
     def move(self, hex):
-        self.rect.x, self.rect.y = hex.to_pixel(3)
+        self.hex = hex
+        self.update()
+
+    def update(self):
+        self.rect.x, self.rect.y = self.hex.to_pixel(3)
 
     def generate_moves(self):
         pass
@@ -30,7 +35,7 @@ class AbstractHiveStone(pygame.sprite.Sprite):
         return True
 
     def _load_image(self):
-        self.image = pygame.image.load(get_path("assets/bee.png"))
+        self.image = pygame.image.load(get_path(f"assets/{self.image}.png"))
         self.image = pygame.transform.scale(self.image, STONE_SIZE)
         # Fetch the rectangle object that has the dimensions of the image
         # Update the position of this object by setting the values of rect.x and rect.y

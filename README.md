@@ -3,7 +3,7 @@
 ## Roadmap
 - [ ] np-arrays
 - [ ] utility-drawing
-- [ ] sprites
+- [.] sprites
 - [ ] movement
 - [ ] logic
 - [ ] height

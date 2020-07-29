@@ -15,7 +15,7 @@ pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 playground = pygame.image.load(get_path("assets/background.jpg")).convert()
 
-stones = pygame.sprite.Group()
+# stones = pygame.sprite.Group()
 
 # states: idle, selected
 IDLE = "IDLE"
@@ -29,9 +29,20 @@ move_number = 0
 selected_stone = None
 board = {}
 
-def add_stones(hex, cls):
-    c = cls(hex)
-    stones.add(c)
+
+stones = [sprite.Queen(Hex(2, 8), team=True, new=True),
+              sprite.Ant(Hex(2, 9), team=True, new=True),
+              sprite.Ant(Hex(2, 10), team=True, new=True),
+              sprite.Ant(Hex(2, 11), team=True, new=True),
+              sprite.Spider(Hex(2, 12), team=True, new=True),
+              sprite.Spider(Hex(2, 13), team=True, new=True),
+              sprite.GrassHopper(Hex(2, 14), team=True, new=True),
+              sprite.GrassHopper(Hex(2, 15), team=True, new=True),
+              sprite.Beetle(Hex(2, 16), team=True, new=True),
+              sprite.Beetle(Hex(2, 17), team=True, new=True),]
+
+for stone in stones:
+    board[stone.hex] = stone
 
 while True:
     # Mainloop
@@ -40,28 +51,37 @@ while True:
             quit()
         # TODO new stones
         if event.type == pygame.MOUSEBUTTONUP:
+            print(stones)
+            print(state)
+            print(board)
             pixel = pygame.mouse.get_pos()
             hex = Hex.from_pixel(Point(pixel[0], pixel[1]))
+            print(hex)
             if state == IDLE:
                 if hex in board.keys(): # select
                     state = SELECTED
                     selected_stone = board[hex]
-            else if state == SELECTED:
+            elif state == SELECTED:
+                old_hex = selected_stone.hex
+                selected_stone.move(hex)
+                board[hex] = selected_stone
+                del board[old_hex]
+                state = "IDLE"
                 # LEGIT MOVE -> make
                 # NOT LEGIT -> error
                 # PLAIN HEX -> clear selection
                 pass
 
-    # Logic
-    stones.update()
 
     screen.blit(playground, playground.get_rect())
     drawing.draw_grid(playground)
-
-    # draw all sprites
-    stones.draw(playground)
+    # Logic
+    # stones.update()
+    for sprite in stones:
+        sprite.update()
+        screen.blit(sprite.image, sprite.rect)
 
     # refresh
-    pygame.display.update()
+    pygame.display.flip()
 
     #Testcomment

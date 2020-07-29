@@ -57,6 +57,9 @@ class Hex:
         else:
             self.s = - (q + r)
 
+    def __eq__(self, other):
+        return self.q == other.q and self.r == other.r
+
     def __repr__(self):
         return f"Hex({self.q}, {self.r}, {self.s})"
 
