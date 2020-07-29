@@ -54,6 +54,7 @@ class InputBox:
                 self.txt_surface = FONT.render(self.text, True, self.color)
 
     def draw(self, screen):
+        pg.draw.rect(screen, (0,0,0), self.rect)
         # Blit the text.
         screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
         # Blit the rect.

@@ -29,7 +29,6 @@ move_number = 0
 selected_stone = None
 board = {}
 
-
 stones = [sprite.Queen(Hex(2, 8), team=True, new=True),
               sprite.Ant(Hex(2, 9), team=True, new=True),
               sprite.Ant(Hex(2, 10), team=True, new=True),
