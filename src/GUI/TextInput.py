@@ -19,6 +19,7 @@ class InputBox:
         self.active = False
         self.done=done
         self.change=change
+        self.txt_rect=self.txt_surface.get_rect()
 
     def handle_event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
@@ -56,7 +57,8 @@ class InputBox:
     def draw(self, screen):
         pg.draw.rect(screen, (0,0,0), self.rect)
         # Blit the text.
-        screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
+        screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+self.rect.h // 2-self.txt_rect.h//2))
+
         # Blit the rect.
         pg.draw.rect(screen, self.color, self.rect, 2)
 

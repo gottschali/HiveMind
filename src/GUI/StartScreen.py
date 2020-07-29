@@ -1,7 +1,7 @@
 import pygame
 from TextInput import InputBox
 from Button import Button
-
+from loadingSymbol import loadingSymbol
 # from pathlib import Path
 SCREEN_WIDTH = 1080
 SCREEN_HEIGHT = 720
@@ -24,6 +24,10 @@ EnterButton=Button(SCREEN_WIDTH//2-100,SCREEN_HEIGHT*0.2+160,200,70,text="ENTER"
 
 ButtonList=[EnterButton]
 
+LoadingSymbolBig=loadingSymbol((SCREEN_WIDTH//2,600),50)
+LoadingSymbolSmall=loadingSymbol((SCREEN_WIDTH//2,600),30,speed=-0.01)
+
+LoadingSymbols=[LoadingSymbolBig,LoadingSymbolSmall]
 def DrawStartScreen(Screen,size):
     screen.blit(bgImage, bgImage.get_rect())
     for Inbox in ListInputBoxes:
@@ -43,6 +47,7 @@ while True:
             Inbox.handle_event(event)
         for Button in ButtonList:
             Button.handle_event(event)
-        DrawStartScreen(screen,(SCREEN_WIDTH, SCREEN_HEIGHT))
-
+    DrawStartScreen(screen,(SCREEN_WIDTH, SCREEN_HEIGHT))
+    for loadingSymbol in LoadingSymbols:
+        loadingSymbol.draw(screen)
     pygame.display.update()
