@@ -25,9 +25,19 @@ class AbstractHiveStone(pygame.sprite.Sprite):
         self.update()
 
     def move(self, hex, board):
-        del board[self.hex]
+
+        # TODO abstract this
+        board[self.hex].pop()
+        if not len(board[self.hex]):
+            del board[self.hex]
+
         self.hex = hex
-        board[hex] = self
+
+        if hex not in board.keys():
+            board[hex] = [ self ]
+        else:
+            board[hex].append(self)
+
         self.update()
 
     def update(self):
@@ -80,7 +90,7 @@ class AbstractHiveStone(pygame.sprite.Sprite):
             same_color = False
             for n in hex.neighbors():
                 try:
-                    if board[n].team != self.team:
+                    if board[n][-1].team != self.team:
                         return False
                     else:
                         same_color = True

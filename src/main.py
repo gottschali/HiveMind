@@ -55,7 +55,7 @@ stones = [sprite.OrangeQueen(Hex(2, 8), new=True),
               sprite.BlackBeetle(Hex(0, 17),  new=True),]
 
 for stone in stones:
-    board[stone.hex] = stone
+    board[stone.hex] = [stone]
 
 while True:
     # Mainloop
@@ -72,10 +72,10 @@ while True:
             print(hex)
             if state == IDLE:
                 if hex in board.keys(): # select
-                    if move_number % 2 == board[hex].team:
+                    if move_number % 2 == board[hex][-1].team:
                         print(f"selected {board[hex]}")
                         state = SELECTED
-                        selected_stone = board[hex]
+                        selected_stone = board[hex][-1]
                     else:
                         print("Wrong color")
             elif state == SELECTED:
