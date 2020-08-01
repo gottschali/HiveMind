@@ -85,30 +85,18 @@ class Hex:
     def hex_rotate_right(self):
         return Hex(-self.r, -self.s, -self.q)
 
-    @property
-    def a(self):
-        return self + hex_directions["a"]
-    @property
-    def b(self):
-        return self + hex_directions["b"]
-    @property
-    def c(self):
-        return self + hex_directions["c"]
-    @property
-    def d(self):
-        return self + hex_directions["d"]
-    @property
-    def e(self):
-        return self + hex_directions["e"]
-    @property
-    def f(self):
-        return self + hex_directions["f"]
 
     def neighbor(self, direction):
         return self + hex_direction[direction]
 
     def neighbors(self):
         return (self + hd for hd in hex_directions.values())
+
+    def circle_iterator(self):
+        d = collections.deque(self.neighbors())
+        for i in range(6):
+            yield d[0], d[1], d[2]
+            d.rotate()
 
     def adjacent(self, other):
         return other in self.neighbors()

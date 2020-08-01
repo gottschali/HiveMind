@@ -7,6 +7,9 @@ from libhex import *
 """
 team True <-> White
 team False <-> Black
+
+TODO move_number maybe obsolote to pass because of self.team
+TODO handle KeyError -> Custom dictionnary implementation
 """
 
 
@@ -25,8 +28,14 @@ class AbstractHiveStone(pygame.sprite.Sprite):
         self._load_image()
         self.update()
 
-    def move(self, hex, board):
+    def move(self, hex, board, queen_move):
+        if self.validate_move(hex, board, queen_move):
+            self.shift(hex, board)
+            return True
+        return False
 
+
+    def shift(self, hex, board):
         # TODO abstract this
         board[self.hex].pop()
         if not len(board[self.hex]):
@@ -48,15 +57,24 @@ class AbstractHiveStone(pygame.sprite.Sprite):
     def generate_moves(self):
         pass
 
-    def available_moves(self, queen_move):
-        if not queen_move[self.team]:
-            return []
+    def available_moves(self, board):
         pass
 
-    def validate_move(self):
+    def moveable(self, board, queen_move):
         if not queen_move[self.team]:
+            print("cannot move as queen not dropped")
             return False
+
+        # TODO One-Hive check
+
         return True
+
+    def validate_move(self, hex, board, queen_move):
+        if not self.moveable(board, queen_move):
+            print("Stone not moveable")
+            return False
+
+        return hex in self.available_moves(board)
 
 
     def drop(self, hex, board, move_number, queen_move):
@@ -65,7 +83,7 @@ class AbstractHiveStone(pygame.sprite.Sprite):
             self.new = False
             if isinstance(self, sprite.Queen):
                 queen_move[move_number % 2] = True
-            self.move(hex, board)
+            self.shift(hex, board)
             return True
         print("Invalid Drop")
         return False
@@ -82,12 +100,8 @@ class AbstractHiveStone(pygame.sprite.Sprite):
             print("Case second move")
             print(board)
             for n in hex.neighbors():
-                print(n)
-                try:
-                    if board[n]:
-                        return True
-                except KeyError:
-                    pass
+                if n in board:
+                    return True
             return False
         else:
             if hex in board.keys():
@@ -96,13 +110,11 @@ class AbstractHiveStone(pygame.sprite.Sprite):
             print("Testing all neighbors for color")
             same_color = False
             for n in hex.neighbors():
-                try:
+                if n in board:
                     if board[n][-1].team != self.team:
                         return False
                     else:
                         same_color = True
-                except KeyError:
-                    pass
             return same_color
 
     def _load_image(self):
@@ -118,6 +130,33 @@ class Runner(AbstractHiveStone):
         super().__init__(*args, **kwargs)
 
 
+    def available_moves(self, board):
+        return self.swarming(board)
+
+    def swarming(self, board):
+        # Runs a DFS on the edge of the hive
+        visited = set()
+        ordering = []
+        stack = []
+        for a, b, c in self.hex.circle_iterator():
+            if b in board:
+                continue
+            if (a in board) ^ (c in board):
+                stack.append(b)
+        while stack:
+            v = stack[-1]
+            stack.pop()
+            ordering.append(v)
+            visited.add(v)
+            for a, b, c in v.circle_iterator():
+                if (b in board) or (b in visited):
+                    continue
+                if (a in board) ^ (c in board):
+                    stack.append(b)
+        print(f"Swarming: {ordering}")
+        return ordering
+
+
 class Queen(Runner):
     image = "bee"
 
@@ -125,7 +164,9 @@ class Queen(Runner):
         super().__init__(*args, **kwargs)
 
     def is_surrounded():
+        # TODO Game Over condition
         pass
+
 
 
 class BlackQueen(Queen):

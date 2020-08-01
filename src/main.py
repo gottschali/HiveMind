@@ -57,6 +57,8 @@ stones = [sprite.OrangeQueen(Hex(2, 8), new=True),
 for stone in stones:
     board[stone.hex] = [stone]
 
+
+drawing.draw_grid(playground)
 while True:
     # Mainloop
     for event in pygame.event.get():
@@ -69,16 +71,14 @@ while True:
             pixel = pygame.mouse.get_pos()
             hex = Hex.from_pixel(Point(pixel[0], pixel[1]))
             print(hex)
-            if state == IDLE:
-                if hex in board.keys(): # select
-                    if move_number % 2 == board[hex][-1].team:
-                        print(f"selected {board[hex]}")
-                        state = SELECTED
-                        selected_stone = board[hex][-1]
-                    else:
-                        print("Wrong color")
+
+            if hex in board.keys(): # select
+                if move_number % 2 == board[hex][-1].team:
+                    print(f"selected {board[hex]}")
+                    state = SELECTED
+                    selected_stone = board[hex][-1]
+
             elif state == SELECTED:
-                old_hex = selected_stone.hex
 
                 # A new stone is added to the game
                 if selected_stone.new:
@@ -87,23 +87,18 @@ while True:
                         move_number += 1
                     continue
 
-                selected_stone.move(hex, board)
-                state = IDLE
-                # LEGIT MOVE -> make
-                # NOT LEGIT -> error
-                # PLAIN HEX -> clear selection
-                pass
+                # Try to make a move
+
+                if selected_stone.move(hex, board, queen_move):
+                    # Move succesfull
+                    move_number += 1
+                    state = IDLE
 
 
     screen.blit(playground, playground.get_rect())
-    drawing.draw_grid(playground)
-    # Logic
-    # stones.update()
     for sprite in stones:
         sprite.update()
         screen.blit(sprite.image, sprite.rect)
 
     # refresh
-    pygame.display.flip()
-
-    #Testcomment
+    pygame.display.update()
