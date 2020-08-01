@@ -1,4 +1,5 @@
 import pygame
+import sprite
 from constants import *
 from utils import get_path
 from libhex import *
@@ -58,16 +59,22 @@ class AbstractHiveStone(pygame.sprite.Sprite):
         return True
 
 
-    def drop(self, hex, board, move_number):
-        if self.validate_drop(hex, board, move_number):
+    def drop(self, hex, board, move_number, queen_move):
+        if self.validate_drop(hex, board, move_number, queen_move):
             print("Valid Drop")
             self.new = False
+            if isinstance(self, sprite.Queen):
+                queen_move[move_number % 2] = True
             self.move(hex, board)
             return True
         print("Invalid Drop")
         return False
 
-    def validate_drop(self, hex, board, move_number):
+    def validate_drop(self, hex, board, move_number, queen_move):
+        if not queen_move[move_number % 2]:
+            if not isinstance(self, sprite.Queen) and move_number >= 6:
+                print("Need to drop queen at lastest as the fourth move")
+                return False
         if move_number == 0:
             print("Case first move")
             return True

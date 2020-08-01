@@ -62,7 +62,6 @@ while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             quit()
-        # TODO new stones
         if event.type == pygame.MOUSEBUTTONUP:
             print(stones)
             print(state)
@@ -81,8 +80,9 @@ while True:
             elif state == SELECTED:
                 old_hex = selected_stone.hex
 
+                # A new stone is added to the game
                 if selected_stone.new:
-                    if selected_stone.drop(hex, board, move_number):
+                    if selected_stone.drop(hex, board, move_number, queen_move):
                         state = IDLE
                         move_number += 1
                     continue
