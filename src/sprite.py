@@ -15,8 +15,6 @@ TODO handle KeyError -> Custom dictionnary implementation
 
 class AbstractHiveStone(pygame.sprite.Sprite):
 
-    image = "ant"
-
     def __init__(self, hex, team=True, new=True):
         # Call the parent class (Sprite) constructor
         pygame.sprite.Sprite.__init__(self)
@@ -118,6 +116,7 @@ class AbstractHiveStone(pygame.sprite.Sprite):
             return same_color
 
     def _load_image(self):
+        print(self.image)
         self.image = pygame.image.load(get_path(f"assets/{self.image}.png"))
         self.image = pygame.transform.scale(self.image, STONE_SIZE)
         # Fetch the rectangle object that has the dimensions of the image
@@ -158,68 +157,28 @@ class Runner(AbstractHiveStone):
 
 
 class Queen(Runner):
-    image = "bee"
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-    def is_surrounded():
-        # TODO Game Over condition
-        pass
+    def __init__(self, hex, team, *args, **kwargs):
+        self.image = "orange_bee" if team else "black_bee"
+        super().__init__(hex, team, *args, **kwargs)
 
 
+    def is_surrounded(self, board):
+        return all(n in board for n in self.hex.neighbors())
 
-class BlackQueen(Queen):
-    image = "black_bee"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(team=False, *args, **kwargs)
-
-
-class OrangeQueen(Queen):
-    image = "orange_bee"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(team=True, *args, **kwargs)
 
 class Ant(Runner):
-    image = "ant"
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class BlackAnt(Ant):
-    image = "black_ant"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(team=False, *args, **kwargs)
-
-class OrangeAnt(Ant):
-    image = "orange_ant"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(team=True, *args, **kwargs)
+    def __init__(self, hex, team, *args, **kwargs):
+        self.image = "orange_ant" if team else "black_ant"
+        super().__init__(hex, team, *args, **kwargs)
 
 
 class Spider(Runner):
-    image = "spider"
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class BlackSpider(Spider):
-    image = "black_spider"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(team=False, *args, **kwargs)
-
-class OrangeSpider(Spider):
-    image = "orange_spider"
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(team=True, *args, **kwargs)
+    def __init__(self, hex, team, *args, **kwargs):
+        self.image = "orange_spider" if team else "black_spider"
+        super().__init__(hex, team, *args, **kwargs)
 
 class Jumper(AbstractHiveStone):
 
@@ -227,21 +186,11 @@ class Jumper(AbstractHiveStone):
         super().__init__(*args, **kwargs)
 
 
-class GrassHopper(Jumper):
-    image = "grass_hopper"
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class GrassHopper(Runner):
 
-class BlackGrassHopper(GrassHopper):
-    image = "black_grass_hopper"
-    def __init__(self, *args, **kwargs):
-        super().__init__(team=False, *args, **kwargs)
-
-
-class OrangeGrassHopper(GrassHopper):
-    image = "orange_grass_hopper"
-    def __init__(self, *args, **kwargs):
-        super().__init__(team=True, *args, **kwargs)
+    def __init__(self, hex, team, *args, **kwargs):
+        self.image = "orange_grass_hopper" if team else "black_grass_hopper"
+        super().__init__(hex, team, *args, **kwargs)
 
 
 class Climber(AbstractHiveStone):
@@ -251,14 +200,7 @@ class Climber(AbstractHiveStone):
 
 
 class Beetle(Climber):
-    pass
+    def __init__(self, hex, team, *args, **kwargs):
+        self.image = "orange_beetle" if team else "black_beetle"
+        super().__init__(hex, team, *args, **kwargs)
 
-class BlackBeetle(Beetle):
-    image = "black_beetle"
-    def __init__(self, *args, **kwargs):
-        super().__init__(team=True, *args, **kwargs)
-
-class OrangeBeetle(Beetle):
-    image = "orange_beetle"
-    def __init__(self, *args, **kwargs):
-        super().__init__(team=True, *args, **kwargs)

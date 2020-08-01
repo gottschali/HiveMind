@@ -2,7 +2,7 @@ import pygame
 from libhex import *
 from constants import *
 from utils import get_path
-import sprite
+from sprite import Queen, Ant, Spider, Beetle, GrassHopper
 import drawing
 
 # TODO annoying path handling -> should work cross platform
@@ -31,28 +31,20 @@ queen_move = [False, False]
 selected_stone = None
 board = {}
 
+play_stones = [Queen, Ant, Ant, Ant, Spider, Spider,
+               GrassHopper, GrassHopper, Beetle, Beetle]
 
-stones = [sprite.OrangeQueen(Hex(2, 8), new=True),
-              sprite.OrangeAnt(Hex(2, 9),  new=True),
-              sprite.OrangeAnt(Hex(2, 10), new=True),
-              sprite.OrangeAnt(Hex(2, 11),  new=True),
-              sprite.OrangeSpider(Hex(2, 12),  new=True),
-              sprite.OrangeSpider(Hex(2, 13),  new=True),
-              sprite.OrangeGrassHopper(Hex(2, 14),  new=True),
-              sprite.OrangeGrassHopper(Hex(2, 15),  new=True),
-              sprite.OrangeBeetle(Hex(2, 16),  new=True),
-              sprite.OrangeBeetle(Hex(2, 17),  new=True),
+black_spare_hexes = [Hex(2, 8 + i) for i in range(len(play_stones))]
+orange_spare_hexes = [Hex(0, 8 + i) for i in range(len(play_stones))]
 
-              sprite.BlackQueen(Hex(0, 8),  new=True),
-              sprite.BlackAnt(Hex(0, 9), new=True),
-              sprite.BlackAnt(Hex(0, 10), new=True),
-              sprite.BlackAnt(Hex(0, 11), new=True),
-              sprite.BlackSpider(Hex(0, 12),  new=True),
-              sprite.BlackSpider(Hex(0, 13),  new=True),
-              sprite.BlackGrassHopper(Hex(0, 14),  new=True),
-              sprite.BlackGrassHopper(Hex(0, 15),  new=True),
-              sprite.BlackBeetle(Hex(0, 16),  new=True),
-              sprite.BlackBeetle(Hex(0, 17),  new=True),]
+black_stones = [cls(h, True, new=True) for cls, h in zip(play_stones,
+    orange_spare_hexes)]
+
+orange_stones = [cls(h, False, new=True) for cls, h in zip(play_stones,
+    black_spare_hexes)]
+
+stones = black_stones + orange_stones
+
 
 for stone in stones:
     board[stone.hex] = [stone]
