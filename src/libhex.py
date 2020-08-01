@@ -107,6 +107,12 @@ class Hex:
     def neighbor(self, direction):
         return self + hex_direction[direction]
 
+    def neighbors(self):
+        return (self + hd for hd in hex_directions.values())
+
+    def adjacent(self, other):
+        return other in self.neighbors()
+
     def diagonal_neighbor(self, direction):
         return self + hex_diagonals[direction]
 
