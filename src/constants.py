@@ -16,5 +16,5 @@ YELLOW = Color(255, 242, 114)
 ORANGE = Color(255, 140, 66)
 RED = Color(186, 27, 29)
 
-STONE_SIZE = (40, 40)
+STONE_SIZE = (47, 47)
 

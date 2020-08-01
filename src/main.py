@@ -27,31 +27,32 @@ size = (SCREEN_WIDTH, SCREEN_HEIGHT)
 
 state = IDLE
 move_number = 0
+queen_move = [False, False]
 selected_stone = None
 board = {}
 
 
-stones = [sprite.Queen(Hex(2, 8), team=True, new=True),
-              sprite.Ant(Hex(2, 9), team=True, new=True),
-              sprite.Ant(Hex(2, 10), team=True, new=True),
-              sprite.Ant(Hex(2, 11), team=True, new=True),
-              sprite.Spider(Hex(2, 12), team=True, new=True),
-              sprite.Spider(Hex(2, 13), team=True, new=True),
-              sprite.GrassHopper(Hex(2, 14), team=True, new=True),
-              sprite.GrassHopper(Hex(2, 15), team=True, new=True),
-              sprite.Beetle(Hex(2, 16), team=True, new=True),
-              sprite.Beetle(Hex(2, 17), team=True, new=True),
+stones = [sprite.OrangeQueen(Hex(2, 8), new=True),
+              sprite.OrangeAnt(Hex(2, 9),  new=True),
+              sprite.OrangeAnt(Hex(2, 10), new=True),
+              sprite.OrangeAnt(Hex(2, 11),  new=True),
+              sprite.OrangeSpider(Hex(2, 12),  new=True),
+              sprite.OrangeSpider(Hex(2, 13),  new=True),
+              sprite.OrangeGrassHopper(Hex(2, 14),  new=True),
+              sprite.OrangeGrassHopper(Hex(2, 15),  new=True),
+              sprite.OrangeBeetle(Hex(2, 16),  new=True),
+              sprite.OrangeBeetle(Hex(2, 17),  new=True),
 
-              sprite.Queen(Hex(0, 8), team=False, new=True),
-              sprite.Ant(Hex(0, 9), team=False, new=True),
-              sprite.Ant(Hex(0, 10), team=False, new=True),
-              sprite.Ant(Hex(0, 11), team=False, new=True),
-              sprite.Spider(Hex(0, 12), team=False, new=True),
-              sprite.Spider(Hex(0, 13), team=False, new=True),
-              sprite.GrassHopper(Hex(0, 14), team=False, new=True),
-              sprite.GrassHopper(Hex(0, 15), team=False, new=True),
-              sprite.Beetle(Hex(0, 16), team=False, new=True),
-              sprite.Beetle(Hex(0, 17), team=False, new=True),]
+              sprite.BlackQueen(Hex(0, 8),  new=True),
+              sprite.BlackAnt(Hex(0, 9), new=True),
+              sprite.BlackAnt(Hex(0, 10), new=True),
+              sprite.BlackAnt(Hex(0, 11), new=True),
+              sprite.BlackSpider(Hex(0, 12),  new=True),
+              sprite.BlackSpider(Hex(0, 13),  new=True),
+              sprite.BlackGrassHopper(Hex(0, 14),  new=True),
+              sprite.BlackGrassHopper(Hex(0, 15),  new=True),
+              sprite.BlackBeetle(Hex(0, 16),  new=True),
+              sprite.BlackBeetle(Hex(0, 17),  new=True),]
 
 for stone in stones:
     board[stone.hex] = stone
@@ -71,14 +72,23 @@ while True:
             print(hex)
             if state == IDLE:
                 if hex in board.keys(): # select
-                    state = SELECTED
-                    selected_stone = board[hex]
+                    if move_number % 2 == board[hex].team:
+                        print(f"selected {board[hex]}")
+                        state = SELECTED
+                        selected_stone = board[hex]
+                    else:
+                        print("Wrong color")
             elif state == SELECTED:
                 old_hex = selected_stone.hex
-                selected_stone.move(hex)
-                board[hex] = selected_stone
-                del board[old_hex]
-                state = "IDLE"
+
+                if selected_stone.new:
+                    if selected_stone.drop(hex, board, move_number):
+                        state = IDLE
+                        move_number += 1
+                    continue
+
+                selected_stone.move(hex, board)
+                state = IDLE
                 # LEGIT MOVE -> make
                 # NOT LEGIT -> error
                 # PLAIN HEX -> clear selection
