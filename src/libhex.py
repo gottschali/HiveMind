@@ -47,6 +47,7 @@ LAYOUT = layout_pointy
 class Hex:
     """Provides utility methods for working with hexagonal tiles"""
 
+
     def __init__(self, q, r, s=None):
         self.q = q
         self.r = r
@@ -57,14 +58,18 @@ class Hex:
         else:
             self.s = - (q + r)
 
+
     def __eq__(self, other):
         return self.q == other.q and self.r == other.r
+
 
     def __repr__(self):
         return f"Hex({self.q}, {self.r}, {self.s})"
 
+
     def __hash__(self):
         return hash(str(self.q) + str(self.r))
+
 
     def __add__(self, other):
         return Hex(self.q + other.q, self.r + other.r, self.s + other.s)
@@ -86,11 +91,9 @@ class Hex:
         return Hex(-self.r, -self.s, -self.q)
 
 
-    def neighbor(self, direction):
-        return self + hex_direction[direction]
-
     def neighbors(self):
-        return (self + hd for hd in hex_directions.values())
+        return (self + hd for hd in hex_directions)
+
 
     def circle_iterator(self):
         d = collections.deque(self.neighbors())
@@ -98,18 +101,23 @@ class Hex:
             yield d[0], d[1], d[2]
             d.rotate()
 
+
     def adjacent(self, other):
         return other in self.neighbors()
 
+
     def diagonal_neighbor(self, direction):
         return self + hex_diagonals[direction]
+
 
     def __abs__(self):
         """ hex length """
         return (abs(self.q) + abs(self.r) + abs(self.s)) // 2
 
+
     def distance(self, other):
         return abs(self - other)
+
 
     def __round__(self):
         qi = int(round(self.q))
@@ -127,10 +135,12 @@ class Hex:
                 si = -qi - ri
         return Hex(qi, ri, si)
 
+
     def lerp(self, other, n):
         return Hex(self.q * (1.0 - n) + other.q * n,
                    self.r * (1.0 - n) + other.r * n,
                    self.s * (1.0 - n) + other.s * n)
+
 
     def line(self, other):
         N = self.distance(b)
@@ -154,6 +164,7 @@ class Hex:
             return Point(x + origin.x + dx, y + origin.y + dy)
         return Point(x + origin.x, y + origin.y)
 
+
     @classmethod
     def from_pixel(cls, p, layout=LAYOUT):
         M = layout.orientation
@@ -164,6 +175,7 @@ class Hex:
         r = M.b2 * pt.x + M.b3 * pt.y
         return round(cls(q, r, -q - r))
 
+
     def polygon_corners(self, layout=LAYOUT):
         corners = []
         center = h.to_pixel(layout)
@@ -172,6 +184,8 @@ class Hex:
             corners.append(Point(center.x - offset.x, center.y - offset.y))
         return corners
 
+
+
 def hex_corner_offset(corner, layout=LAYOUT):
     M = layout.orientation
     size = layout.size
@@ -179,69 +193,9 @@ def hex_corner_offset(corner, layout=LAYOUT):
     return Point(size.x * math.cos(angle), size.y * math.sin(angle))
 
 
-"""
-    def qoffset_from_cube(self, offset):
-        col = self.q
-        row = self.r + (self..q + offset * (self.q & 1)) // 2
-        if offset != EVEN and offset != ODD:
-            raise ValueError("offset must be EVEN (+1) or ODD (-1)")
-        return OffsetCoord(col, row)
-
-def qoffset_to_cube(offset, h):
-    q = h.col
-    r = h.row - (h.col + offset * (h.col & 1)) // 2
-    s = -q - r
-    if offset != EVEN and offset != ODD:
-        raise ValueError("offset must be EVEN (+1) or ODD (-1)")
-    return Hex(q, r, s)
-
-def roffset_from_cube(offset, h):
-    col = h.q + (h.r + offset * (h.r & 1)) // 2
-    row = h.r
-    if offset != EVEN and offset != ODD:
-        raise ValueError("offset must be EVEN (+1) or ODD (-1)")
-    return OffsetCoord(col, row)
-
-def roffset_to_cube(offset, h):
-    q = h.col - (h.row + offset * (h.row & 1)) // 2
-    r = h.row
-    s = -q - r
-    if offset != EVEN and offset != ODD:
-        raise ValueError("offset must be EVEN (+1) or ODD (-1)")
-    return Hex(q, r, s)
-
-
-
-
-DoubledCoord = collections.namedtuple("DoubledCoord", ["col", "row"])
-
-def qdoubled_from_cube(h):
-    col = h.q
-    row = 2 * h.r + h.q
-    return DoubledCoord(col, row)
-
-def qdoubled_to_cube(h):
-    q = h.col
-    r = (h.row - h.col) // 2
-    s = -q - r
-    return Hex(q, r, s)
-
-def rdoubled_from_cube(h):
-    col = 2 * h.q + h.r
-    row = h.r
-    return DoubledCoord(col, row)
-
-def rdoubled_to_cube(h):
-    q = (h.col - h.row) // 2
-    r = h.row
-    s = -q - r
-    return Hex(q, r, s)
-
-"""
-
-
-hex_directions = {"a": Hex(1, 0, -1), "b": Hex(1, -1, 0), "c": Hex(0, -1, 1),
-                  "d": Hex(-1, 0, 1), "e": Hex(-1, 1, 0), "f": Hex(0, 1, -1) }
+hex_directions = [Hex(1, 0, -1), Hex(1, -1, 0), Hex(0, -1, 1),
+                  Hex(-1, 0, 1),  Hex(-1, 1, 0),  Hex(0, 1, -1)]
 
 hex_diagonals = {"a": Hex(2, -1, -1), "b": Hex(1, -2, 1), "c": Hex(-1, -1, 2),
                  "d": Hex(-2, 1, 1), "e": Hex(-1, 2, -1), "f": Hex(1, 1, -2)}
+

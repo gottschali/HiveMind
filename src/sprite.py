@@ -1,6 +1,8 @@
 import pygame
 import sprite
+from collections import deque
 from constants import *
+from libhex import *
 from utils import get_path
 
 """
@@ -51,7 +53,7 @@ class AbstractHiveStone(pygame.sprite.Sprite):
         self.rect.y -= RADIUS / 2 - 3
 
 
-    def available_moves(self, board) -> list:
+    def available_moves(self, board):
         """ Returns a list of Hexes of available moves """
         raise NotImplemented
 
@@ -153,35 +155,53 @@ class Runner(AbstractHiveStone):
         super().__init__(*args, **kwargs)
 
 
-    def available_moves(self, board) -> list:
+    def available_moves(self, board):
         return self.swarming(board)
 
 
-    def swarming(self, board) -> list:
-        """
-        Runs a DFS on the edge of the hive. Return all hexes that are
-        reachable this way
-        """
-        visited = set()
-        ordering = []
-        stack = []
+    def one_step(self, board) -> list:
         for a, b, c in self.hex.circle_iterator():
             if b in board:
                 continue
             if (a in board) ^ (c in board):
-                stack.append(b)
-        while stack:
-            v = stack[-1]
-            stack.pop()
+                yield b
+
+
+    def swarming(self, board, filter=None) -> list:
+        """
+        Runs a DFS on the edge of the hive. Return all hexes that are
+        reachable this way
+        """
+        # Otherwise the stone uses itself to move along
+        old = board[self.hex]
+        del board[self.hex]
+        visited = set()
+        ordering = []
+        parent = {}
+        distance = {}
+        q = deque()
+        q.append(self.hex)
+        parent[self.hex] = None
+        distance[self.hex] = 0
+        visited.add(self.hex)
+        while q:
+            v = q.popleft()
             ordering.append(v)
-            visited.add(v)
             for a, b, c in v.circle_iterator():
                 if (b in board) or (b in visited):
                     continue
                 if (a in board) ^ (c in board):
-                    stack.append(b)
-        print(f"Swarming: {ordering}")
-        return ordering
+                    visited.add(b)
+                    parent[b] = v
+                    distance[b] = distance[v] + 1
+                    q.append(b)
+        for i in ordering:
+            print(f"{i}: {distance[i]}, (<- {parent[i]})")
+        # restore the stone
+        board[self.hex] = old
+        if not filter is None:
+            return filter(distance)
+        return iter(ordering)
 
 
 
@@ -196,6 +216,10 @@ class Queen(Runner):
     def is_surrounded(self, board) -> bool:
         """ Game Over condition """
         return all(n in board for n in self.hex.neighbors())
+
+
+    def available_moves(self, board):
+        return self.one_step(board)
 
 
 
@@ -216,6 +240,14 @@ class Spider(Runner):
         super().__init__(hex, team, *args, **kwargs)
 
 
+    def available_moves(self, board) -> list:
+        def only_three_hexes(distance):
+            for h, d in distance.items():
+                if d == 3:
+                    yield h
+        return self.swarming(board, only_three_hexes)
+
+
 
 class GrassHopper(AbstractHiveStone):
     """ Unique piece that jumps over others """
@@ -223,6 +255,15 @@ class GrassHopper(AbstractHiveStone):
     def __init__(self, hex, team, *args, **kwargs):
         self.image = "orange_grass_hopper" if team else "black_grass_hopper"
         super().__init__(hex, team, *args, **kwargs)
+
+
+    def available_moves(self, board):
+        for d in hex_directions:
+            if self.hex + d in board:
+                i = 2
+                while self.hex + d * i in board:
+                    i += 1
+                yield self.hex + d * i
 
 
 
