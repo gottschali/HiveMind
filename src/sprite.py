@@ -4,6 +4,7 @@ from collections import deque
 from constants import *
 from libhex import *
 from utils import get_path
+from one_hive import one_hive
 
 """
 team True <-> White
@@ -68,8 +69,7 @@ class AbstractHiveStone(pygame.sprite.Sprite):
         if not queen_move[self.team]:
             print("cannot move as queen not dropped")
             return False
-        # TODO One-Hive check
-        return True
+        return not self.hex in one_hive(board)
 
 
     def validate_move(self, hex, board, queen_move) -> bool:

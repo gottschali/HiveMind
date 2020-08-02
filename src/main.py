@@ -4,7 +4,6 @@ from constants import *
 from utils import get_path
 from sprite import Queen, Ant, Spider, Beetle, GrassHopper
 import drawing
-import algo
 
 # TODO annoying path handling -> should work cross platform
 
