@@ -24,10 +24,12 @@ def one_hive(board):
                 dfs(n, v, counter)
                 lowlink[v] = min(lowlink[v], lowlink[n])
             if lowlink[n] >= index[v]:
-                articulation.add(v)
+                if len(board[v]) == 1:
+                    articulation.add(v)
         if p == null_hex and children > 1:
             # Root is an articulation point
-            articulation.add(v)
+            if len(board[v]) == 1:
+                articulation.add(v)
     for e in board:
         if not board[e][-1].new:
             root = e

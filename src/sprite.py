@@ -240,7 +240,7 @@ class Spider(Runner):
         super().__init__(hex, team, *args, **kwargs)
 
 
-    def available_moves(self, board) -> list:
+    def available_moves(self, board):
         def only_three_hexes(distance):
             for h, d in distance.items():
                 if d == 3:
@@ -281,4 +281,26 @@ class Beetle(Climber):
     def __init__(self, hex, team, *args, **kwargs):
         self.image = "orange_beetle" if team else "black_beetle"
         super().__init__(hex, team, *args, **kwargs)
+
+
+    def available_moves(self, board):
+        height = len(board[self.hex])
+        for i, (a, b, c) in enumerate(self.hex.circle_iterator()):
+            ha = hb = hc = 0
+            for x, y in zip((ha, hb, hc), (a, b, c)):
+                if y in board:
+                    x = len(board[y])
+                # 1. Upwards / downwards
+                # When hb != h
+                # Not possible if ha >= h and hb >= h
+                # 2. on same niveau
+                # else
+                # Not possible if ha >= h and hb >= h aka blocked
+                # a xor c occupied
+                if not (ha >= height and hc >= height):
+                    if hb != height:
+                        if b in board or ((a in board) ^ (c in board)):
+                            yield b
+                    elif (a in board) ^ (c in board):
+                        yield b
 

@@ -6,6 +6,7 @@ from sprite import Queen, Ant, Spider, Beetle, GrassHopper
 import drawing
 
 # TODO annoying path handling -> should work cross platform
+# TODO If no possible moves for a player -> pass
 
 pygame.display.init()
 
@@ -71,14 +72,7 @@ while not game_over(board):
             hex = Hex.from_pixel(Point(pixel[0], pixel[1]))
             print(hex)
 
-            if hex in board.keys(): # select
-                if move_number % 2 == board[hex][-1].team:
-                    print(f"selected {board[hex]}")
-                    state = SELECTED
-                    selected_stone = board[hex][-1]
-
-            elif state == SELECTED:
-
+            if state == SELECTED:
                 # A new stone is added to the game
                 if selected_stone.new:
                     if selected_stone.drop(hex, board, move_number, queen_move):
@@ -87,14 +81,20 @@ while not game_over(board):
                     continue
 
                 # Try to make a move
-
                 if selected_stone.move(hex, board, queen_move):
                     # Move succesfull
                     move_number += 1
-                    state = IDLE
+                state = IDLE
+
+            elif hex in board.keys(): # select
+                if move_number % 2 == board[hex][-1].team:
+                    print(f"selected {board[hex]}")
+                    state = SELECTED
+                    selected_stone = board[hex][-1]
 
 
     screen.blit(playground, playground.get_rect())
+    stones.sort(key=lambda x: len(board[x.hex]))
     for sprite in stones:
         sprite.update()
         screen.blit(sprite.image, sprite.rect)
