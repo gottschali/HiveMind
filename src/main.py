@@ -4,18 +4,16 @@ from constants import *
 from utils import get_path
 from sprite import Queen, Ant, Spider, Beetle, GrassHopper
 import drawing
+import algo
 
 # TODO annoying path handling -> should work cross platform
 
-pygame.init()
+pygame.display.init()
 
-# WIDTH = int(SCREEN_WIDTH / (RADIUS * sqrt(3)))
-# HEIGHT = int(SCREEN_HEIGHT / RADIUS / 2)
-
+clock = pygame.time.Clock()
+clock.tick(30)
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 playground = pygame.image.load(get_path("assets/background.jpg")).convert()
-
-# stones = pygame.sprite.Group()
 
 # states: idle, selected
 IDLE = "IDLE"
@@ -23,7 +21,6 @@ SELECTED = "SELECTED"
 WAITING = "WAITING"
 
 size = (SCREEN_WIDTH, SCREEN_HEIGHT)
-
 
 state = IDLE
 move_number = 0
@@ -49,9 +46,20 @@ stones = black_stones + orange_stones
 for stone in stones:
     board[stone.hex] = [stone]
 
-
 drawing.draw_grid(playground)
-while True:
+
+def game_over(board):
+    for stones in board.values():
+        for stone in stones:
+            if isinstance(stone, Queen):
+                if not stone.new and stone.is_surrounded(board):
+                    if stone.team:
+                        print("Orange wins")
+                        return 1
+                    print("Black wins")
+                    return -1
+
+while not game_over(board):
     # Mainloop
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
