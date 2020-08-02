@@ -1,6 +1,8 @@
 # HiveMind
 TODO
-* Visual feedback (illegal, ...)
+* Visual feedback
+    * Illegal move
+    * Stone selected
 * Error messages (top bar with information)
 * Proper logging
 * linting / formatting
@@ -26,3 +28,12 @@ TODO
 -[ ] nice look
 -[.] server -> connect
 -[ ] ai
+
+# Nice animations
+Use libhex things:
+- linear interpolation
+- drawing of circles
+- Movement
+
+
+On game over: rippling circles outwards
