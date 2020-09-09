@@ -4,6 +4,7 @@ from constants import *
 from utils import get_path
 from sprite import Queen, Ant, Spider, Beetle, GrassHopper
 import drawing
+from state import Board
 
 # Conventions
 # True <-> Orange <-> 1
@@ -40,42 +41,20 @@ stones = black_stones + orange_stones
 
 # Initialize the board. It is a hashmap with hexes as keys and
 # list of stones as values
-board = {}
-for stone in stones:
-    board[stone.hex] = [stone]
-
-
-def check_game_state(board):
-    """ If a queen is completely surrounded the other player wins """
-    orange_over = black_over = False
-    for stones in board.values():
-        for stone in stones:
-            if isinstance(stone, Queen):
-                if not stone.new and stone.is_surrounded(board):
-                    if stone.team:
-                        orange_over = True
-                    else:
-                        black_over = True
-    if orange_over and black_over:
-        # DRAW
-        return -1
-    elif orange_over:
-        return True
-    elif black_over:
-        return False
-
+board = Board()
+board.add_stones(stones)
 
 # The grid has to be drawn only once
 drawing.draw_grid(playground)
 
-while check_game_state(board) is None:
+while board.is_game_over() is None:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             quit()
         if event.type == pygame.MOUSEBUTTONUP:
             print(stones)
             print(state)
-            print(board)
+            print(list(board.get_legal_actions()))
             pixel = pygame.mouse.get_pos()
             hex = Hex.from_pixel(Point(pixel[0], pixel[1]))
             print(hex)
@@ -85,28 +64,28 @@ while check_game_state(board) is None:
                 # A new stone is added to the game
                 update = False
                 if selected_stone.new:
-                    if selected_stone.drop(hex, board, move_number, queen_move):
+                    if selected_stone.drop(hex, board.board, move_number, queen_move):
                         update = True
                 # Try to move an existing stone
                 else:
-                    if selected_stone.move(hex, board, queen_move):
+                    if selected_stone.move(hex, board.board, queen_move):
                         # Move succesfull
                         update = True
                 if update:
                     move_number += 1
                 state = IDLE
             elif state == IDLE:
-                if hex in board.keys(): # Try to select a stone
+                if hex in board.board.keys(): # Try to select a stone
                     # Check if the selected stone belongs to the player
-                    if move_number % 2 == board[hex][-1].team:
-                        print(f"selected {board[hex]}")
+                    if move_number % 2 == board.board[hex][-1].team:
+                        print(f"selected {board.board[hex]}")
                         state = SELECTED
-                        selected_stone = board[hex][-1]
+                        selected_stone = board.board[hex][-1]
 
     screen.blit(playground, playground.get_rect())
     # sort the stones according to their height
     # otherwise a stone that lies under them would be drawn over them
-    stones.sort(key=lambda x: len(board[x.hex]))
+    stones.sort(key=lambda x: len(board.board[x.hex]))
     # Update the positions of
     for sprite in stones:
         sprite.update()

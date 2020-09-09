@@ -17,17 +17,17 @@ TODO
 * indicate stacked stones
 
 ## Roadmap
--[ ] Glue screens together
--[ ] np-arrays
--[ ] utility-drawing
--[x] sprites
--[x] movement
--[x] logic
--[x] height
--[x] Game flow
--[ ] nice look
--[.] server -> connect
--[ ] ai
+- [ ] Glue screens together
+- [ ] np-arrays
+- [ ] utility-drawing
+- [x] sprites
+- [x] movement
+- [x] logic
+- [x] height
+- [x] Game flow
+- [ ] nice look
+- [.] server -> connect
+- [ ] ai
 
 # Nice animations
 Use libhex things:
