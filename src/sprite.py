@@ -64,10 +64,13 @@ class AbstractHiveStone(pygame.sprite.Sprite):
         Checks if the stone is moveable
         Which is the case when
             i.  The player has dropped his queen
-            ii. The One-Hive rule is not violated
+            ii. The insect is not covered by another one
+            iii.The One-Hive rule is not violated
         """
         if not queen_move[self.team]:
             print("cannot move as queen not dropped")
+            return False
+        if board[self.hex][-1] != self:
             return False
         return not self.hex in one_hive(board)
 

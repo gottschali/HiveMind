@@ -1,40 +1,31 @@
 from libhex import *
 
-null_hex = Hex(-999, 999)
 
-def one_hive(board):
+def one_hive(hive):
     lowlink = {}
     visited = {}
     index = {}
-    articulation = set()
     counter = 0
-    def dfs(v, p, counter):
-        visited[v] = True
+    def dfs(node, parent, counter):
+        visited[node] = True
         counter += 1
-        index[v] = counter
-        lowlink[v] = counter
+        index[node] = counter
+        lowlink[node] = counter
         children = 0
-        for n in v.neighbors():
-            if n == p or not n in board:
+        for neighbor in node.neighbors():
+            if neighbor == parent or not neighbor in hive:
                 continue
-            if n in visited:
-                lowlink[v] = min(lowlink[v], lowlink[n])
+            if neighbor in visited:
+                lowlink[node] = min(lowlink[node], lowlink[neighbor])
             else:
                 children += 1
-                dfs(n, v, counter)
-                lowlink[v] = min(lowlink[v], lowlink[n])
-            if lowlink[n] >= index[v]:
-                if len(board[v]) == 1:
-                    articulation.add(v)
-        if p == null_hex and children > 1:
+                dfs(neighbor, node, counter)
+                lowlink[node] = min(lowlink[node], lowlink[neighbor])
+            if lowlink[neighbor] >= index[node]:
+                yield node
+        if parent == None and children > 1:
             # Root is an articulation point
-            if len(board[v]) == 1:
-                articulation.add(v)
-    for e in board:
-        if not board[e][-1].new:
-            root = e
-            break
-    dfs(root, null_hex, counter)
-    print(articulation)
-    return articulation
+            yield node
+    root = next(iter(hive))
+    yield from dfs(root, None, counter)
 
