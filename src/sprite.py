@@ -53,7 +53,7 @@ class AbstractInsect:
         raise NotImplemented
 
 
-    @abstractmethod
+    @staticmethod
     def pre_moveable(hex, state) -> bool:
         """
         Checks if the stone is moveable
@@ -110,7 +110,7 @@ class AbstractInsect:
             return same_color
 
 
-class Runner(AbstractHiveStone):
+class Runner(AbstractInsect):
 
     """
     Provides utility methods for insects that move on the border of the
@@ -196,7 +196,7 @@ class Spider(Runner):
         return self.swarming(hex, board, only_three_hexes)
 
 
-class GrassHopper(AbstractHiveStone):
+class GrassHopper(AbstractInsect):
     """ Unique piece that jumps over others """
 
     def available_moves(self, hex, board):
@@ -209,7 +209,7 @@ class GrassHopper(AbstractHiveStone):
 
 
 
-class Climber(AbstractHiveStone):
+class Climber(AbstractInsect):
     """ Abstract class for insects that may move on top of others """
     pass
 

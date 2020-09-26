@@ -199,3 +199,7 @@ hex_directions = [Hex(1, 0, -1), Hex(1, -1, 0), Hex(0, -1, 1),
 hex_diagonals = {"a": Hex(2, -1, -1), "b": Hex(1, -2, 1), "c": Hex(-1, -1, 2),
                  "d": Hex(-2, 1, 1), "e": Hex(-1, 2, -1), "f": Hex(1, 1, -2)}
 
+
+class NoneHex(Hex):
+    def __init__(self):
+        super().__init__(math.nan, math.nan)

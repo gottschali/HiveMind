@@ -23,9 +23,9 @@ def one_hive(hive):
                 lowlink[node] = min(lowlink[node], lowlink[neighbor])
             if lowlink[neighbor] >= index[node]:
                 yield node
-        if parent == None and children > 1:
+        if parent == NoneHex and children > 1:
             # Root is an articulation point
             yield node
     root = next(iter(hive))
-    yield from dfs(root, None, counter)
+    yield from dfs(root, NoneHex, counter)
 
