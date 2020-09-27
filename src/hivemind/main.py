@@ -1,7 +1,7 @@
 import logging
 
-from state import *
-from hex import Hex
+from .state import *
+from .hex import Hex
 
 LEVEL = logging.DEBUG
 

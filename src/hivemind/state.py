@@ -2,10 +2,10 @@ from copy import deepcopy
 import logging
 from typing import Iterator, List
 
-from insect import Insect, Bee, Spider, Ant, GrassHopper, Beetle
-from hive import Hive
-from action import Action, Move, Drop
-from hex import Hex
+from .insect import Insect, Bee, Spider, Ant, GrassHopper, Beetle
+from .hive import Hive
+from .action import Action, Move, Drop
+from .hex import Hex
 
 logger = logging.getLogger(__name__)
 
@@ -105,13 +105,13 @@ class State:
         if not self.bee_move:
             logger.warn(f"Insects can't be moved before the bee is played")
             return False
-        if hex in self.articulation_points:
+        if self.hive.height(hex) == 1 and hex in self.articulation_points:
             logger.warn(f"The insect can't be moved due to the one hive rule")
             return False
         # Check if the target is valid
-        possible_moves = list(hive.generate_moves_for_insect(insect.name, hex))
+        possible_moves = list(self.hive.generate_moves_for_insect(insect.name, hex))
         logger.debug(f"Checking the possible moves {possible_moves}")
-        return hex in possible_moves
+        return move.destination in possible_moves
 
 
     def validate_drop(self, drop: Drop) -> bool:
@@ -142,7 +142,8 @@ class State:
         logger.debug("Checking the surrounded insects for their color")
         return self.hive.neighbor_team(hex, self.current_team)
 
-    def result(self):
+    @property
+    def game_result(self):
         """ If a queen is completely surrounded the other player wins """
         white_lost = black_lost = False
         for hex, insects in self.hive.items():
@@ -155,9 +156,9 @@ class State:
                         black_lost = True
         return 0 if white_lost and black_lost else 1 if white_lost else -1 if black_lost else None
 
-    def status(self) -> bool:
+    def is_game_over(self) -> bool:
         """ Check if the game is over """
-        return self.result() is None
+        return not self.game_result is None
 
     def unique_droppable_insects(self):
         return set(self.availables())

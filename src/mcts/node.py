@@ -1,13 +1,6 @@
 import numpy as np
 from collections import defaultdict
 
-# Why defaultdict
-# state::get_legal_actions
-# state::move -> state
-# state::is_game_over
-# state::next_to_move ???
-
-
 class MonteCarloTreeSearchNode:
     def __init__(self, state, parent=None):
         self.state = state
@@ -17,24 +10,28 @@ class MonteCarloTreeSearchNode:
         self._results = defaultdict(int)
         self._untried_actions = None
 
+    @property
     def untried_actions(self):
         """ returns list of moves """
         if self._untried_actions is None:
-            self._untried_actions = self.state.get_legal_actions()
+            self._untried_actions = list(self.state.generate_actions())
         return self._untried_actions
 
+    @property
     def q(self):
-        wins = self._results[self.parent.state.move_number % 2]
-        loses = self._results[-1 * self.parent.state.move_number % 2]
+        wins = self._results[self.parent.state.current_team]
+        loses = self._results[-1 * self.parent.state.current_team]
+        return wins - loses
 
+    @property
     def n(self):
         return self._number_of_visits
 
     def expand(self):
         """ Does add a child """
         action = self.untried_actions.pop()
-        next_board = self.state.move(action)
-        child_node = MonteCarloTreeSearchNode(next_board, parent=self)
+        next_state = self.state + action
+        child_node = MonteCarloTreeSearchNode(next_state, parent=self)
         self.children.append(child_node)
         return child_node
 
@@ -44,13 +41,26 @@ class MonteCarloTreeSearchNode:
     def rollout(self):
         """ Playout a game until done """
         current_rollout_board = self.state
+        # TODO
         while not current_rollout_board.is_game_over():
-            possible_moves = current_rollout_board.get_legal_actions()
+            if current_rollout_board.turn_number > 200:
+                print("Too many moves, treat as stalemate")
+                return 0
+            possible_moves = list(current_rollout_board.generate_actions())
             action = self.rollout_policy(possible_moves)
-            current_rollout_board = current_rollout_board.move(action)
+            new = current_rollout_board + action
+            while new is None:
+                possible_moves.remove(action)
+                print("INCONSISTENCE between Generation and Validation")
+                if not possible_moves:
+                    print("No more moves found")
+                    return 0
+                action = self.rollout_policy(possible_moves)
+                new = current_rollout_board + action
+            current_rollout_board = new
         return current_rollout_board.game_result
 
-    def backpropagate(self, reward):
+    def backpropagate(self, result):
         """ Update q and n upwards the tree """
         self._number_of_visits += 1.0
         self._results[result] += 1.0
@@ -74,30 +84,3 @@ class MonteCarloTreeSearchNode:
         return np.random.choice(possible_moves)
 
 
-class MonteCarloTreeSearch:
-    def __init__(self, node):
-        self.root = node
-
-    def best_action(self, simulations_number):
-        for _ in range(0, simulations_number):
-            v = self._tree_policy()
-            reward = v.rollout()
-            v.backpropagate(reward)
-        # to select best child go for exploitation only
-        # return self.root.best_child(c_param=0.)
-        return self.root.best_child()
-
-    def _tree_policy(self):
-        """
-        selects node to run rollout/playout for
-        Returns a node
-        -------
-        """
-        current_node = self.root
-        while not current_node.is_terminal_node():
-            if not current_node.is_fully_expanded():
-                return current_node.expand()  # -> a child node
-            else:
-                # Return the best child if the tree is fully expanded
-                current_node = current_node.best_child()
-        return current_node

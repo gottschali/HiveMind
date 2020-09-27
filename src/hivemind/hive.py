@@ -3,8 +3,9 @@ import logging
 from copy import deepcopy
 from collections import deque
 from typing import Iterator, List, Tuple
-from hex import Hex
-from insect import Insect
+
+from .hex import Hex
+from .insect import Insect
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +76,7 @@ class Hive(dict):
         visited = {}
         index = {}
         counter = 0
-        articulation_points = []
+        articulation_points = set()
         def dfs(node, parent, counter):
             """ Performs a depth first search on node at depth counter """
             visited[node] = True
@@ -114,13 +115,13 @@ class Hive(dict):
                     #         |    v
                     #          \   |
                     #           \ n
-                    articulation_points.append(node)
+                    articulation_points.add(node)
             if parent == none_hex and children > 1:
                 # Root has no parent and is articulation point if it has more than 1 children
                 #      R     Removal of R would remove the link between the subtrees
                 #     / \
                 #   ...  ...
-                articulation_points.append(node)
+                articulation_points.add(node)
         try:
             root = self.get_root_hex()
             none_hex = Hex(math.nan, math.nan)
@@ -229,6 +230,8 @@ class Hive(dict):
         empty_hexes = set()
         visited = {}
         def dfs(node, parent):
+            if node in visited:
+                return
             visited[node] = True
             for neighbor in node.neighbors():
                 if neighbor == parent:
@@ -250,7 +253,7 @@ class Hive(dict):
     def generate_moves(self, team):
         logger.debug(f"Generating moves for team {team}")
         articulation_points = self.one_hive()
-        logger.debug(f"The articultaion points are {articulation_points}")
+        logger.debug(f"The articulation points are {articulation_points}")
         for hex, insect in self.get_hex_and_insects_of_team(team):
             logger.debug(f"Found {hex, insect} belonging to {team}")
             if self.height(hex) == 1 and hex in articulation_points:
