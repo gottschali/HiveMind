@@ -138,9 +138,10 @@ class State:
         elif self.turn_number == 1:
             logger.debug(f"Checking if the second stone is adjacent to the first")
             # Only adjacent hexes to the first are valid
-            return any(self.hive.neighbors(hex))
-        logger.debug("Checking the surrounded insects for their color")
-        return self.hive.neighbor_team(hex, self.current_team)
+            return self.hive.get_root_hex().adjacent(hex)
+        val = self.hive.neighbor_team(hex, self.current_team)
+        logger.debug(f"Checking the surrounded insects for their color: {val}")
+        return val
 
     @property
     def game_result(self):

@@ -65,6 +65,7 @@ class Hive(dict):
 
     def neighbor_team(self, hex: Hex, team: bool) -> bool:
         """ Checks if all adjacent hexes of hex are uniquely of the same team """
+        logger.debug(list(self.insect_at_hex(neighbor).team for neighbor in self.neighbors(hex)))
         return all(self.insect_at_hex(neighbor).team == team for neighbor in self.neighbors(hex))
 
     def one_hive(self) -> List[Hex]:
@@ -196,7 +197,7 @@ class Hive(dict):
     def generate_climbs_from_hex(self, hex: Hex) -> Iterator[Hex]:
         # TODO Verify correctness
         hh = self.height(hex)
-        if hh: # I. The insect is on elevated level
+        if hh > 1: # I. The insect is on elevated level
             for a, b, c in hex.circle_iterator():
                 if self.height(b) < hh:
                     # Blocked if both sides have high larger equal to the own height
@@ -244,6 +245,7 @@ class Hive(dict):
             # Find empty hexes adjacent to the hive
             root = self.get_root_hex()
             dfs(root, None)
+            logger.debug(f"Found empty hexes {empty_hexes}")
             # Not the most efficient solution though
             yield from filter(lambda hex: self.neighbor_team(hex, team), empty_hexes)
         else: # The hive is empty -> only the Origin is valid / everything is valid

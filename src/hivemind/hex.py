@@ -1,5 +1,6 @@
 # Adapted from -- http://www.redblobgames.com/grids/hexagons/
 
+
 import math
 from typing import Iterator, Tuple
 
@@ -10,19 +11,14 @@ class Hex:
     q and r represent the axial coordinates.
     The third cube coordinate s is calculated implicitly.
     """
-
-    #     0,-1  1,0
-    # -1,-1   0,0   1,1
-    #     -1,0  0,1
     directions = (
-        (1, 0, -1),
-        (1, 1, 0),
-        (0, 1, 1),
-        (-1, 0, 1),
-        (-1, -1, 0),
-        (0, -1, -1),
-    )
-
+        (+1, -1, 0),
+        (+1, 0, -1),
+        (0, +1, -1),
+        (-1, +1, 0),
+        (-1, 0, +1),
+        (0, -1, +1),
+        )
     def __init__(self, q: int = 0, r: int = 0, _=None):
         self.q = q
         self.r = r

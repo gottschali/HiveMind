@@ -16,6 +16,7 @@ keywords = ["game", "boardgame"]
 [tool.poetry.dependencies]
 python = "^3.7"
 numpy = "^1.19.2"
+pygame = "^1.9.6"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.2"
