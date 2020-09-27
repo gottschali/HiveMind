@@ -7,13 +7,13 @@ from collections import defaultdict
 # state::is_game_over
 # state::next_to_move ???
 
-class MonteCarloTreeSearchNode:
 
+class MonteCarloTreeSearchNode:
     def __init__(self, state, parent=None):
         self.state = state
         self.parent = parent
         self.children = []
-        self._number_of_visits = 0.
+        self._number_of_visits = 0.0
         self._results = defaultdict(int)
         self._untried_actions = None
 
@@ -34,9 +34,7 @@ class MonteCarloTreeSearchNode:
         """ Does add a child """
         action = self.untried_actions.pop()
         next_board = self.state.move(action)
-        child_node = MonteCarloTreeSearchNode(
-            next_board, parent=self
-        )
+        child_node = MonteCarloTreeSearchNode(next_board, parent=self)
         self.children.append(child_node)
         return child_node
 
@@ -54,8 +52,8 @@ class MonteCarloTreeSearchNode:
 
     def backpropagate(self, reward):
         """ Update q and n upwards the tree """
-        self._number_of_visits += 1.
-        self._results[result] += 1.
+        self._number_of_visits += 1.0
+        self._results[result] += 1.0
         if self.parent:
             self.parent.backpropagate(result)
 
@@ -75,8 +73,8 @@ class MonteCarloTreeSearchNode:
         """ How to choose from possible moves -> Move """
         return np.random.choice(possible_moves)
 
-class MonteCarloTreeSearch:
 
+class MonteCarloTreeSearch:
     def __init__(self, node):
         self.root = node
 
@@ -98,7 +96,7 @@ class MonteCarloTreeSearch:
         current_node = self.root
         while not current_node.is_terminal_node():
             if not current_node.is_fully_expanded():
-                return current_node.expand() # -> a child node
+                return current_node.expand()  # -> a child node
             else:
                 # Return the best child if the tree is fully expanded
                 current_node = current_node.best_child()
