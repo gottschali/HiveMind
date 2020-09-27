@@ -30,7 +30,10 @@ class Hex:
         self._coords = (self.q, self.r, self.s)
 
     def __eq__(self, other: "Hex") -> bool:
-        return self.q == other.q and self.r == other.r
+        try:
+            return self.q == other.q and self.r == other.r
+        except:
+            return False
 
     def __getitem__(self, index: int) -> int:
         return self._coords[index]

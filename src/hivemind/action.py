@@ -15,4 +15,4 @@ class Drop(Action):
         self.destination = destination
 
     def __repr__(self):
-        return f"Move({self.insect}, {self.destination})"
+        return f"Drop('{self.insect}', {self.destination})"
