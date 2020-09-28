@@ -150,10 +150,10 @@ class Hive(dict):
         """
         # Otherwise dict keys get changed
         # VERY UGLY
-        self = deepcopy(self)
+        new = deepcopy(self)
         # Remove the insect temporarily, otherwise the insect uses itself to move along
-        tmp = self[hex]
-        del self[hex]
+        tmp = new[hex]
+        del new[hex]
         visited = set()
         ordering = []
         parent = {}
@@ -165,18 +165,19 @@ class Hive(dict):
         visited.add(hex)
         while q:
             v = q.popleft()
+            visited.add(v)
             ordering.append(v)
-            for b in self.generate_walks_from_hex(hex):
+            for b in new.generate_walks_from_hex(v):
                 if b in visited:
                     continue
-                visited.add(b)
                 parent[b] = v
                 distance[b] = distance[v] + 1
                 q.append(b)
         # restore the insect
-        self[hex] = tmp
+        new[hex] = tmp
+        print(ordering)
         logger.debug(f"The calculated distance map is {distance}")
-        if not func is None:
+        if not (func is None):
             return list(filter(func, distance.items()))
         return ordering
 
