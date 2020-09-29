@@ -74,13 +74,13 @@ class Hive(dict):
         These are insects that if removed would seperate the hive into atleast two components.
         """
         lowlink = {}
-        visited = {}
+        visited = set()
         index = {}
         counter = 0
         articulation_points = set()
         def dfs(node, parent, counter):
             """ Performs a depth first search on node at depth counter """
-            visited[node] = True
+            visited.add(node)
             counter += 1
             index[node] = counter
             lowlink[node] = counter
@@ -89,35 +89,29 @@ class Hive(dict):
                 if neighbor == parent: # That's where we cam from
                     continue
                 if neighbor in visited: # A backlink is found
-                    # Minimize the lowlink
-                    #     |
-                    #     n: 1
-                    #   /  .: 2
-                    #  /   .: ...
-                    #  node: n -> 1
-                    lowlink[node] = min(lowlink[node], lowlink[neighbor])
+                    lowlink[node] = min(lowlink[node], index[neighbor])
                 else:
-                    children += 1 # A neighbor that is not visited is a new child
                     dfs(neighbor, node, counter) # Recurse the dfs on the child
                     lowlink[node] = min(lowlink[node], lowlink[neighbor])
-                    # Backpropagete the lowest link
+                    # Backpropagate the lowest link
                     #     |
                     #     n: 1
                     #   /  .: 2 -> 1
                     #  /   .: ... -> 1
                     #  node: 1
-                if lowlink[neighbor] >= index[node]:
-                    # If the neighbor has a backlink the node must not be an articulation point as
-                    # it has atleast another connection
-                    # But if the node is the lowest link it the only link to the upper tree
-                    # it is necessarily an articulation point
-                    #            k  ..
-                    #          /    |
-                    #         |    v
-                    #          \   |
-                    #           \ n
-                    articulation_points.add(node)
-            if parent == none_hex and children > 1:
+                    if lowlink[neighbor] >= index[node] and parent != None:
+                        # If the neighbor has a backlink the node must not be an articulation point as
+                        # it has atleast another connection
+                        # But if the node is the lowest link it the only link to the upper tree
+                        # it is necessarily an articulation point
+                        #            k  ..
+                        #          /    |
+                        #         |    v
+                        #          \   |
+                        #           \ n
+                        articulation_points.add(node)
+                    children += 1 # A neighbor that is not visited is a new child
+            if parent == None and children >= 2:
                 # Root has no parent and is articulation point if it has more than 1 children
                 #      R     Removal of R would remove the link between the subtrees
                 #     / \
@@ -125,8 +119,7 @@ class Hive(dict):
                 articulation_points.add(node)
         try:
             root = self.get_root_hex()
-            none_hex = Hex(math.nan, math.nan)
-            dfs(root, none_hex, counter)
+            dfs(root, None, counter)
         except StopIteration:
             pass
         return articulation_points
