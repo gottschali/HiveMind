@@ -147,6 +147,7 @@ class Hive(dict):
     def generate_any_walks_from_hex(self, hex: Hex, func=None) -> List[Hex]:
         """
         Runs a BFS on the edge of the hive. Return all hexes that are reachable this way
+        Func can be a unary function that filters out distances
         """
         # Otherwise dict keys get changed
         # VERY UGLY
@@ -158,32 +159,32 @@ class Hive(dict):
         ordering = []
         parent = {}
         distance = {}
-        q = deque()
-        q.append(hex)
+        queue = deque()
+        queue.append(hex)
         parent[hex] = None
         distance[hex] = 0
         visited.add(hex)
-        while q:
-            v = q.popleft()
-            visited.add(v)
-            ordering.append(v)
-            for b in new.generate_walks_from_hex(v):
-                if b in visited:
+        while queue:
+            vertex = queue.popleft()
+            visited.add(vertex)
+            ordering.append(vertex)
+            for neighbor in new.generate_walks_from_hex(vertex):
+                if neighbor in visited:
                     continue
-                parent[b] = v
-                distance[b] = distance[v] + 1
-                q.append(b)
-        # restore the insect
-        new[hex] = tmp
-        print(ordering)
+                parent[neighbor] = vertex
+                distance[neighbor] = distance[vertex] + 1
+                queue.append(neighbor)
         logger.debug(f"The calculated distance map is {distance}")
         if not (func is None):
-            return list(filter(func, distance.items()))
+            ordering = []
+            for h, d in distance.items():
+                if func(d):
+                    yield h
         return ordering
 
     def generate_spider_walks_from_hex(self, hex: Hex) -> List[Hex]:
         """ Finds hexes that can be reached in three steps """
-        return self.generate_any_walks_from_hex(hex, lambda x: x[1] == 3)
+        return self.generate_any_walks_from_hex(hex, lambda x: x == 3)
 
     def generate_jumps_from_hex(self, hex: Hex) -> Iterator[Hex]:
         """ Yield all hexes that a grasshopper can jump to """
