@@ -39,7 +39,6 @@ def draw_state(state, surface):
         # Shift the hex by constant factor
         rect.x, rect.y = list(hex_to_pixel(hex + Hex(10, 10), 3))
         rect.y -= RADIUS / 2 - 3
-        print(rect)
         surface.blit(img, rect)
 
 

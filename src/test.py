@@ -12,7 +12,7 @@ from hivemind.hive import *
 from hivemind.insect import *
 from hivemind.hex import *
 
-LEVEL = logging.DEBUG
+LEVEL = logging.WARNING
 
 logging.basicConfig(filename='test.log', filemode="w", format='%(filename)s: %(message)s',
                     level=logging.DEBUG)
@@ -50,7 +50,7 @@ while True:
 
     pygame.display.update()
 
-    time.sleep(1)
+    time.sleep(.01)
 
     state = next_state(state)
 
