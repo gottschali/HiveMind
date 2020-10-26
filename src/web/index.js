@@ -64,23 +64,19 @@ function main() {
     }
 
     let tiles = [];
-    const Http = new XMLHttpRequest();
-    const url='http://127.0.0.1:5000/state';
-    Http.open("GET", url);
-    Http.send();
-    Http.onreadystatechange = (e) => {
-        const response = Http.responseText;
-        let state = JSON.parse(response);
-        for (const insect of state.hive) {
-            const q = insect.q;
-            const r = insect.r;
-            const height = insect.height;
-            const team = insect.team;
-            const name = insect.name;
-            tiles.push(makeTileInstance(geometry, team, new HEX.Hex(q, r, height), name, height));
-        }
-        requestAnimationFrame(render);
-    };
+	  let webSocket = new WebSocket("ws://localhost:8766");
+		webSocket.onmessage = function(event) {
+			let state = JSON.parse(event.data);
+			for (const insect of state.hive) {
+						const q = insect.q;
+						const r = insect.r;
+						const height = insect.height;
+						const team = insect.team;
+						const name = insect.name;
+						tiles.push(makeTileInstance(geometry, team, new HEX.Hex(q, r, height), name, height));
+			}
+			requestAnimationFrame(render);
+		};
 
     function render(time) {
         time *= 0.001;  // convert time to seconds
