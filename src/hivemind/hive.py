@@ -149,7 +149,6 @@ class Hive(dict):
         tmp = new[hex]
         del new[hex]
         visited = set()
-        ordering = []
         parent = {}
         distance = {}
         queue = deque()
@@ -160,7 +159,6 @@ class Hive(dict):
         while queue:
             vertex = queue.popleft()
             visited.add(vertex)
-            ordering.append(vertex)
             for neighbor in new.generate_walks_from_hex(vertex):
                 if neighbor in visited:
                     continue
@@ -169,11 +167,10 @@ class Hive(dict):
                 queue.append(neighbor)
         logger.debug(f"The calculated distance map is {distance}")
         if not (func is None):
-            ordering = []
             for h, d in distance.items():
                 if func(d):
                     yield h
-        return ordering
+        yield from distance.keys()
 
     def generate_spider_walks_from_hex(self, hex: Hex) -> List[Hex]:
         """ Finds hexes that can be reached in three steps """
@@ -209,15 +206,15 @@ class Hive(dict):
     def generate_moves_for_insect(self, insect_name: str, hex: Hex) -> Iterator[Hex]:
         """ Yield possible move destination hexes for insect by name """
         if insect_name == "bee":
-            yield from self.generate_walks_from_hex(hex)
+            return self.generate_walks_from_hex(hex)
         elif insect_name == "spider":
-            yield from self.generate_spider_walks_from_hex(hex)
+            return self.generate_spider_walks_from_hex(hex)
         elif insect_name == "ant":
-            yield from self.generate_any_walks_from_hex(hex)
+            return self.generate_any_walks_from_hex(hex)
         elif insect_name == "grasshopper":
-            yield from self.generate_jumps_from_hex(hex)
+            return self.generate_jumps_from_hex(hex)
         elif insect_name == "beetle":
-            yield from self.generate_climbs_from_hex(hex)
+            return self.generate_climbs_from_hex(hex)
         else:
             raise Exception("Unknown insect")
 
@@ -256,6 +253,7 @@ class Hive(dict):
             if self.height(hex) == 1 and hex in articulation_points:
                 logger.debug(f"{hex, insect} can't be moved due to one-hive")
                 continue
+
             for destination in self.generate_moves_for_insect(insect.name, hex):
                 logger.debug(f"Found destination {destination} for {insect.name} at {hex}")
                 yield hex, destination
