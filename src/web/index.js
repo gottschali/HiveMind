@@ -46,7 +46,7 @@ function main() {
 
     function makeTileInstance(geometry, team, hex, name, height=0) {
         const color = (team ? GREEN: YELLOW);
-
+        console.log(color);
         // const image = `./assets/${name}.jpeg`;
 				// var texture = new THREE.TextureLoader().load( image );
 				var texture = textures[name];
@@ -61,7 +61,6 @@ function main() {
 																																});
 					//return material
 				//});
-				console.log(material);
 				const tileMesh = new THREE.Mesh(geometry, material);
 				// wireframe
 				var geo = new THREE.EdgesGeometry( tileMesh.geometry ); // or WireframeGeometry
