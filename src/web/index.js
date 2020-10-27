@@ -2,10 +2,16 @@
 import * as THREE from './js/three.module.js';
 import * as HEX from './js/hexlib.js';
 
+const BLACK = "#1E212B";
+const GREEN = "#4D8B31";
+const YELLOW = "#FFC800";
+const ORANGE = "#FF8427";
+const WHITE = "#FFFFFF";
+
 function main() {
     const canvas = document.querySelector('#c');
     const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
-    renderer.setClearColor("#DDDDDD");
+    renderer.setClearColor(WHITE);
 
     const fov = 80;
     const aspect = window.innerWidth / window.innerHeight;  // the canvas default
@@ -23,7 +29,7 @@ function main() {
     // const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
     const geometry = new THREE.CylinderBufferGeometry(1, 1, 0.5, 6); // radiusTop, radiusBottom, height, radialSegments
 
-    const light = new THREE.DirectionalLight(0xFFFFFF, 0.8); // color, intensity
+    const light = new THREE.DirectionalLight(WHITE, 0.8); // color, intensity
     light.position.set( 0, -10, 15);
     scene.add(light);
 
@@ -39,7 +45,7 @@ function main() {
 		names.forEach( name => textures[name] = loader.load( `./assets/${name}.jpeg` ) );
 
     function makeTileInstance(geometry, team, hex, name, height=0) {
-        const color = (team ? '#DF1C34' : '#56B6C2');
+        const color = (team ? GREEN: YELLOW);
 
         // const image = `./assets/${name}.jpeg`;
 				// var texture = new THREE.TextureLoader().load( image );
@@ -59,7 +65,7 @@ function main() {
 				const tileMesh = new THREE.Mesh(geometry, material);
 				// wireframe
 				var geo = new THREE.EdgesGeometry( tileMesh.geometry ); // or WireframeGeometry
-				const wireColor = "#AAAAAA";
+				const wireColor = BLACK;
 				var mat = new THREE.LineBasicMaterial( { color: wireColor , linewidth: 1 } );
 				var wireframe = new THREE.LineSegments( geo, mat );
 				tileMesh.add( wireframe ); // Don't add to the scene directly, make it a child
