@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "Starting http-server"
+http-server ./web -c -1 &
+
+echo "Starting python server"
+poetry run python server.py &
+

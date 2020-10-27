@@ -4,7 +4,7 @@ import asyncio
 import websockets
 
 import json
-from random import choice
+import random
 
 from hivemind.state import *
 from hivemind.hive import *
@@ -27,23 +27,21 @@ def state_to_json(state):
             dump['hive'][index]['team'] = insect.team
             index += 1
     dump['availables'] = state._availables
-    # return json.dumps(dump)
-    return dump
+    return json.dumps(dump)
 
 def next_state(state):
-    return state + choice(list(state.generate_actions()))
-
-state = State()
-for i in range(10):
-    state = next_state(state)
-print(state)
+    return state + random.choice(list(state.generate_actions()))
 
 async def hello(websocket, path):
-    json_state = state_to_json(state)
-    state = next_state(state)
-    await websocket.send(json_state)
+    state = State()
+    while True:
+        json_state = state_to_json(state)
+        print(json_state)
+        await websocket.send(json_state)
+        await asyncio.sleep(.5)
+        state = next_state(state)
 
-start_server = websockets.serve(hello, "localhost", 8766)
+start_server = websockets.serve(hello, "127.0.0.1", 5678)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()

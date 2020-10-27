@@ -32,62 +32,64 @@ function main() {
     const origin = new HEX.Point(0, 0);
     const layout = new HEX.Layout(orientation, size, origin);
 
+		const loader = new THREE.TextureLoader();
+
+		var names = ["grasshopper", "bee", "ant", "spider", "beetle"];
+		var textures = {};
+		names.forEach( name => textures[name] = loader.load( `./assets/${name}.jpeg` ) );
+
     function makeTileInstance(geometry, team, hex, name, height=0) {
         const color = (team ? '#DF1C34' : '#56B6C2');
-        const loader = new THREE.TextureLoader();
-        // TODO move to jpgs ???
-        const image = `./assets/${name}.png`;
-        console.log(image);
-        loader.load(image, (texture) => {
-            const material = new THREE.MeshPhongMaterial({color: color,
-                                                            polygonOffset: true,
-                                                            polygonOffsetFactor: 1, // positive value pushes polygon further away
-                                                            polygonOffsetUnits: 0,
-                                                            map: texture,
-                                                            });
-            const tileMesh = new THREE.Mesh(geometry, material);
-            // wireframe
-            var geo = new THREE.EdgesGeometry( tileMesh.geometry ); // or WireframeGeometry
-            const wireColor = ( !team ? '#DF1C34' : '#56B6C2');
-            var mat = new THREE.LineBasicMaterial( { color: wireColor , linewidth: 1 } );
-            var wireframe = new THREE.LineSegments( geo, mat );
-            tileMesh.add( wireframe ); // Don't add to the scene directly, make it a child
-            scene.add(tileMesh);
-            const {x, y} = layout.hexToPixel(hex);
-            tileMesh.position.x = x;
-            tileMesh.position.y = y;
-            tileMesh.position.z = height;
-            tileMesh.rotateX(Math.PI / 2);
-            tileMesh.rotateY(Math.PI / 6);
-            return tileMesh;
-        });
+
+        // const image = `./assets/${name}.jpeg`;
+				// var texture = new THREE.TextureLoader().load( image );
+				var texture = textures[name];
+				// immediately use the texture for material creation
+				//var material = new THREE.MeshBasicMaterial( { map: texture } );
+        //var material = loader.load(image, (texture) => {
+				var material = new THREE.MeshPhongMaterial({color: color,
+																																polygonOffset: true,
+																																polygonOffsetFactor: 1, // positive value pushes polygon further away
+																																polygonOffsetUnits: 0,
+																																map: texture,
+																																});
+					//return material
+				//});
+				console.log(material);
+				const tileMesh = new THREE.Mesh(geometry, material);
+				// wireframe
+				var geo = new THREE.EdgesGeometry( tileMesh.geometry ); // or WireframeGeometry
+				const wireColor = "#AAAAAA";
+				var mat = new THREE.LineBasicMaterial( { color: wireColor , linewidth: 1 } );
+				var wireframe = new THREE.LineSegments( geo, mat );
+				tileMesh.add( wireframe ); // Don't add to the scene directly, make it a child
+				const {x, y} = layout.hexToPixel(hex);
+				tileMesh.position.x = x;
+				tileMesh.position.y = y;
+				tileMesh.position.z = height;
+				tileMesh.rotateX(Math.PI / 2);
+				tileMesh.rotateY(Math.PI / 6);
+				return tileMesh;
     }
 
-    let tiles = [];
-	  let webSocket = new WebSocket("ws://localhost:8766");
-		webSocket.onmessage = function(event) {
-			let state = JSON.parse(event.data);
-			for (const insect of state.hive) {
-						const q = insect.q;
-						const r = insect.r;
-						const height = insect.height;
-						const team = insect.team;
-						const name = insect.name;
-						tiles.push(makeTileInstance(geometry, team, new HEX.Hex(q, r, height), name, height));
-			}
-			requestAnimationFrame(render);
-		};
+
+		var tile_group = new THREE.Group();
+		scene.add(tile_group)
 
     function render(time) {
         time *= 0.001;  // convert time to seconds
 
+				while (tile_group.children.length) {
+					tile_group.remove(tile_group.children[0]);
+				}
+			  tiles.forEach( tile => tile_group.add(tile) );
         if (resizeRendererTodisplaySize(renderer)) {
             camera.aspect = canvas.clientWidth / canvas.clientHeight;
             camera.updateProjectionMatrix();
         }
         renderer.render(scene, camera);
         // continue looping
-        requestAnimationFrame(render);
+        // requestAnimationFrame(render);
     }
 
     function resizeRendererTodisplaySize(renderer) {
@@ -100,5 +102,22 @@ function main() {
         }
         return needResize;
     }
+
+    var tiles = [];
+	  var webSocket = new WebSocket("ws://localhost:5678");
+		webSocket.onmessage = function(event) {
+			var state = JSON.parse(event.data);
+      tiles = [];
+			for (const insect of state.hive) {
+						const q = insect.q;
+						const r = insect.r;
+						const height = insect.height;
+						const team = insect.team;
+						const name = insect.name;
+						tiles.push(makeTileInstance(geometry, team, new HEX.Hex(q, r, height), name, height));
+			}
+			requestAnimationFrame(render);
+		};
 }
+
 main();
