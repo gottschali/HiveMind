@@ -1,2 +1,0 @@
-- Run flask on localhost (app.py)
-- httpserver in web directory
