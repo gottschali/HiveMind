@@ -41,7 +41,15 @@ async def hello(websocket, path):
         await asyncio.sleep(.5)
         state = next_state(state)
 
-start_server = websockets.serve(hello, "127.0.0.1", 5678)
+def run():
+    print("Starting hive server")
+    start_server = websockets.serve(hello, "127.0.0.1", 5678)
 
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
+
+    # asyncio.run(start_server)
+    asyncio.get_event_loop().run_until_complete(start_server)
+    asyncio.get_event_loop().run_forever()
+    print("Stopping hive server")
+
+if __name__ == "__main__":
+    run()
