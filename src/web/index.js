@@ -34,6 +34,9 @@ function main() {
     light.position.set( 10, -10, 15 );
     scene.add(light);
 
+    scene.background = new THREE.Color( BLACK );
+    scene.fog = new THREE.Fog( BLACK , 11, 44 );
+
     const controls = new ORBIT.OrbitControls (camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.5;
@@ -55,13 +58,13 @@ function main() {
     layout.polygonCorners(new HEX.Hex(0, 0)).forEach(({x, y}) => points.push( new THREE.Vector3(x, y, 0)));
     console.log(points);
     const flatHexGeometry = new THREE.BufferGeometry().setFromPoints( points );
-    const flatHexMaterial = new THREE.LineBasicMaterial( { color: BLACK } );
+    const flatHexMaterial = new THREE.LineBasicMaterial( { color: WHITE } );
     const flatHexLine = new THREE.Line(flatHexGeometry, flatHexMaterial);
     var planeGroup = new THREE.Group();
     for (var q=-100; q<100; q++ ){
         for (var r=-100; r<100; r++){
             const hex = new HEX.Hex(q, r);
-            if (hex.len() < 33) {
+            if (hex.len() < 66) {
                 const {x, y} = layout.hexToPixel(hex);
                 var flatHexTile = flatHexLine.clone();
                 flatHexTile.position.x = x;
