@@ -35,8 +35,8 @@ function main() {
     scene.add(light);
 
     const controls = new ORBIT.OrbitControls (camera, renderer.domElement);
-    // controls.enableDamping = true;
-    // controls.dampingFactor = 0.25;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.5;
     controls.enableZoom = true;
 
     const orientation = HEX.Layout.flat;
