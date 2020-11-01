@@ -9,8 +9,6 @@ const YELLOW = '#FFC800';
 const ORANGE = '#FF8427';
 const WHITE = '#FFFFFF';
 
-// TODO Add flat tile plane
-
 function main() {
     // Draw on the canvas
     const canvas = document.querySelector('#c');
@@ -34,9 +32,11 @@ function main() {
     light.position.set( 10, -10, 15 );
     scene.add(light);
 
+    // Creates a black FOG
     scene.background = new THREE.Color( BLACK );
     scene.fog = new THREE.Fog( BLACK , 11, 44 );
 
+    // Control for moving around the scene
     const controls = new ORBIT.OrbitControls (camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.5;
@@ -47,16 +47,16 @@ function main() {
     const origin = new HEX.Point(0, 0);
     const layout = new HEX.Layout(orientation, size, origin);
 
-		const loader = new THREE.TextureLoader();
 
     // Preload all images and store the textures in a hashmap for every insect
+		const loader = new THREE.TextureLoader();
 		var names = ["grasshopper", "bee", "ant", "spider", "beetle"];
 		var textures = {};
 		names.forEach( name => textures[name] = loader.load( `./assets/${name}.jpeg` ) );
 
+    // Add a flat hex plane
     const points = [];
     layout.polygonCorners(new HEX.Hex(0, 0)).forEach(({x, y}) => points.push( new THREE.Vector3(x, y, 0)));
-    console.log(points);
     const flatHexGeometry = new THREE.BufferGeometry().setFromPoints( points );
     const flatHexMaterial = new THREE.LineBasicMaterial( { color: WHITE } );
     const flatHexLine = new THREE.Line(flatHexGeometry, flatHexMaterial);
