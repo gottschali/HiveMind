@@ -46,9 +46,30 @@ function main() {
 		var textures = {};
 		names.forEach( name => textures[name] = loader.load( `./assets/${name}.jpeg` ) );
 
+    const points = [];
+    layout.polygonCorners(new HEX.Hex(0, 0)).forEach(({x, y}) => points.push( new THREE.Vector3(x, y, 0)));
+    console.log(points);
+    const flatHexGeometry = new THREE.BufferGeometry().setFromPoints( points );
+    const flatHexMaterial = new THREE.LineBasicMaterial( { color: BLACK } );
+    const flatHexLine = new THREE.Line(flatHexGeometry, flatHexMaterial);
+    var planeGroup = new THREE.Group();
+    for (var q=-100; q<100; q++ ){
+        for (var r=-100; r<100; r++){
+            const hex = new HEX.Hex(q, r);
+            if (hex.len() < 100) {
+                const {x, y} = layout.hexToPixel(hex);
+                var flatHexTile = flatHexLine.clone();
+                flatHexTile.position.x = x;
+                flatHexTile.position.y = y;
+                planeGroup.add(flatHexTile);
+            }
+        }
+    }
+    scene.add(planeGroup);
+    renderer.render( scene, camera );
+
 
     const hexGeometry = new THREE.CylinderBufferGeometry( 1, 1, 0.5, 6 ); // radiusTop, radiusBottom, height, radialSegments
-
 
 		const wireframeGeometry = new THREE.EdgesGeometry( hexGeometry );
 		const wireframeMaterial = new THREE.LineBasicMaterial( { color: BLACK , linewidth: 1 } );
@@ -77,6 +98,7 @@ function main() {
 				tile.rotateY(Math.PI / 6);
 				return tile;
     }
+
 
     // contains all insects
 		var tile_group = new THREE.Group();
