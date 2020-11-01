@@ -61,6 +61,8 @@ function main() {
     controls.enableDamping = true;
     controls.dampingFactor = 0.5;
     controls.enableZoom = true;
+    controls.maxAzimuthAngle = Math.PI / 2;
+    controls.minAzimuthAngle = -Math.PI / 2;
 
     const orientation = HEX.Layout.flat;
     const size = new HEX.Point(1, 1);
