@@ -1,6 +1,7 @@
 // Import the modules
 import * as THREE from './js/three.module.js';
 import * as HEX from './js/hexlib.js';
+import * as ORBIT from "./js/OrbitControls.js";
 
 const BLACK = '#1E212B';
 const GREEN = '#4D8B31';
@@ -29,10 +30,14 @@ function main() {
 
     const scene = new THREE.Scene();
 
-
     const light = new THREE.DirectionalLight(WHITE, 1); // color, intensity
     light.position.set( 10, -10, 15 );
     scene.add(light);
+
+    const controls = new ORBIT.OrbitControls (camera, renderer.domElement);
+    // controls.enableDamping = true;
+    // controls.dampingFactor = 0.25;
+    controls.enableZoom = true;
 
     const orientation = HEX.Layout.flat;
     const size = new HEX.Point(1, 1);
@@ -56,11 +61,12 @@ function main() {
     for (var q=-100; q<100; q++ ){
         for (var r=-100; r<100; r++){
             const hex = new HEX.Hex(q, r);
-            if (hex.len() < 100) {
+            if (hex.len() < 33) {
                 const {x, y} = layout.hexToPixel(hex);
                 var flatHexTile = flatHexLine.clone();
                 flatHexTile.position.x = x;
                 flatHexTile.position.y = y;
+                flatHexTile.position.z = -0.25;
                 planeGroup.add(flatHexTile);
             }
         }
@@ -107,13 +113,14 @@ function main() {
     function render(time) {
         time *= 0.001;  // convert time to seconds
 
+        controls.update();
         if (resizeRendererTodisplaySize(renderer)) { // update camera settings if the screen is resized
             camera.aspect = canvas.clientWidth / canvas.clientHeight;
             camera.updateProjectionMatrix();
         }
         renderer.render(scene, camera);
         // continue looping
-        // requestAnimationFrame(render);
+        requestAnimationFrame(render);
     }
 
     function resizeRendererTodisplaySize(renderer) {
@@ -127,8 +134,8 @@ function main() {
         return needResize;
     }
 
-	  var webSocket = new WebSocket("ws://localhost:5678");
-		webSocket.onmessage = function(event) {
+	  var wSocket = new WebSocket("ws://localhost:5678");
+		wSocket.onmessage = function(event) {
 			var state = JSON.parse(event.data);
 
       // clear the previous hexes
@@ -138,8 +145,9 @@ function main() {
 			for (const insect of state.hive) { // parse the state
           tile_group.add(makeTileInstance(insect.team, new HEX.Hex(insect.q, insect.r), insect.name, insect.height));
 			}
-			requestAnimationFrame(render); // redraw the screen
+			// requestAnimationFrame(render); // redraw the screen
 		};
+    requestAnimationFrame(render);
 }
 
 main();
