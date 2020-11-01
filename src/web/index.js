@@ -81,7 +81,8 @@ function main() {
     const hexGeometry = new THREE.CylinderBufferGeometry( 1, 1, 0.5, 6 ); // radiusTop, radiusBottom, height, radialSegments
 
 		const wireframeGeometry = new THREE.EdgesGeometry( hexGeometry );
-		const wireframeMaterial = new THREE.LineBasicMaterial( { color: BLACK , linewidth: 1 } );
+
+		const wireframeMaterial = new THREE.LineBasicMaterial( { color: BLACK });
 		const wireframe = new THREE.LineSegments( wireframeGeometry, wireframeMaterial );
 
     function makeTileInstance(team, hex, name, height) {
