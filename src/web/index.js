@@ -28,9 +28,29 @@ function main() {
 
     const scene = new THREE.Scene();
 
-    const light = new THREE.DirectionalLight(WHITE, 1); // color, intensity
-    light.position.set( 10, -10, 15 );
+    // const dirLight1 = new THREE.DirectionalLight( ORANGE , 0.5 );
+		// dirLight1.position.set( 10, 10, 10 );
+		// scene.add( dirLight1 );
+
+		// const dirLight2 = new THREE.DirectionalLight( GREEN , 0.5 );
+		// dirLight2.position.set( - 10, - 10, - 10 );
+		// scene.add( dirLight2 );
+
+		var ambientLight = new THREE.AmbientLight( WHITE , 0.9 );
+    ambientLight.position.set( 10, -10, 15 );
+		// scene.add( ambientLight );
+
+    const light = new THREE.DirectionalLight(WHITE, 0.7);
+    light.position.set( 0, -100, 100 );
     scene.add(light);
+
+    const light1 = new THREE.DirectionalLight(WHITE, 0.8);
+    light1.position.set( -100, 100, 100 );
+    scene.add(light1);
+
+    const light2 = new THREE.DirectionalLight(WHITE, 0.9);
+    light2.position.set( 100, -100, 100 );
+    scene.add(light2);
 
     // Creates a black FOG
     scene.background = new THREE.Color( BLACK );
@@ -87,13 +107,15 @@ function main() {
 
     function makeTileInstance(team, hex, name, height) {
         // Create a 3D object at the position given by hex and height
-        const color = (team ? WHITE : YELLOW);
+        const color = (team ? GREEN : ORANGE);
 				var texture = textures[name];
-				var material = new THREE.MeshPhongMaterial({color: color,
+				var material = new THREE.MeshStandardMaterial({color: color,
 																									  polygonOffset: true,
 																										polygonOffsetFactor: 1, // positive value pushes polygon further away
 																										polygonOffsetUnits: 0,
 																										map: texture,
+                                                    roughness: 0.5,
+                                                    metalness: 0.5,
 																									 });
 
 
@@ -116,6 +138,7 @@ function main() {
 
     function render(time) {
         time *= 0.001;  // convert time to seconds
+
 
         controls.update();
         if (resizeRendererTodisplaySize(renderer)) { // update camera settings if the screen is resized
