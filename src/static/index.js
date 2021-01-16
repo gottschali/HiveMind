@@ -1,7 +1,7 @@
 // Import the modules
-import * as THREE from './js/three.module.js';
-import * as HEX from './js/hexlib.js';
-import * as ORBIT from "./js/OrbitControls.js";
+import * as THREE from './three.module.js'
+import * as HEX from './hexlib.js'
+import * as ORBIT from './OrbitControls.js'
 
 const BLACK = '#1E212B';
 const GREEN = '#4D8B31';
@@ -76,7 +76,7 @@ function main() {
 		const loader = new THREE.TextureLoader();
 		var names = ["grasshopper", "bee", "ant", "spider", "beetle"];
 		var textures = {};
-		names.forEach( name => textures[name] = loader.load( `./assets/${name}.jpeg` ) );
+		names.forEach( name => textures[name] = loader.load( `./static/assets/${name}.jpeg` ) );
 
     // Add a flat hex plane
     const points = [];
