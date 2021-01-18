@@ -47,7 +47,7 @@ def test_move(message):
 def auto_move(message):
     print("AutoMove requested from client")
     global state
-    while True:
+    for i in range(100):
         state = next_state(state)
         json_state = state.to_json()
         print(json_state)

@@ -140,14 +140,17 @@ function resizeRendererTodisplaySize(renderer) {
     }
     return needResize;
 }
-
+var tileArray = [];
 function drawState(json) {
     var state = JSON.parse(json);
     // clear the previous hexes
     tile_group.clear();
+    tileArray.length = 0;
     // TODO: optimize: drop: only add new insect, move: move the object to new destination
     for (const insect of state.hive) {
-        tile_group.add(makeTileInstance(insect.team, new HEX.Hex(insect.q, insect.r), insect.name, insect.height));
+        var newInst = makeTileInstance(insect.team, new HEX.Hex(insect.q, insect.r), insect.name, insect.height);
+        tileArray.push(newInst);
+        tile_group.add(newInst);
     }
 }
 
@@ -191,6 +194,21 @@ $(document).ready(function() {
     });
 });
 
-
+function onDocumentMouseDown( event ) {
+    console.log("click");
+    event.preventDefault();
+    var mouse3D = new THREE.Vector3(
+        ( ( event.clientX - canvas.offsetLeft ) / canvas.width ) * 2 - 1,
+        -( ( event.clientY - canvas.offsetTop ) / canvas.height ) * 2 + 1,
+          0.5 );
+    var raycaster =  new THREE.Raycaster();
+    raycaster.setFromCamera( mouse3D, camera );
+    var intersects = raycaster.intersectObjects( tileArray );
+    console.log(intersects);
+    if ( intersects.length > 0 ) {
+        intersects[ 0 ].object.material.color.setHex( 0xffffff * Math.random() );
+    }
+}
+canvas.addEventListener( "click", onDocumentMouseDown );
 render(); // Start the render loop
 
