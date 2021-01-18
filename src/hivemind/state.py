@@ -1,6 +1,7 @@
 from copy import deepcopy
 import logging
 from typing import Iterator, List
+import json
 
 from .insect import Insect, Bee, Spider, Ant, GrassHopper, Beetle
 from .hive import Hive
@@ -37,6 +38,23 @@ class State:
 
     def __repr__(self):
         return f"State({self.hive}, {self._bee_move}, {self.turn_number}, {self._availables})"
+
+    def to_json(self):
+        dump = {}
+        dump["hive"] = []
+        for hex, stack in self.hive.items():
+            for height, insect in enumerate(stack):
+                dump["hive"].append({})
+                temp = dump["hive"][-1]
+                # r, s, h, name, team
+                temp["q"] = hex.r
+                temp["r"] = hex.s
+                temp["height"] = height
+                temp["name"] = insect.name
+                temp["team"] = insect.team
+        dump["availables"] = self._availables
+        # TODO: add more information
+        return json.dumps(dump)
 
     @property
     def current_team(self) -> bool:
