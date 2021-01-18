@@ -185,4 +185,8 @@ class State:
                 for origin, destination in self.hive.generate_moves(self.current_team):
                     yield Move(origin, destination)
 
+    def children(self):
+        for action in self.generate_actions():
+            yield self + action
+
 
