@@ -1,5 +1,3 @@
-// Import the modules
->>>>>>> 0c1028675e4832e5eb79babcb79b853ab0b1b77e
 import * as THREE from './three.module.js';
 import * as HEX from './hexlib.js';
 import * as ORBIT from './OrbitControls.js';
@@ -219,7 +217,6 @@ function onDocumentMouseDown( event ) {
     }
 }
 canvas.addEventListener( "click", onDocumentMouseDown );
-});
 
 render(); // Start the render loop
 

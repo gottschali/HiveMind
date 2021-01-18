@@ -222,3 +222,8 @@ class State:
         for action in self.generate_actions():
             yield self + action
 
+    def children(self):
+        for action in self.generate_actions():
+            yield self + action
+
+
