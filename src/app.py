@@ -54,6 +54,16 @@ def auto_move(message):
         emit("sendstate", json_state)
         time.sleep(.5)
 
+@socketio.on("selecthex")
+def select_hex(hex):
+    print(hex)
+    hex = Hex(hex["data"]["q"], hex["data"]["r"])
+    print(state.possible_actions)
+    print("Server sending move options", hex)
+    opts = list(state.possible_actions_for_hex(hex))
+    print(opts)
+    emit("moveoptions", {"options": [[h.q, h.r] for h in opts]})
+
 def next_state(state):
     return state + random.choice(list(state.generate_actions()))
 

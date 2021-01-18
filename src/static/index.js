@@ -154,12 +154,11 @@ function drawState(json) {
     }
 }
 
+// Connect to the Socket.IO server.
+// The connection URL has the following format, relative to the current page:
+//     http[s]://<domain>:<port>[/<namespace>]
+var socket = io();
 $(document).ready(function() {
-    // Connect to the Socket.IO server.
-    // The connection URL has the following format, relative to the current page:
-    //     http[s]://<domain>:<port>[/<namespace>]
-    var socket = io();
-
     // Event handler for new connections.
     // The callback function is invoked when a connection with the
     // server is established.
@@ -194,6 +193,11 @@ $(document).ready(function() {
     });
 });
 
+function emitSelectHex(hex) {
+    console.log("Client selected hex", hex);
+    socket.emit('selecthex', {'data': hex});
+}
+
 function onDocumentMouseDown( event ) {
     console.log("click");
     event.preventDefault();
@@ -206,7 +210,12 @@ function onDocumentMouseDown( event ) {
     var intersects = raycaster.intersectObjects( tileArray );
     console.log(intersects);
     if ( intersects.length > 0 ) {
-        intersects[ 0 ].object.material.color.setHex( 0xffffff * Math.random() );
+        var selected = intersects[ 0 ];
+        // Disco debugging
+        selected.object.material.color.setHex( 0xffffff * Math.random() );
+        const newHex = layout.pixelToHex(selected.point).round();
+        console.log(newHex);
+        emitSelectHex(newHex);
     }
 }
 canvas.addEventListener( "click", onDocumentMouseDown );

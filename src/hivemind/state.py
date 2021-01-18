@@ -1,6 +1,7 @@
 from copy import deepcopy
 import logging
 from typing import Iterator, List
+from functools import cached_property
 import json
 
 from .insect import Insect, Bee, Spider, Ant, GrassHopper, Beetle
@@ -203,4 +204,21 @@ class State:
                 for origin, destination in self.hive.generate_moves(self.current_team):
                     yield Move(origin, destination)
 
+    def children(self):
+        for action in self.generate_actions():
+            yield self + action
+
+    @cached_property
+    def possible_actions(self):
+        return list(self.generate_actions())
+
+    def possible_actions_for_hex(self, hex):
+        for action in self.possible_actions:
+            if isinstance(action, Move):
+                if action.origin == hex:
+                    yield action.destination
+
+    def children(self):
+        for action in self.generate_actions():
+            yield self + action
 

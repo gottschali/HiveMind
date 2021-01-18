@@ -1,6 +1,7 @@
 class Action:
     pass
 
+# TODO -> namedtuple
 class Move(Action):
     def __init__(self, origin, destination):
         self.origin = origin
