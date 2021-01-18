@@ -12,7 +12,6 @@ const WHITE = '#fdf6e3'; // solarized
 
 // fix lighting
 
-function main() {
     // Draw on the canvas
     const canvas = document.querySelector('#c');
     const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
@@ -154,7 +153,7 @@ function main() {
         }
         renderer.render(scene, camera);
         // continue looping
-        // requestAnimationFrame(render);
+        requestAnimationFrame(render);
     }
 
     function resizeRendererTodisplaySize(renderer) {
@@ -168,20 +167,48 @@ function main() {
         return needResize;
     }
 
-	  var wSocket = new WebSocket("ws://localhost:5678");
-		wSocket.onmessage = function(event) {
-			var state = JSON.parse(event.data);
+        $(document).ready(function() {
+            // Connect to the Socket.IO server.
+            // The connection URL has the following format, relative to the current page:
+            //     http[s]://<domain>:<port>[/<namespace>]
+            var socket = io();
 
-      // clear the previous hexes
-			while (tile_group.children.length) {
-					 tile_group.remove(tile_group.children[0]);
-			}
-			for (const insect of state.hive) { // parse the state
-          tile_group.add(makeTileInstance(insect.team, new HEX.Hex(insect.q, insect.r), insect.name, insect.height));
-			}
-			requestAnimationFrame(render); // redraw the screen
-		};
-    requestAnimationFrame(render);
-}
+            // Event handler for new connections.
+            // The callback function is invoked when a connection with the
+            // server is established.
+            socket.on('connect', function() {
+                console.log("Client connected")
+                socket.emit('my_event', {data: 'I\'m connected!'});
+            });
 
-main();
+            // Event handler for server sent data.
+            // The callback function is invoked whenever the server emits data
+            // to the client. The data is then displayed in the "Received"
+            // section of the page.
+            socket.on('testresponse', function(msg) {
+                console.log("Client received data from server");
+                console.log(msg)
+                var state = JSON.parse(msg);
+
+                // clear the previous hexes
+                while (tile_group.children.length) {
+                      tile_group.remove(tile_group.children[0]);
+                }
+                for (const insect of state.hive) { // parse the state
+                    tile_group.add(makeTileInstance(insect.team, new HEX.Hex(insect.q, insect.r), insect.name, insect.height));
+                }
+                return false;
+            });
+
+            // Handlers for the different forms in the page.
+            // These accept data from the user and send it to the server in a
+            // variety of ways
+            $('form#test').submit(function(event) {
+                console.log("Client requesting move")
+                socket.emit('test', {data: 'RequestMove'});
+                return false;
+            });
+        });
+
+render()
+

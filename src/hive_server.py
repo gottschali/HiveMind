@@ -42,8 +42,10 @@ async def hello(websocket, path):
         state = next_state(state)
 
 def run():
-    print("Starting hive server")
-    start_server = websockets.serve(hello, "127.0.0.1", 5678)
+    port = 5678
+    host = "127.0.0.1"
+    print(f"Starting hive server on {host}:{port}")
+    start_server = websockets.serve(hello, host, port)
 
 
     # asyncio.run(start_server)
