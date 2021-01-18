@@ -4,10 +4,13 @@ import * as HEX from './hexlib.js'
 import * as ORBIT from './OrbitControls.js'
 
 const BLACK = '#1E212B';
-const GREEN = '#4D8B31';
-const YELLOW = '#FFC800';
-const ORANGE = '#FF8427';
-const WHITE = '#FFFFFF';
+const BG = '#002b36';
+const GREEN = '#859900';
+const YELLOW = '#b58900';
+const ORANGE = '#cb4b16';
+const WHITE = '#fdf6e3'; // solarized
+
+// fix lighting
 
 function main() {
     // Draw on the canvas
@@ -53,8 +56,8 @@ function main() {
     //scene.add(light2);
 
     // Creates a black FOG
-    scene.background = new THREE.Color( BLACK );
-    scene.fog = new THREE.Fog( BLACK , 11, 44 );
+    scene.background = new THREE.Color( BG );
+    scene.fog = new THREE.Fog( BG , 11, 44 );
 
     // Control for moving around the scene
     const controls = new ORBIT.OrbitControls (camera, renderer.domElement);
@@ -151,7 +154,7 @@ function main() {
         }
         renderer.render(scene, camera);
         // continue looping
-        requestAnimationFrame(render);
+        // requestAnimationFrame(render);
     }
 
     function resizeRendererTodisplaySize(renderer) {
@@ -176,7 +179,7 @@ function main() {
 			for (const insect of state.hive) { // parse the state
           tile_group.add(makeTileInstance(insect.team, new HEX.Hex(insect.q, insect.r), insect.name, insect.height));
 			}
-			// requestAnimationFrame(render); // redraw the screen
+			requestAnimationFrame(render); // redraw the screen
 		};
     requestAnimationFrame(render);
 }

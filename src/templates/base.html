@@ -1,18 +1,25 @@
-<!doctype html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>{% block title %}{% endblock %} - HiveMind</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-<nav>
-  <h1>HiveMind</h1>
-  <ul>
-      <li><a href="{{ url_for('hello_world') }}">Home</a>
-  </ul>
-</nav>
+<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"\>
+</head>
+
+<body>
+    <header>
+    <nav>
+        <h1>HiveMind</h1>
+        <ul>
+            <li><a href="{{ url_for('hello_world') }}">Home</a> </li>
+        </ul>
+    </nav>
+    </header>
+
 <section class="content">
-  <header>
-    {% block header %}{% endblock %}
-  </header>
-  {% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
-  {% endfor %}
-  {% block content %}{% endblock %}
+    {% block content %}
+    {% endblock %}
 </section>
+</body>
+</html>
