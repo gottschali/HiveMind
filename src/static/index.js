@@ -1,3 +1,5 @@
+// Import the modules
+>>>>>>> 0c1028675e4832e5eb79babcb79b853ab0b1b77e
 import * as THREE from './three.module.js';
 import * as HEX from './hexlib.js';
 import * as ORBIT from './OrbitControls.js';
@@ -85,7 +87,7 @@ for (var q=-100; q<100; q++ ){
 scene.add(planeGroup);
 
 // radiusTop, radiusBottom, height, radialSegments
-const hexGeometry = new THREE.CylinderBufferGeometry( 1, 1, 0.5, 6 ); 
+const hexGeometry = new THREE.CylinderBufferGeometry( 1, 1, 0.5, 6 );
 const wireframeGeometry = new THREE.EdgesGeometry( hexGeometry );
 const wireframeMaterial = new THREE.LineBasicMaterial( { color: BLACK, linewidth: 5 });
 const wireframe = new THREE.LineSegments( wireframeGeometry, wireframeMaterial );
@@ -138,6 +140,7 @@ function resizeRendererTodisplaySize(renderer) {
     return needResize;
 }
 var tileArray = [];
+
 function drawState(json) {
     var state = JSON.parse(json);
     // clear the previous hexes
@@ -207,5 +210,7 @@ function onDocumentMouseDown( event ) {
     }
 }
 canvas.addEventListener( "click", onDocumentMouseDown );
+});
+
 render(); // Start the render loop
 
