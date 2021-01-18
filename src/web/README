@@ -1,3 +1,0 @@
-poetry run python hive_server.py
-
-python http_server.py

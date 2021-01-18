@@ -1,4 +1,3 @@
-// Import the modules
 import * as THREE from './three.module.js';
 import * as HEX from './hexlib.js';
 import * as ORBIT from './OrbitControls.js';
@@ -16,8 +15,6 @@ const VIOLET = '#6c71c4';
 const BLUE = '#268bd2';
 const CYAN = '#2aa198';
 const GREEN = '#859900';
-
-// fix lighting
 
 // Draw on the canvas
 const canvas = document.querySelector('#c');
