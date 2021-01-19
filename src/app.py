@@ -15,6 +15,8 @@ socketio = SocketIO(app)
 # In future threading/async
 
 state = State()
+action_type = None
+origin = None
 
 @app.route("/")
 def index():
@@ -51,8 +53,12 @@ def auto_move(message):
 
 @socketio.on("selecthex")
 def select_hex(hex):
+    global action_type
+    global origin
     print(hex)
     hex = Hex(hex["data"]["q"], hex["data"]["r"])
+    origin = hex
+    action_type = Move
     print(hex)
     print(state.possible_actions)
     print("Server sending move options", hex)
@@ -60,6 +66,25 @@ def select_hex(hex):
     print(state.bee_move)
     print(opts)
     emit("moveoptions", json.dumps([{"q": h.q, "r": h.r, "h": state.hive.height(h) } for h in opts]))
+
+
+@socketio.on("targethex")
+def target_hex(hex):
+    global state
+    destination = Hex(hex["data"]["q"], hex["data"]["r"])
+    print(destination)
+    if action_type == Move:
+        move = Move(origin, destination)
+        print("Server making move", move)
+        # TODO make that raise excpetion
+        if (new_state := state + move):
+            state = new_state
+        else:
+            print("WARNING: bad move")
+        json_state = state.to_json()
+        emit("sendstate", json_state)
+    else:
+        raise NotImplementedError
 
 
 

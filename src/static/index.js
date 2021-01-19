@@ -120,9 +120,11 @@ var highlightMaterial = new THREE.MeshStandardMaterial({color: FG,
                                                        });
 
 var highlightGroup= new THREE.Group();
+var highlightArray = [];
 scene.add(highlightGroup);
 function makeHighlightInstances(hexes) {
     highlightGroup.clear();
+    highlightArray.length = 0;
     hexes.forEach( ({q, r, h}) => {
         const {x, y} = layout.hexToPixel(new HEX.Hex(q, r));
         const tile = new THREE.Mesh(hexGeometry, highlightMaterial);
@@ -130,6 +132,7 @@ function makeHighlightInstances(hexes) {
         tile.rotateX(Math.PI / 2);
         tile.rotateY(Math.PI / 6);
         highlightGroup.add(tile);
+        highlightArray.push(tile);
     });
 }
 
@@ -195,6 +198,7 @@ $(document).ready(function() {
         console.log("Client received data from server");
         console.log(json);
         drawState(json);
+        state = "IDLE";
         return false;
     });
 
@@ -220,6 +224,8 @@ $(document).ready(function() {
         socket.emit('auto_move', {data: 'RequestAutoMove'});
         return false;
     });
+    // Request the first move by default
+    socket.emit('test', {data: 'RequestMove'});
 });
 
 function emitSelectHex(hex) {
@@ -227,10 +233,25 @@ function emitSelectHex(hex) {
     socket.emit('selecthex', {'data': hex});
 }
 
+function emitTargetHex(hex) {
+    console.log("Client makes move", hex);
+    // -> app.py
+    // listen on new state
+    socket.emit('targethex', {'data': hex});
+    state = WAITING;
+    socket.emit('test', {data: 'RequestMove'});
+}
+
 var previousSelection = null;
 
+const IDLE = "idle";
+const WAITING = "waiting";
+const SELECTED = "selected";
+var state = IDLE;
+
 function onDocumentMouseDown( event ) {
-    console.log("click");
+    console.log("state: ", state);
+    if (state === WAITING) return;
     event.preventDefault();
     var mouse3D = new THREE.Vector3(
         ( ( event.clientX - canvas.offsetLeft ) / canvas.width ) * 2 - 1,
@@ -239,15 +260,26 @@ function onDocumentMouseDown( event ) {
     var raycaster =  new THREE.Raycaster();
     raycaster.setFromCamera( mouse3D, camera );
     var intersects = raycaster.intersectObjects( tileArray );
-    console.log(intersects);
-    if ( intersects.length > 0 ) {
+    var intersectsTarget = raycaster.intersectObjects( highlightArray );
+    console.log(intersects, intersectsTarget);
+
+    if ( intersectsTarget.length > 0 ) {
+        var target = intersectsTarget[ 0 ];
+        const newHex = layout.pixelToHex(target.point).round();
+        console.log(newHex);
+        state = IDLE;
+        // TODO: abstract state change
+        highlightGroup.clear();
+        emitTargetHex(newHex);
+        }
+    else if ( intersects.length > 0 ) {
         var selected = intersects[ 0 ];
-        // Disco debugging
         console.log("selected-highligh", selected, previousSelection);
         if (previousSelection !== null && previousSelection.id == selected.object.id) {
             console.log("selected the same again", previousSelection.previous);
             selected.object.material.color.setHex( previousSelection.previous );
             previousSelection = null;
+            state = IDLE;
         }
         else if (previousSelection === null || previousSelection.id != selected.object.id) {
             if (previousSelection !== null) {
@@ -258,7 +290,9 @@ function onDocumentMouseDown( event ) {
             selected.object.material.color.set( GREEN );
             const newHex = layout.pixelToHex(selected.point).round();
             console.log(newHex);
+            state = SELECTED;
             emitSelectHex(newHex);
+
         }
     }
 }
