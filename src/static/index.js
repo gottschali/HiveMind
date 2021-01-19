@@ -227,6 +227,8 @@ function emitSelectHex(hex) {
     socket.emit('selecthex', {'data': hex});
 }
 
+var previousSelection = null;
+
 function onDocumentMouseDown( event ) {
     console.log("click");
     event.preventDefault();
@@ -241,10 +243,23 @@ function onDocumentMouseDown( event ) {
     if ( intersects.length > 0 ) {
         var selected = intersects[ 0 ];
         // Disco debugging
-        selected.object.material.color.setHex( 0xffffff * Math.random() );
-        const newHex = layout.pixelToHex(selected.point).round();
-        console.log(newHex);
-        emitSelectHex(newHex);
+        console.log("selected-highligh", selected, previousSelection);
+        if (previousSelection !== null && previousSelection.id == selected.object.id) {
+            console.log("selected the same again", previousSelection.previous);
+            selected.object.material.color.setHex( previousSelection.previous );
+            previousSelection = null;
+        }
+        else if (previousSelection === null || previousSelection.id != selected.object.id) {
+            if (previousSelection !== null) {
+                previousSelection.material.color.setHex( previousSelection.previous );
+            }
+            previousSelection = selected.object;
+            previousSelection.previous = selected.object.material.color.getHex();
+            selected.object.material.color.set( GREEN );
+            const newHex = layout.pixelToHex(selected.point).round();
+            console.log(newHex);
+            emitSelectHex(newHex);
+        }
     }
 }
 canvas.addEventListener( "click", onDocumentMouseDown );
