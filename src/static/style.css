@@ -2,6 +2,9 @@ body {
     background: rgb(0, 43, 54);
     color: rgb(253, 246, 227)
 }
+nav, controls {
+    float: left;
+}
 #c {
      margin: 0;
      width: 100%;

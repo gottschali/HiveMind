@@ -14,7 +14,7 @@ class MonteCarloTreeSearchNode:
     def untried_actions(self):
         """ returns list of moves """
         if self._untried_actions is None:
-            self._untried_actions = list(self.state.generate_actions())
+            self._untried_actions = list(self.state.possible_actions)
         return self._untried_actions
 
     @property
@@ -46,16 +46,16 @@ class MonteCarloTreeSearchNode:
             if current_rollout_board.turn_number > 200:
                 print("Too many moves, treat as stalemate")
                 return 0
-            possible_moves = list(current_rollout_board.generate_actions())
-            action = self.rollout_policy(possible_moves)
+            possible_actions = current_rollout_board.possible_actions
+            action = self.rollout_policy(possible_actions)
             new = current_rollout_board + action
             while new is None:
-                possible_moves.remove(action)
+                possible_actions.remove(action)
                 print("INCONSISTENCE between Generation and Validation")
-                if not possible_moves:
+                if not possible_actions:
                     print("No more moves found")
                     return 0
-                action = self.rollout_policy(possible_moves)
+                action = self.rollout_policy(possible_actions)
                 new = current_rollout_board + action
             current_rollout_board = new
         return current_rollout_board.game_result
@@ -79,8 +79,8 @@ class MonteCarloTreeSearchNode:
         ]
         return self.children[np.argmax(choices_weights)]
 
-    def rollout_policy(self, possible_moves):
+    def rollout_policy(self, possible_actions):
         """ How to choose from possible moves -> Move """
-        return np.random.choice(possible_moves)
+        return np.random.choice(possible_actions)
 
 

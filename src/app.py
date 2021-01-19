@@ -17,11 +17,7 @@ socketio = SocketIO(app)
 state = State()
 
 @app.route("/")
-def hello_world():
-    return "Hello World!"
-
-@app.route("/play")
-def play():
+def index():
     return render_template("index.html")
 
 @socketio.on("connect")
@@ -38,7 +34,7 @@ def test_disconnect():
 def test_move(message):
     print("Move requested from client")
     global state
-    state = next_state(state)
+    state = state.next_state()
     json_state = state.to_json()
     print(json_state)
     emit("sendstate", json_state)
@@ -48,7 +44,7 @@ def auto_move(message):
     print("AutoMove requested from client")
     global state
     for i in range(100):
-        state = next_state(state)
+        state = state.next_state()
         json_state = state.to_json()
         print(json_state)
         emit("sendstate", json_state)
@@ -58,14 +54,14 @@ def auto_move(message):
 def select_hex(hex):
     print(hex)
     hex = Hex(hex["data"]["q"], hex["data"]["r"])
+    print(hex)
     print(state.possible_actions)
     print("Server sending move options", hex)
     opts = list(state.possible_actions_for_hex(hex))
+    print(state.bee_move)
     print(opts)
     emit("moveoptions", {"options": [[h.q, h.r] for h in opts]})
 
-def next_state(state):
-    return state + random.choice(list(state.generate_actions()))
 
 
 if __name__ == '__main__':

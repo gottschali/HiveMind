@@ -2,6 +2,7 @@ from copy import deepcopy
 import logging
 from typing import Iterator, List
 from functools import cached_property
+import random
 import json
 
 from .insect import Insect, Bee, Spider, Ant, GrassHopper, Beetle
@@ -48,8 +49,8 @@ class State:
                 dump["hive"].append({})
                 temp = dump["hive"][-1]
                 # r, s, h, name, team
-                temp["q"] = hex.r
-                temp["r"] = hex.s
+                temp["q"] = hex.q
+                temp["r"] = hex.r
                 temp["height"] = height
                 temp["name"] = insect.name
                 temp["team"] = insect.team
@@ -93,6 +94,7 @@ class State:
             new_state.turn_number += 1
             # Not so nice / bad practice, new instantiation instead of copy?
             new_state.articulation_points = new_hive.one_hive()
+            new_state.possible_actions = tuple(new_state.generate_actions())
             logger.debug(f"Created new state {new_state}")
             return new_state
         logger.warn(f"Validation for action {action} failed!")
@@ -128,9 +130,9 @@ class State:
             logger.warn(f"The insect can't be moved due to the one hive rule")
             return False
         # Check if the target is valid
-        possible_moves = list(self.hive.generate_moves_for_insect(insect.name, hex))
-        logger.debug(f"Checking the possible moves {possible_moves}")
-        return move.destination in possible_moves
+        possible_actions = list(self.hive.generate_moves_for_insect(insect.name, hex))
+        logger.debug(f"Checking the possible moves {possible_actions}")
+        return move.destination in possible_actions
 
 
     def validate_drop(self, drop: Drop) -> bool:
@@ -204,13 +206,9 @@ class State:
                 for origin, destination in self.hive.generate_moves(self.current_team):
                     yield Move(origin, destination)
 
-    def children(self):
-        for action in self.generate_actions():
-            yield self + action
-
     @cached_property
     def possible_actions(self):
-        return list(self.generate_actions())
+        return tuple(self.generate_actions())
 
     def possible_actions_for_hex(self, hex):
         for action in self.possible_actions:
@@ -219,11 +217,9 @@ class State:
                     yield action.destination
 
     def children(self):
-        for action in self.generate_actions():
+        for action in self.possible_actions:
             yield self + action
 
-    def children(self):
-        for action in self.generate_actions():
-            yield self + action
-
+    def next_state(self, policy=random.choice):
+        return self + policy(self.possible_actions)
 
