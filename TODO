@@ -1,2 +1,12 @@
-- Highlight options
-- Different States
+- Implement Dropping
+- Smart computer
+-- MinMax
+-- BoardEvaluation heuristic
+
+- Add documentation
+
+- Add testing
+
+- Networking
+-- Multithread
+-- Sessions (Join rooms)

@@ -12,6 +12,13 @@ from hivemind.hex import *
 app = Flask(__name__)
 socketio = SocketIO(app)
 
+# TODO: Research SocketIO
+# TODO: Do without starred imports
+# TODO: standardize JSON de-/serialization
+# TODO: Standardized naming for signals
+# TODO: No gobal state
+# TODO: send moveable pieces (one-hive) with state
+# - state for each session
 # In future threading/async
 
 state = State()

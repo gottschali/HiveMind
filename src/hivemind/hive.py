@@ -137,6 +137,7 @@ class Hive(dict):
             if (self.height(a)) ^ (self.height(c)):
                 yield b
 
+    # TODO: do not yield (Hex, Hex) [Move to itself]
     def generate_any_walks_from_hex(self, hex: Hex, func=None) -> List[Hex]:
         """
         Runs a BFS on the edge of the hive. Return all hexes that are reachable this way
@@ -208,6 +209,7 @@ class Hive(dict):
         if insect_name == "bee":
             return self.generate_walks_from_hex(hex)
         elif insect_name == "spider":
+            # TODO: Spider walks are ants at the moment
             return self.generate_spider_walks_from_hex(hex)
         elif insect_name == "ant":
             return self.generate_any_walks_from_hex(hex)

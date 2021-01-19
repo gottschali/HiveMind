@@ -12,10 +12,15 @@ from .hex import Hex
 
 logger = logging.getLogger(__name__)
 
-# TODO good naming
-# Private functions
 
 class State:
+    # TODO: good naming
+    # TODO: Private functions
+    # TODO Define specifications
+    # - Where is verification needed
+    # - avoid recomputation
+    # - lazy computation: only if necessary
+    # TODO: behaviour when no moves possible for a player
     insects = ("bee",
                "spider", "spider",
                "ant", "ant", "ant",

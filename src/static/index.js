@@ -59,6 +59,7 @@ const origin = new HEX.Point(0, 0);
 const layout = new HEX.Layout(orientation, size, origin);
 
 // Preload all images and store the textures in a hashmap for every insect
+// TODO: Load the texture only on top and not on all sides
 const loader = new THREE.TextureLoader();
 var names = ["grasshopper", "bee", "ant", "spider", "beetle"];
 var textures = {};

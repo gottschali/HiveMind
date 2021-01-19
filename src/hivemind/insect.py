@@ -1,3 +1,5 @@
+# TODO: remove repetitions
+
 class Insect:
     def __init__(self, name, team):
         self.name = name
