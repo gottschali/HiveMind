@@ -2,7 +2,7 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 
 import random
-import time
+import json
 
 from hivemind.state import *
 from hivemind.hive import *
@@ -43,12 +43,11 @@ def test_move(message):
 def auto_move(message):
     print("AutoMove requested from client")
     global state
-    for i in range(100):
+    for i in range(33):
         state = state.next_state()
         json_state = state.to_json()
         print(json_state)
         emit("sendstate", json_state)
-        time.sleep(.5)
 
 @socketio.on("selecthex")
 def select_hex(hex):
@@ -60,7 +59,7 @@ def select_hex(hex):
     opts = list(state.possible_actions_for_hex(hex))
     print(state.bee_move)
     print(opts)
-    emit("moveoptions", {"options": [[h.q, h.r] for h in opts]})
+    emit("moveoptions", json.dumps([{"q": h.q, "r": h.r, "h": state.hive.height(h) } for h in opts]))
 
 
 

@@ -95,8 +95,8 @@ function makeTileInstance(team, hex, name, height) {
     // Can be precomputed
     var material = new THREE.MeshStandardMaterial({color: (team ? MAGENTA : YELLOW),
                                                    polygonOffset: true,
-                                                   polygonOffsetFactor: 1, // positive value pushes polygon further away
-                                                   polygonOffsetUnits: 0,
+                                                   polygonOffsetFactor: 5, // positive value pushes polygon further away
+                                                   polygonOffsetUnits: 1,
                                                    map: textures[name],
                                                    roughness: 0.5,
                                                    metalness: 0.5,
@@ -109,6 +109,28 @@ function makeTileInstance(team, hex, name, height) {
     tile.rotateX(Math.PI / 2);
     tile.rotateY(Math.PI / 6);
     return tile;
+}
+
+var highlightMaterial = new THREE.MeshStandardMaterial({color: FG,
+                                                        polygonOffset: true,
+                                                        polygonOffsetFactor: 0,
+                                                        polygonOffsetUnits: 0,
+                                                        transparent: true,
+                                                        opacity: 0.3,
+                                                       });
+
+var highlightGroup= new THREE.Group();
+scene.add(highlightGroup);
+function makeHighlightInstances(hexes) {
+    highlightGroup.clear();
+    hexes.forEach( ({q, r, h}) => {
+        const {x, y} = layout.hexToPixel(new HEX.Hex(q, r));
+        const tile = new THREE.Mesh(hexGeometry, highlightMaterial);
+        tile.position.set( x, y, h * 0.5 );
+        tile.rotateX(Math.PI / 2);
+        tile.rotateY(Math.PI / 6);
+        highlightGroup.add(tile);
+    });
 }
 
 // contains all insects
@@ -173,6 +195,15 @@ $(document).ready(function() {
         console.log("Client received data from server");
         console.log(json);
         drawState(json);
+        return false;
+    });
+
+    socket.on('moveoptions', function(json) {
+        console.log("Client received options from server");
+        console.log(json);
+        var hexes = JSON.parse(json);
+        console.log(hexes);
+        makeHighlightInstances(hexes);
         return false;
     });
 
