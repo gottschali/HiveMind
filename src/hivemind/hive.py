@@ -168,7 +168,6 @@ class Hive(dict):
                 queue.append(neighbor)
         logger.debug(f"The calculated distance map is {distance}")
         if not (func is None):
-            print("Distance", distance)
             for h, d in distance.items():
                 if func(d):
                     yield h
