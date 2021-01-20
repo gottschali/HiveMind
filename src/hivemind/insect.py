@@ -1,35 +1,19 @@
-# TODO: remove repetitions
+from enum import Enum
+from typing import NamedTuple
 
-class Insect:
-    def __init__(self, name, team):
-        self.name = name
-        self.team = team
+# Enumeration for all Insect classes
+class Insect(Enum):
+    BEE = 1
+    SPIDER = 2
+    ANT = 3
+    GRASSHOPPER = 4
+    BEETLE = 5
 
+class Team(Enum):
+    WHITE = 0
+    BLACK = 1
 
-    def __repr__(self):
-        return f"{type(self).__name__}({self.team})"
+class Stone(NamedTuple):
+    insect: Insect
+    team: Team
 
-class Bee(Insect):
-    name = "bee"
-    def __init__(self, team):
-        super().__init__(self.name, team)
-
-class Spider(Insect):
-    name = "spider"
-    def __init__(self, team):
-        super().__init__(self.name, team)
-
-class Ant(Insect):
-    name = "ant"
-    def __init__(self, team):
-        super().__init__(self.name, team)
-
-class GrassHopper(Insect):
-    name = "grasshopper"
-    def __init__(self, team):
-        super().__init__(self.name, team)
-
-class Beetle(Insect):
-    name = "beetle"
-    def __init__(self, team):
-        super().__init__(self.name, team)
