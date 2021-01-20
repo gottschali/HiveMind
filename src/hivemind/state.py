@@ -44,23 +44,20 @@ class State:
     # - avoid recomputation
     # - lazy computation: only if necessary
     # TODO: behaviour when no moves possible for a player
-
-    # The initial availables insects
-    # TODO: -> directly use stones !!!
     # TODO: Root state as subclass, better ini
-    insects = (Insect.BEE,
-               Insect.SPIDER, Insect.SPIDER,
-               Insect.ANT, Insect.ANT, Insect.ANT,
-               Insect.GRASSHOPPER, Insect.GRASSHOPPER, Insect.GRASSHOPPER,
-               Insect.BEETLE, Insect.BEETLE)
+
 
     def __init__(self, hive=None, bee_move=(False, False), turn_number=0, availables=None):
         self.hive = hive if hive else Hive()
         self._bee_move = list(bee_move)
         self.turn_number = turn_number
         if availables is None:
-            # TODO: ugly, use STONES
-            self.availables = [Stone(insect, team) for insect in self.insects for team in list(Team)]
+            insects = (Insect.BEE,
+                       Insect.SPIDER, Insect.SPIDER,
+                       Insect.ANT, Insect.ANT, Insect.ANT,
+                       Insect.GRASSHOPPER, Insect.GRASSHOPPER, Insect.GRASSHOPPER,
+                       Insect.BEETLE, Insect.BEETLE)
+            self.availables = [Stone(insect, team) for insect in insects for team in list(Team)]
         else:
             self.availables = availables
         self.articulation_points = self.hive.one_hive()
