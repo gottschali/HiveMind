@@ -12,7 +12,6 @@ from hivemind.hex import *
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-# TODO: Research SocketIO
 # TODO: Do without starred imports
 # TODO: standardize JSON de-/serialization
 # TODO: Standardized naming for signals
