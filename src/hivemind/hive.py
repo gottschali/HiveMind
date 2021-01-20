@@ -5,7 +5,7 @@ from collections import deque
 from typing import Iterator, List, Tuple
 
 from .hex import Hex
-from .insect import Insect
+from .insect import Insect, Stone, Team
 
 logger = logging.getLogger(__name__)
 
@@ -23,13 +23,14 @@ class Hive(dict):
     def __repr__(self):
         return f"Hive({super().__repr__()})"
 
-    def insect_at_hex(self, hex: Hex) -> Insect:
+    def stone_at_hex(self, hex: Hex) -> Stone:
         return self[hex][-1]
 
     def get_root_hex(self):
+        # TODO self may be empty
         return next(iter(self))
 
-    def remove_insect(self, hex: Hex):
+    def remove_stone(self, hex: Hex):
         """
         Removes the highest insect from the hive at hex.
         If it was the only one the key gets deleted.
@@ -38,17 +39,17 @@ class Hive(dict):
         if not len(self[hex]):
             del self[hex]
 
-    def get_hex_and_insects_of_team(self, team: bool) -> Iterator[Tuple[Hex, Insect]]:
+    def get_hex_and_stones_of_team(self, team: Team) -> Iterator[Tuple[Hex, Stone]]:
         for hex, stack in self.items():
-            insect = self.insect_at_hex(hex)
-            if insect.team == team:
-                yield hex, insect
+            stone = self.stone_at_hex(hex)
+            if stone.team == team:
+                yield hex, stone
 
-    def add_insect(self, hex: Hex, insect: Insect) -> None:
+    def add_stone(self, hex: Hex, stone: Stone) -> None:
         if hex not in self:
-            self[hex] = [insect]
+            self[hex] = [stone]
         else:
-            self[hex].append(insect)
+            self[hex].append(stone)
 
     def hex_surrounded(self, hex: Hex) -> bool:
         """ Tests if all surrounding hexes of hex are occupied """
@@ -58,15 +59,15 @@ class Hive(dict):
         """ Yields all neighboring hexes that are occupied """
         return (neighbor for neighbor in hex.neighbors() if neighbor in self)
 
-    def highest_neighbor_insects(self, hex: Hex) -> Iterator[Insect]:
+    def highest_neighbor_stones(self, hex: Hex) -> Iterator[Stone]:
         """ Yields the highest adjacent insects """
         for n in self.neighbors(hex):
             yield self[n][-1]
 
-    def neighbor_team(self, hex: Hex, team: bool) -> bool:
+    def neighbor_team(self, hex: Hex, team: Team) -> bool:
         """ Checks if all adjacent hexes of hex are uniquely of the same team """
-        logger.debug(list(self.insect_at_hex(neighbor).team for neighbor in self.neighbors(hex)))
-        return all(self.insect_at_hex(neighbor).team == team for neighbor in self.neighbors(hex))
+        logger.debug(list(self.stone_at_hex(neighbor).team for neighbor in self.neighbors(hex)))
+        return all(self.stone_at_hex(neighbor).team == team for neighbor in self.neighbors(hex))
 
     def one_hive(self) -> List[Hex]:
         """
@@ -206,22 +207,23 @@ class Hive(dict):
             if self.height(b) >= hh:
                 yield b
 
-    def generate_moves_for_insect(self, insect_name: str, hex: Hex) -> Iterator[Hex]:
+    def generate_moves_for_stone(self, stone: Stone, hex: Hex) -> Iterator[Hex]:
         """ Yield possible move destination hexes for insect by name """
-        if insect_name == "bee":
+        if stone.insect == Insect.BEE:
             return self.generate_walks_from_hex(hex)
-        elif insect_name == "spider":
+        elif stone.insect == Insect.SPIDER:
             return self.generate_spider_walks_from_hex(hex)
-        elif insect_name == "ant":
+        elif stone.insect == Insect.ANT:
             return self.generate_any_walks_from_hex(hex)
-        elif insect_name == "grasshopper":
+        elif stone.insect == Insect.GRASSHOPPER:
             return self.generate_jumps_from_hex(hex)
-        elif insect_name == "beetle":
+        elif stone.insect == Insect.BEETLE:
             return self.generate_climbs_from_hex(hex)
         else:
+            # TODO better excpetion
             raise Exception("Unknown insect")
 
-    def generate_drops(self, team: bool) -> Iterator[Hex]:
+    def generate_drops(self, team: Team) -> Iterator[Hex]:
         """ Finds hexes on which an insect of team could be dropped """
         empty_hexes = set()
         visited = {}
@@ -251,12 +253,12 @@ class Hive(dict):
         logger.debug(f"Generating moves for team {team}")
         articulation_points = self.one_hive()
         logger.debug(f"The articulation points are {articulation_points}")
-        for hex, insect in self.get_hex_and_insects_of_team(team):
-            logger.debug(f"Found {hex, insect} belonging to {team}")
+        for hex, stone in self.get_hex_and_stones_of_team(team):
+            logger.debug(f"Found {hex, stone} belonging to {team}")
             if self.height(hex) == 1 and hex in articulation_points:
-                logger.debug(f"{hex, insect} can't be moved due to one-hive")
+                logger.debug(f"{hex, stone} can't be moved due to one-hive")
                 continue
 
-            for destination in self.generate_moves_for_insect(insect.name, hex):
-                logger.debug(f"Found destination {destination} for {insect.name} at {hex}")
+            for destination in self.generate_moves_for_stone(stone, hex):
+                logger.debug(f"Found destination {destination} for {stone} at {hex}")
                 yield hex, destination

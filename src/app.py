@@ -6,7 +6,6 @@ import json
 
 from hivemind.state import *
 from hivemind.hive import *
-from hivemind.insect import *
 from hivemind.hex import *
 
 app = Flask(__name__)

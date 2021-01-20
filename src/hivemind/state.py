@@ -5,11 +5,13 @@ from functools import cached_property
 import random
 import json
 
-from .insect import Insect, Bee, Spider, Ant, GrassHopper, Beetle
+from .insect import Insect, Team, Stone
 from .hive import Hive
 from .hex import Hex
 
 logger = logging.getLogger(__name__)
+
+# TODO: Origin hex constant
 
 class Action:
     """ Base class for abstract game"""
@@ -25,13 +27,13 @@ class Move(Action):
         return f"Move({self.origin}, {self.destination})"
 
 class Drop(Action):
-    """ Drop a insect to a destination Hex """
-    def __init__(self, insect: str, destination: Hex):
-        self.insect = insect
+    """ Drop a stone to a destination Hex """
+    def __init__(self, stone: Stone, destination: Hex):
+        self.stone = stone
         self.destination = destination
 
     def __repr__(self):
-        return f"Drop('{self.insect}', {self.destination})"
+        return f"Drop('{self.stone}', {self.destination})"
 
 
 class State:
@@ -42,45 +44,51 @@ class State:
     # - avoid recomputation
     # - lazy computation: only if necessary
     # TODO: behaviour when no moves possible for a player
-    insects = ("bee",
-               "spider", "spider",
-               "ant", "ant", "ant",
-               "grasshopper", "grasshopper", "grasshopper",
-               "beetle", "beetle")
-    mapping = {"bee": Bee,
-               "spider": Spider,
-               "ant": Ant,
-               "grasshopper": GrassHopper,
-               "beetle": Beetle}
+
+    # The initial availables insects
+    # TODO: -> directly use stones !!!
+    # TODO: Root state as subclass, better ini
+    insects = (Insect.BEE,
+               Insect.SPIDER, Insect.SPIDER,
+               Insect.ANT, Insect.ANT, Insect.ANT,
+               Insect.GRASSHOPPER, Insect.GRASSHOPPER, Insect.GRASSHOPPER,
+               Insect.BEETLE, Insect.BEETLE)
 
     def __init__(self, hive=None, bee_move=(False, False), turn_number=0, availables=None):
         self.hive = hive if hive else Hive()
         self._bee_move = list(bee_move)
         self.turn_number = turn_number
         if availables is None:
-            self._availables = [[i for i in self.insects],
-                               [i for i in self.insects]]
+            # TODO: ugly, use STONES
+            self.availables = [Stone(insect, team) for insect in self.insects for team in list(Team)]
         else:
-            self._availables = availables
+            self.availables = availables
         self.articulation_points = self.hive.one_hive()
 
     def __repr__(self):
-        return f"State({self.hive}, {self._bee_move}, {self.turn_number}, {self._availables})"
+        return f"State({self.hive}, {self._bee_move}, {self.turn_number}, {self.availables})"
 
     def to_json(self):
         dump = {}
         dump["hive"] = []
+        # Temporary fix to not break client
+        mapping = {Insect.BEE: "bee",
+                   Insect.SPIDER: "spider",
+                   Insect.ANT: "ant",
+                   Insect.GRASSHOPPER: "grasshopper",
+                   Insect.BEETLE: "beetle",
+                   }
         for hex, stack in self.hive.items():
-            for height, insect in enumerate(stack):
+            for height, stone in enumerate(stack):
                 dump["hive"].append({})
                 temp = dump["hive"][-1]
                 # r, s, h, name, team
                 temp["q"] = hex.q
                 temp["r"] = hex.r
                 temp["height"] = height
-                temp["name"] = insect.name
-                temp["team"] = insect.team
-        dump["availables"] = self._availables
+                temp["name"] = mapping[stone.insect]
+                temp["team"] = stone.team
+        # dump["availables"] = self.availables
         # TODO: add more information
         return json.dumps(dump)
 
@@ -92,13 +100,6 @@ class State:
     def bee_move(self) -> bool:
         return self._bee_move[self.current_team]
 
-    def availables(self) -> List[str]:
-        return self._availables[self.current_team]
-
-    def insect_from_name(self, name: str) -> Insect:
-        """ Get an insect instance by name for the current team """
-        return self.mapping[name](self.current_team)
-
     def __add__(self, action) -> "State":
         assert isinstance(action, Action) is True
         if self.validate_action(action):
@@ -108,15 +109,15 @@ class State:
             new_hive = new_state.hive
             destination = action.destination
             if isinstance(action, Move): # Action
-                insect = new_hive.insect_at_hex(action.origin)
-                new_hive.remove_insect(action.origin)
+                stone = new_hive.stone_at_hex(action.origin)
+                new_hive.remove_stone(action.origin)
             else: # Drop
-                insect = self.insect_from_name(action.insect)
-                if isinstance(insect, Bee):
+                stone = action.stone
+                if stone.insect == Insect.BEE:
                     # TODO setter
                     new_state._bee_move[self.current_team] = True
-                new_state.availables().remove(insect.name)
-            new_hive.add_insect(destination, insect)
+                new_state.availables.remove(stone)
+            new_hive.add_stone(destination, stone)
             new_state.turn_number += 1
             # Not so nice / bad practice, new instantiation instead of copy?
             new_state.articulation_points = new_hive.one_hive()
@@ -170,8 +171,8 @@ class State:
         The queen must be dropped in the first four moves
         """
         logger.debug(f"Valdidating drop: {drop}")
-        if drop.insect not in self.availables():
-            logger.warn(f"The insect {drop.insect} is not available for dropping anymore")
+        if drop.stone not in self.availables:
+            logger.warn(f"The insect {drop.stone} is not available for dropping anymore")
             return False
         # Only dropping on free hexes is allowed
         hex = drop.destination
@@ -194,11 +195,11 @@ class State:
     def game_result(self):
         """ If a queen is completely surrounded the other player wins """
         white_lost = black_lost = False
-        for hex, insects in self.hive.items():
-            insect = insects[0]
-            if isinstance(insect, Bee):
+        for hex, stones in self.hive.items():
+            stone = stones[0]
+            if stone.insect == Insect.BEE:
                 if self.hive.hex_surrounded(hex):
-                    if insect.team:
+                    if stone.team:
                         white_lost = True
                     else:
                         black_lost = True
@@ -208,26 +209,29 @@ class State:
         """ Check if the game is over """
         return not self.game_result is None
 
-    def unique_droppable_insects(self):
-        return set(self.availables())
+    def unique_availables(self):
+        return set(self.availables)
 
     def generate_actions(self) -> Iterator[Move]:
         """ Generate all legal actions for the current state """
+        # TODO DRY
         if self.turn_number == 0:
-            for insect in self.unique_droppable_insects():
-                yield Drop(insect, Hex(0, 0))
+            # TODO oneline
+            for stone in self.unique_availables():
+                yield Drop(stone, Hex(0, 0))
         elif self.turn_number == 1:
             root = self.hive.get_root_hex()
+            # TODO oneline
             for hex in root.neighbors():
-                for insect in self.unique_droppable_insects():
-                    yield Drop(insect, hex)
+                for stone in self.unique_availables():
+                    yield Drop(stone,hex)
         elif self.turn_number >= 6 and not self.bee_move:
             for drop_hex in self.hive.generate_drops(self.current_team):
-                yield Drop("bee", drop_hex)
+                yield Drop(Stone(Insect.BEE, self.current_team), drop_hex)
         else:
             for drop_hex in self.hive.generate_drops(self.current_team):
-                for insect in self.unique_droppable_insects():
-                    yield Drop(insect, drop_hex)
+                for stone in self.unique_availables():
+                    yield Drop(stone, drop_hex)
             if self.bee_move:
                 for origin, destination in self.hive.generate_moves(self.current_team):
                     yield Move(origin, destination)
