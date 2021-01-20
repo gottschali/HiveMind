@@ -125,59 +125,6 @@ class State:
         else:
             raise Exception("Action must be either a Move or a Drop")
 
-    def validate_move(self, move: Move) -> bool:
-        logger.debug(f"Validating move: {move}")
-        hex = move.origin
-        # No insect at the location
-        if hex not in self.hive:
-            logger.warn(f"There is no insect at move origin {hex}")
-            return False
-        stone = self.hive.stone_at_hex(hex)
-        # Wrong Team
-        if stone.team != self.current_team:
-            logger.warn(f"The stone at {hex} belongs to player {self.current_team}")
-            return False
-        # Bee not played yet
-        if not self.bee_move:
-            logger.warn(f"Insects can't be moved before the bee is played")
-            return False
-        if self.hive.height(hex) == 1 and hex in self.articulation_points:
-            logger.warn(f"The insect can't be moved due to the one hive rule")
-            return False
-        # Check if the target is valid
-        logger.debug(f"Checking the possible moves {self.possible_actions}")
-        return move.destination in self.possible_actions
-
-
-    def validate_drop(self, drop: Drop) -> bool:
-        """
-        Check if adding a stone to the board is legal:
-        it may not be adjacent to stones of the enemy and must touch
-        atleast one friendly stone.
-        (the highest counts if they are stacked)
-        The queen must be dropped in the first four moves
-        """
-        logger.debug(f"Valdidating drop: {drop}")
-        if drop.stone not in self.availables:
-            logger.warn(f"The insect {drop.stone} is not available for dropping anymore")
-            return False
-        # Only dropping on free hexes is allowed
-        hex = drop.destination
-        if hex in self.hive:
-            logger.warn(f"You cannot drop insects on occupied tiles")
-            return False
-        if self.turn_number == 0:
-            logger.debug(f"Every drop is valid in the first round")
-            # Any hex is valid
-            return True
-        elif self.turn_number == 1:
-            logger.debug(f"Checking if the second stone is adjacent to the first")
-            # Only adjacent hexes to the first are valid
-            return self.hive.get_root_hex().adjacent(hex)
-        val = self.hive.neighbor_team(hex, self.current_team)
-        logger.debug(f"Checking the surrounded insects for their color: {val}")
-        return val
-
     @property
     def game_result(self):
         """ If a queen is completely surrounded the other player wins """
