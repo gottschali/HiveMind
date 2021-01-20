@@ -19,7 +19,7 @@ socketio = SocketIO(app)
 # - state for each session
 # In future threading/async
 
-state = State()
+state = Root()
 action_type = None
 origin = None
 

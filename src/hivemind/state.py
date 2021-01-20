@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 # TODO: Origin hex constant
 
 class Action:
-    """ Base class for abstract game"""
+    """ Base class for abstract game action that can be performed in a turn """
     pass
 
 class Move(Action):
@@ -39,27 +39,20 @@ class Drop(Action):
 class State:
     # TODO: good naming
     # TODO: Private functions
-    # TODO Define specifications
+    # TODO Define specifications (immutability)
     # - Where is verification needed
     # - avoid recomputation
     # - lazy computation: only if necessary
     # TODO: behaviour when no moves possible for a player
     # TODO: Root state as subclass, better ini
+    # TODO: beemove
 
 
-    def __init__(self, hive=None, bee_move=(False, False), turn_number=0, availables=None):
-        self.hive = hive if hive else Hive()
-        self._bee_move = list(bee_move)
+    def __init__(self, hive, bee_move, turn_number, availables):
+        self.hive = hive
+        self._bee_move = bee_move
         self.turn_number = turn_number
-        if availables is None:
-            insects = (Insect.BEE,
-                       Insect.SPIDER, Insect.SPIDER,
-                       Insect.ANT, Insect.ANT, Insect.ANT,
-                       Insect.GRASSHOPPER, Insect.GRASSHOPPER, Insect.GRASSHOPPER,
-                       Insect.BEETLE, Insect.BEETLE)
-            self.availables = [Stone(insect, team) for insect in insects for team in list(Team)]
-        else:
-            self.availables = availables
+        self.availables = availables
         self.articulation_points = self.hive.one_hive()
 
     def __repr__(self):
@@ -83,39 +76,40 @@ class State:
         return json.dumps(dump)
 
     @property
-    def current_team(self) -> bool:
+    def current_team(self) -> Team:
         return Team.WHITE if self.turn_number % 2 else Team.BLACK
 
     @property
     def bee_move(self) -> bool:
         return self._bee_move[self.current_team.value]
 
-    def __add__(self, action) -> "State":
-        assert isinstance(action, Action) is True
-        if self.validate_action(action):
-            logger.debug(f"Validated action {action} successfully")
-            # Create new state
-            new_state = deepcopy(self)
-            new_hive = new_state.hive
-            destination = action.destination
-            if isinstance(action, Move): # Action
-                stone = new_hive.stone_at_hex(action.origin)
-                new_hive.remove_stone(action.origin)
-            else: # Drop
-                stone = action.stone
-                if stone.insect == Insect.BEE:
-                    # TODO setter
-                    new_state._bee_move[self.current_team.value] = True
-                new_state.availables.remove(stone)
+    def __add__(self, action: Action) -> "State":
+        """ Returns a new State with the action performed """
+        # TODO : Invalid action
+        assert action in self.possible_actions
+        new_state = deepcopy(self)
+        new_hive = new_state.hive
+        destination = action.destination
+        if isinstance(action, Move):
+            # Remove the stone from the old position and add it at the new one
+            stone = new_hive.stone_at_hex(action.origin)
+            new_hive.remove_stone(action.origin)
             new_hive.add_stone(destination, stone)
-            new_state.turn_number += 1
-            # Not so nice / bad practice, new instantiation instead of copy?
-            new_state.articulation_points = new_hive.one_hive()
-            new_state.possible_actions = tuple(new_state.generate_actions())
-            logger.debug(f"Created new state {new_state}")
-            return new_state
-        logger.warn(f"Validation for action {action} failed!")
-        return None
+        elif isinstance(action, Drop):
+            stone = action.stone
+            if stone.insect == Insect.BEE:
+                # TODO setter
+                # Update that the bee is dropped
+                new_state._bee_move[self.current_team.value] = True
+            # Remove the dropped stone from the availables and add it to the hive
+            new_state.availables.remove(stone)
+            new_hive.add_stone(destination, stone)
+        new_state.turn_number += 1
+        # Maybe cached property and unset them, so they are computed when needed
+        new_state.articulation_points = new_hive.one_hive()
+        new_state.possible_actions = tuple(new_state.generate_actions())
+        logger.debug(f"Created new state {new_state}")
+        return new_state
 
     def validate_action(self, action: Action) -> bool:
         logger.debug(f"Validating action: {action}")
@@ -244,3 +238,17 @@ class State:
     def next_state(self, policy=random.choice):
         return self + policy(self.possible_actions)
 
+
+class Root(State):
+
+    def __init__(self):
+        self.hive = Hive()
+        self._bee_move = [False, False]
+        self.turn_number = 0
+        insects = (Insect.BEE,
+                    Insect.SPIDER, Insect.SPIDER,
+                    Insect.ANT, Insect.ANT, Insect.ANT,
+                    Insect.GRASSHOPPER, Insect.GRASSHOPPER, Insect.GRASSHOPPER,
+                    Insect.BEETLE, Insect.BEETLE)
+        self.availables = [Stone(insect, team) for insect in insects for team in list(Team)]
+        self.articulation_points = self.hive.one_hive()
