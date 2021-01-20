@@ -137,7 +137,6 @@ class Hive(dict):
             if (self.height(a)) ^ (self.height(c)):
                 yield b
 
-    # TODO: do not yield (Hex, Hex) [Move to itself]
     def generate_any_walks_from_hex(self, hex: Hex, func=None) -> List[Hex]:
         """
         Runs a BFS on the edge of the hive. Return all hexes that are reachable this way
@@ -173,7 +172,8 @@ class Hive(dict):
                 if func(d):
                     yield h
         else:
-            yield from distance.keys()
+            visited.discard(hex)
+            yield from visited
 
     def generate_spider_walks_from_hex(self, hex: Hex) -> List[Hex]:
         """ Finds hexes that can be reached in three steps """
