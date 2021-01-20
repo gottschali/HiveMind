@@ -13,6 +13,8 @@ logger = logging.getLogger(__name__)
 
 # TODO: Origin hex constant
 
+# TODO common things, like custom namedtuple
+# TODO: comparison on action
 class Action:
     """ Base class for abstract game action that can be performed in a turn """
     pass
@@ -23,6 +25,9 @@ class Move(Action):
         self.origin = origin
         self.destination = destination
 
+    def __eq__(self, other):
+        return isinstance(other, Move) and (self.origin, self.destination) ==  (other.origin, other.destination)
+
     def __repr__(self):
         return f"Move({self.origin}, {self.destination})"
 
@@ -31,6 +36,9 @@ class Drop(Action):
     def __init__(self, stone: Stone, destination: Hex):
         self.stone = stone
         self.destination = destination
+
+    def __eq__(self, other):
+        return isinstance(other, Drop) and (self.stone, self.destination) ==  (other.stone, other.destination)
 
     def __repr__(self):
         return f"Drop('{self.stone}', {self.destination})"
@@ -88,7 +96,6 @@ class State:
 
     def __add__(self, action: Action) -> "State":
         """ Returns a new State with the action performed """
-        # TODO : Invalid action
         assert action in self.possible_actions
         new_state = deepcopy(self)
         new_hive = new_state.hive
