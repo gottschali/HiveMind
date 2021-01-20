@@ -168,10 +168,12 @@ class Hive(dict):
                 queue.append(neighbor)
         logger.debug(f"The calculated distance map is {distance}")
         if not (func is None):
+            print("Distance", distance)
             for h, d in distance.items():
                 if func(d):
                     yield h
-        yield from distance.keys()
+        else:
+            yield from distance.keys()
 
     def generate_spider_walks_from_hex(self, hex: Hex) -> List[Hex]:
         """ Finds hexes that can be reached in three steps """
@@ -209,7 +211,6 @@ class Hive(dict):
         if insect_name == "bee":
             return self.generate_walks_from_hex(hex)
         elif insect_name == "spider":
-            # TODO: Spider walks are ants at the moment
             return self.generate_spider_walks_from_hex(hex)
         elif insect_name == "ant":
             return self.generate_any_walks_from_hex(hex)
