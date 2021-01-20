@@ -7,10 +7,31 @@ import json
 
 from .insect import Insect, Bee, Spider, Ant, GrassHopper, Beetle
 from .hive import Hive
-from .action import Action, Move, Drop
 from .hex import Hex
 
 logger = logging.getLogger(__name__)
+
+class Action:
+    """ Base class for abstract game"""
+    pass
+
+class Move(Action):
+    """ Move from a origin Hex to a destination Hex """
+    def __init__(self, origin: Hex, destination: Hex):
+        self.origin = origin
+        self.destination = destination
+
+    def __repr__(self):
+        return f"Move({self.origin}, {self.destination})"
+
+class Drop(Action):
+    """ Drop a insect to a destination Hex """
+    def __init__(self, insect: str, destination: Hex):
+        self.insect = insect
+        self.destination = destination
+
+    def __repr__(self):
+        return f"Drop('{self.insect}', {self.destination})"
 
 
 class State:
