@@ -68,13 +68,6 @@ class State:
     def to_json(self):
         dump = {}
         dump["hive"] = []
-        # Temporary fix to not break client
-        mapping = {Insect.BEE: "bee",
-                   Insect.SPIDER: "spider",
-                   Insect.ANT: "ant",
-                   Insect.GRASSHOPPER: "grasshopper",
-                   Insect.BEETLE: "beetle",
-                   }
         for hex, stack in self.hive.items():
             for height, stone in enumerate(stack):
                 dump["hive"].append({})
@@ -83,7 +76,7 @@ class State:
                 temp["q"] = hex.q
                 temp["r"] = hex.r
                 temp["height"] = height
-                temp["name"] = mapping[stone.insect]
+                temp["name"] = stone.insect.value
                 temp["team"] = stone.team.value
         # dump["availables"] = self.availables
         # TODO: add more information

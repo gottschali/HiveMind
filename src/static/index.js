@@ -91,6 +91,11 @@ const wireframeGeometry = new THREE.EdgesGeometry( hexGeometry );
 const wireframeMaterial = new THREE.LineBasicMaterial( { color: BLACK, linewidth: 5 });
 const wireframe = new THREE.LineSegments( wireframeGeometry, wireframeMaterial );
 
+const insectMap = {1: "bee",
+                   2: "spider",
+                   3: "ant",
+                   4: "grasshopper",
+                   5: "beetle"};
 function makeTileInstance(team, hex, name, height) {
     // Create a 3D object at the position given by hex and height
     // Can be precomputed
@@ -98,7 +103,7 @@ function makeTileInstance(team, hex, name, height) {
                                                    polygonOffset: true,
                                                    polygonOffsetFactor: 5, // positive value pushes polygon further away
                                                    polygonOffsetUnits: 1,
-                                                   map: textures[name],
+                                                   map: textures[insectMap[name]],
                                                    roughness: 0.5,
                                                    metalness: 0.5,
                                                   });
