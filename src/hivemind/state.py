@@ -53,10 +53,13 @@ class State:
         self._bee_move = bee_move
         self.turn_number = turn_number
         self.availables = availables
-        self.articulation_points = self.hive.one_hive()
 
     def __repr__(self):
         return f"State({self.hive}, {self._bee_move}, {self.turn_number}, {self.availables})"
+
+    @cached_property
+    def articulation_points(self):
+        return self.hive.one_hive()
 
     def to_json(self):
         dump = {}
@@ -105,9 +108,10 @@ class State:
             new_state.availables.remove(stone)
             new_hive.add_stone(destination, stone)
         new_state.turn_number += 1
-        # Maybe cached property and unset them, so they are computed when needed
-        new_state.articulation_points = new_hive.one_hive()
-        new_state.possible_actions = tuple(new_state.generate_actions())
+        # Unset them so they are recomputed on the new state
+        for attr in ("articulation_points", "possible_actions"):
+            if hasattr(new_state, attr):
+                del new_state.__dict__[attr]
         logger.debug(f"Created new state {new_state}")
         return new_state
 
@@ -141,9 +145,8 @@ class State:
             logger.warn(f"The insect can't be moved due to the one hive rule")
             return False
         # Check if the target is valid
-        possible_actions = list(self.hive.generate_moves_for_stone(stone, hex))
-        logger.debug(f"Checking the possible moves {possible_actions}")
-        return move.destination in possible_actions
+        logger.debug(f"Checking the possible moves {self.possible_actions}")
+        return move.destination in self.possible_actions
 
 
     def validate_drop(self, drop: Drop) -> bool:
@@ -251,4 +254,3 @@ class Root(State):
                     Insect.GRASSHOPPER, Insect.GRASSHOPPER, Insect.GRASSHOPPER,
                     Insect.BEETLE, Insect.BEETLE)
         self.availables = [Stone(insect, team) for insect in insects for team in list(Team)]
-        self.articulation_points = self.hive.one_hive()
