@@ -53,7 +53,6 @@ def auto_move(message):
     for i in range(33):
         state = state.next_state()
         json_state = state.to_json()
-        print(json_state)
         emit("sendstate", json_state)
 
 @socketio.on("selecthex")

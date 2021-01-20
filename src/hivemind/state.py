@@ -87,18 +87,18 @@ class State:
                 temp["r"] = hex.r
                 temp["height"] = height
                 temp["name"] = mapping[stone.insect]
-                temp["team"] = stone.team
+                temp["team"] = stone.team.value
         # dump["availables"] = self.availables
         # TODO: add more information
         return json.dumps(dump)
 
     @property
     def current_team(self) -> bool:
-        return self.turn_number % 2
+        return Team.WHITE if self.turn_number % 2 else Team.BLACK
 
     @property
     def bee_move(self) -> bool:
-        return self._bee_move[self.current_team]
+        return self._bee_move[self.current_team.value]
 
     def __add__(self, action) -> "State":
         assert isinstance(action, Action) is True
@@ -115,7 +115,7 @@ class State:
                 stone = action.stone
                 if stone.insect == Insect.BEE:
                     # TODO setter
-                    new_state._bee_move[self.current_team] = True
+                    new_state._bee_move[self.current_team.value] = True
                 new_state.availables.remove(stone)
             new_hive.add_stone(destination, stone)
             new_state.turn_number += 1
@@ -144,10 +144,10 @@ class State:
         if hex not in self.hive:
             logger.warn(f"There is no insect at move origin {hex}")
             return False
-        insect = self.hive.insect_at_hex(hex)
+        stone = self.hive.stone_at_hex(hex)
         # Wrong Team
-        if insect.team != self.current_team:
-            logger.warn(f"The insect at {hex} belongs to player {self.current_team}")
+        if stone.team != self.current_team:
+            logger.warn(f"The stone at {hex} belongs to player {self.current_team}")
             return False
         # Bee not played yet
         if not self.bee_move:
@@ -157,7 +157,7 @@ class State:
             logger.warn(f"The insect can't be moved due to the one hive rule")
             return False
         # Check if the target is valid
-        possible_actions = list(self.hive.generate_moves_for_insect(insect.name, hex))
+        possible_actions = list(self.hive.generate_moves_for_stone(stone, hex))
         logger.debug(f"Checking the possible moves {possible_actions}")
         return move.destination in possible_actions
 
@@ -199,7 +199,7 @@ class State:
             stone = stones[0]
             if stone.insect == Insect.BEE:
                 if self.hive.hex_surrounded(hex):
-                    if stone.team:
+                    if stone.team == team.WHITE:
                         white_lost = True
                     else:
                         black_lost = True
@@ -210,7 +210,8 @@ class State:
         return not self.game_result is None
 
     def unique_availables(self):
-        return set(self.availables)
+        # Unique only from team
+        return {a for a in self.availables if a.team == self.current_team}
 
     def generate_actions(self) -> Iterator[Move]:
         """ Generate all legal actions for the current state """
