@@ -50,10 +50,11 @@ def test_move(message):
 def auto_move(message):
     print("AutoMove requested from client")
     global state
-    for i in range(33):
+    for i in range(50):
         state = state.next_state()
         json_state = state.to_json()
         emit("sendstate", json_state)
+        socketio.sleep(0.020)
 
 @socketio.on("selecthex")
 def select_hex(hex):
@@ -81,10 +82,10 @@ def target_hex(hex):
         move = Move(origin, destination)
         print("Server making move", move)
         # TODO make that raise excpetion
-        if (new_state := state + move):
-            state = new_state
-        else:
-            print("WARNING: bad move")
+        try:
+            state = state + move
+        except Exception as e:
+            raise e
         json_state = state.to_json()
         emit("sendstate", json_state)
     else:
