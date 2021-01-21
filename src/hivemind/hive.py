@@ -3,6 +3,7 @@ import logging
 from copy import deepcopy
 from collections import deque
 from typing import Iterator, List, Tuple
+from functools import cached_property
 
 from .hex import Hex
 from .insect import Insect, Stone, Team
@@ -69,6 +70,7 @@ class Hive(dict):
         logger.debug(list(self.stone_at_hex(neighbor).team for neighbor in self.neighbors(hex)))
         return all(self.stone_at_hex(neighbor).team == team for neighbor in self.neighbors(hex))
 
+    @cached_property
     def one_hive(self) -> List[Hex]:
         """
         Finds articulation points of hive-graph
@@ -250,14 +252,11 @@ class Hive(dict):
 
     def generate_moves(self, team):
         logger.debug(f"Generating moves for team {team}")
-        articulation_points = self.one_hive()
-        logger.debug(f"The articulation points are {articulation_points}")
         for hex, stone in self.get_hex_and_stones_of_team(team):
             logger.debug(f"Found {hex, stone} belonging to {team}")
-            if self.height(hex) == 1 and hex in articulation_points:
+            if self.height(hex) == 1 and hex in self.one_hive:
                 logger.debug(f"{hex, stone} can't be moved due to one-hive")
                 continue
-
             for destination in self.generate_moves_for_stone(stone, hex):
                 logger.debug(f"Found destination {destination} for {stone} at {hex}")
                 yield hex, destination

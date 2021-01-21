@@ -64,10 +64,6 @@ class State:
     def __repr__(self):
         return f"State({self.hive}, {self._bee_move}, {self.turn_number}, {self.availables})"
 
-    @cached_property
-    def articulation_points(self):
-        return self.hive.one_hive()
-
     def to_json(self):
         dump = {}
         dump["hive"] = []
@@ -114,9 +110,8 @@ class State:
             new_hive.add_stone(action.destination, stone)
         new_state.turn_number += 1
         # Unset them so they are recomputed on the new state
-        for attr in ("articulation_points", "possible_actions"):
-            if hasattr(new_state, attr):
-                del new_state.__dict__[attr]
+        if hasattr(new_state, "possible_actions"):
+            del new_state.__dict__["possible_actions"]
         logger.debug(f"Created new state {new_state}")
         return new_state
 
