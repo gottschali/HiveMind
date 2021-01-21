@@ -97,7 +97,7 @@ class State:
         new_hive = new_state.hive
         if isinstance(action, Move):
             # Remove the stone from the old position and add it at the new one
-            stone = new_hive.stone_at_hex(action.origin)
+            stone = new_hive.at(action.origin)
             new_hive.remove_stone(action.origin)
             new_hive.add_stone(action.destination, stone)
         elif isinstance(action, Drop):

@@ -23,27 +23,21 @@ class Hive(dict):
     def __repr__(self):
         return f"Hive({super().__repr__()})"
 
-    def stone_at_hex(self, hex: Hex) -> Stone:
+    def at(self, hex: Hex) -> Stone:
         return self[hex][-1]
 
     def get_root_hex(self):
-        # TODO self may be empty
-        return next(iter(self))
+        if len(self):
+            return next(iter(self))
 
     def remove_stone(self, hex: Hex):
         """
-        Removes the highest insect from the hive at hex.
+        Removes the highest stone from the hive at hex.
         If it was the only one the key gets deleted.
         """
         self[hex].pop()
         if not len(self[hex]):
             del self[hex]
-
-    def get_hex_and_stones_of_team(self, team: Team) -> Iterator[Tuple[Hex, Stone]]:
-        for hex, stack in self.items():
-            stone = self.stone_at_hex(hex)
-            if stone.team == team:
-                yield hex, stone
 
     def add_stone(self, hex: Hex, stone: Stone) -> None:
         if hex not in self:
@@ -66,8 +60,8 @@ class Hive(dict):
 
     def neighbor_team(self, hex: Hex, team: Team) -> bool:
         """ Checks if all adjacent hexes of hex are uniquely of the same team """
-        logger.debug(list(self.stone_at_hex(neighbor).team for neighbor in self.neighbors(hex)))
-        return all(self.stone_at_hex(neighbor).team == team for neighbor in self.neighbors(hex))
+        logger.debug(list(self.at(neighbor).team for neighbor in self.neighbors(hex)))
+        return all(self.at(neighbor).team == team for neighbor in self.neighbors(hex))
 
     def one_hive(self) -> List[Hex]:
         """
