@@ -2,7 +2,7 @@ import math
 import logging
 from copy import deepcopy
 from collections import deque
-from typing import Generator, Iterator, List, Tuple
+from typing import Generator, List, Tuple
 
 from .hex import Hex
 from .insect import Insect, Stone, Team
@@ -44,11 +44,11 @@ class Hive(dict):
         """ Tests if all surrounding hexes of hex are occupied """
         return all(n in self for n in hex.neighbors())
 
-    def neighbors(self, hex: Hex) -> Iterator[Hex]:
+    def neighbors(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Yields all neighboring hexes that are occupied """
         return (neighbor for neighbor in hex.neighbors() if neighbor in self)
 
-    def highest_neighbor_stones(self, hex: Hex) -> Iterator[Stone]:
+    def highest_neighbor_stones(self, hex: Hex) -> Generator[Stone, None, None]:
         """ Yields the highest adjacent insects """
         for n in self.neighbors(hex):
             yield self[n][-1]
@@ -120,7 +120,7 @@ class Hive(dict):
     def height(self, hex: Hex) -> int:
         return len(self[hex]) if hex in self else 0
 
-    def generate_walks_from_hex(self, hex: Hex) -> Iterator[Hex]:
+    def generate_walks_from_hex(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Find neigboring hexes that can be reached in one move (only on the first level)"""
         for a, b, c in hex.circle_iterator():
             if self.height(b): # The destination is occupied
@@ -171,7 +171,7 @@ class Hive(dict):
         """ Finds hexes that can be reached in three steps """
         return self.generate_any_walks_from_hex(hex, lambda x: x == 3)
 
-    def generate_jumps_from_hex(self, hex: Hex) -> Iterator[Hex]:
+    def generate_jumps_from_hex(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Yield all hexes that a grasshopper can jump to """
         for d in Hex.directions: # Consider all possible directions
             offset = Hex(*d)
@@ -181,7 +181,7 @@ class Hive(dict):
                     i += 1
                 yield hex + offset * i
 
-    def generate_climbs_from_hex(self, hex: Hex) -> Iterator[Hex]:
+    def generate_climbs_from_hex(self, hex: Hex) -> Generator[Hex, None, None]:
         # TODO Verify correctness
         hh = self.height(hex)
         if hh > 1: # I. The insect is on elevated level
@@ -198,7 +198,7 @@ class Hive(dict):
             if self.height(b) >= hh:
                 yield b
 
-    def generate_drops(self, team: Team) -> Iterator[Hex]:
+    def generate_drops(self, team: Team) -> Generator[Hex, None, None]:
         """ Finds hexes on which a stone of team could be dropped """
         visited = {}
         # Maybe make iterative
