@@ -1,6 +1,6 @@
 from copy import deepcopy
 import logging
-from typing import Iterator, List, Set
+from typing import Iterator, List, Set, Tuple
 from functools import cached_property
 import random
 import json
@@ -139,29 +139,24 @@ class State:
         return {a for a in self.availables if a.team == self.current_team}
 
     @cached_property
-    def possible_actions(self) -> List[Action]:
+    def possible_actions(self) -> Tuple[Action]:
         """ Generate all legal actions for the current state """
-        # TODO DRY
         opts = []
         drop_stones = self._unique_availables()
         if self.turn_number == 0:
-            return (Drop(stone, Hex(0, 0)) for stone in drop_stones)
+            opts = [Drop(stone, Hex(0, 0)) for stone in drop_stones]
         elif self.turn_number == 1:
-            root = self.hive.get_root_hex()
-            # TODO oneline
-            for hex in root.neighbors():
-                for stone in drop_stones:
-                    yield Drop(stone,hex)
+            neighbours = self.hive.get_root_hex().neighbors()
+            opts = [Drop(stone, hex) for stone in drop_stones for hex in neighbours]
         elif self.turn_number >= 6 and not self.bee_move:
             for drop_hex in self.hive.generate_drops(self.current_team):
-                yield Drop(Stone(Insect.BEE, self.current_team), drop_hex)
+                opts.append(Drop(Stone(Insect.BEE, self.current_team), drop_hex))
         else:
             for drop_hex in self.hive.generate_drops(self.current_team):
-                for stone in drop_stones:
-                    yield Drop(stone, drop_hex)
+                opts.extend(Drop(stone, drop_hex) for stone in drop_stones)
             if self.bee_move:
                 for origin, destination in self.hive.generate_moves(self.current_team):
-                    yield Move(origin, destination)
+                    opts.append(Move(origin, destination))
         return tuple(opts) if opts else (Pass(),)
 
     def possible_actions_for_hex(self, hex):
