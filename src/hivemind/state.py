@@ -146,7 +146,7 @@ class State:
         if self.turn_number == 0:
             opts = [Drop(stone, Hex(0, 0)) for stone in drop_stones]
         elif self.turn_number == 1:
-            neighbours = self.hive.get_root_hex().neighbors()
+            neighbours = self.hive._get_root().neighbors()
             opts = [Drop(stone, hex) for stone in drop_stones for hex in neighbours]
         elif self.turn_number >= 6 and not self.bee_move:
             for drop_hex in self.hive.generate_drops(self.current_team):

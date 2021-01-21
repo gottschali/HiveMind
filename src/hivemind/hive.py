@@ -25,9 +25,6 @@ class Hive(dict):
     def at(self, hex: Hex) -> Stone:
         return self[hex][-1]
 
-    def get_root_hex(self):
-        return next(iter(self))
-
     def remove_stone(self, hex: Hex):
         """
         Removes the highest stone from the hive at hex.
@@ -60,6 +57,9 @@ class Hive(dict):
         """ Checks if all adjacent hexes of hex are uniquely of the same team """
         logger.debug(list(self.at(neighbor).team for neighbor in self.neighbors(hex)))
         return all(self.at(neighbor).team == team for neighbor in self.neighbors(hex))
+
+    def _get_root(self):
+        return next(iter(self))
 
     def one_hive(self) -> List[Hex]:
         """
@@ -111,7 +111,7 @@ class Hive(dict):
                 #   ...  ...
                 articulation_points.add(node)
         try:
-            root = self.get_root_hex()
+            root = self._get_root()
             dfs(root, None, counter)
         except StopIteration:
             pass
@@ -215,7 +215,7 @@ class Hive(dict):
                     dfs(neighbor, node)
         if self:
             # Find empty hexes adjacent to the hive
-            root = self.get_root_hex()
+            root = self._get_root()
             dfs(root, None)
             logger.debug(f"Found empty hexes {empty_hexes}")
             # Not the most efficient solution though
