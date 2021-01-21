@@ -20,6 +20,7 @@ const GREEN = '#859900';
 const canvas = document.querySelector('#c');
 const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
 renderer.setClearColor(BG); // background color
+renderer.setSize(window.innerWidth, window.innerHeight);
 
 // Defines the camera pyramid slant
 const fov = 80; // field of view
@@ -153,11 +154,13 @@ scene.add(camera);
 function compareStone(a, b) {
     return (a.team == b.team) ? a.name < b.name : a.team < b.team;
 }
+
+const dropGeometry = new THREE.CylinderBufferGeometry( 0.1, 0.1, 0.05, 0.6 );
 function makeDropTileInstances(arr) {
     arr.sort(compareStone);
     dropGroup.clear();
     dropArr.length = 0; 
-    var x = -13;
+    var x = -10;
     var prev = null;
     var dy = 0;
     for (const stone of arr) {
@@ -171,7 +174,7 @@ function makeDropTileInstances(arr) {
         prev = stone;
         var material = new THREE.MeshStandardMaterial({color: (stone.team ? MAGENTA : YELLOW),
                                                    polygonOffset: true,
-                                                   polygonOffsetFactor: 5, // positive value pushes polygon further away
+                                                   polygonOffsetFactor: 5,
                                                    polygonOffsetUnits: 1,
                                                    map: textures[insectMap[stone.name]],
                                                    roughness: 0.5,
@@ -181,7 +184,7 @@ function makeDropTileInstances(arr) {
         const tile = new THREE.Mesh(hexGeometry, material);
         tile.rotateX(Math.PI / 2);
         tile.rotateY(Math.PI / 4);
-        tile.position.set(x, 5 + dy, 0);
+        tile.position.set(x, 10 + dy, -10);
         tile.insect = stone.name;
         tile.add( wireframe.clone() ); // Don't add to the scene directly, make it a child
         dropGroup.add(tile);
