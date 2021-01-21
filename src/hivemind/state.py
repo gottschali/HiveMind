@@ -134,7 +134,6 @@ class State:
         """ Check if the game is over """
         return not (self.game_result is None)
 
-    @cached_property
     def _unique_availables(self) -> Set[Stone]:
         """ Returns the unique availables Stones that can be dropped by the current team """
         return {a for a in self.availables if a.team == self.current_team}
@@ -144,20 +143,21 @@ class State:
         """ Generate all legal actions for the current state """
         # TODO DRY
         opts = []
+        drop_stones = self._unique_availables()
         if self.turn_number == 0:
-            return (Drop(stone, Hex(0, 0)) for stone in self._unique_availables)
+            return (Drop(stone, Hex(0, 0)) for stone in drop_stones)
         elif self.turn_number == 1:
             root = self.hive.get_root_hex()
             # TODO oneline
             for hex in root.neighbors():
-                for stone in self._unique_availables():
+                for stone in drop_stones:
                     yield Drop(stone,hex)
         elif self.turn_number >= 6 and not self.bee_move:
             for drop_hex in self.hive.generate_drops(self.current_team):
                 yield Drop(Stone(Insect.BEE, self.current_team), drop_hex)
         else:
             for drop_hex in self.hive.generate_drops(self.current_team):
-                for stone in self._unique_availables():
+                for stone in drop_stones:
                     yield Drop(stone, drop_hex)
             if self.bee_move:
                 for origin, destination in self.hive.generate_moves(self.current_team):
