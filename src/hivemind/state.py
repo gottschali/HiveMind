@@ -174,7 +174,7 @@ class State:
         for action in self.possible_actions:
             yield self + action
 
-    def next_state(self, policy):
+    def next_state(self, policy=random.choice):
         return self + policy(self.possible_actions)
 
 
