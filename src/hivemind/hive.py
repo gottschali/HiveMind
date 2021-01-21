@@ -238,7 +238,7 @@ class Hive(dict):
             raise Exception("Unknown insect")
 
 
-    def generate_moves(self, team):
+    def generate_moves(self, team: Team) -> Generator[Tuple[Hex, Hex], None, None]:
         articulation_points = self.one_hive()
         for hex in (hex for hex in self if self.at(hex).team == team):
             if self.height(hex) == 1 and hex in articulation_points:
