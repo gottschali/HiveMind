@@ -66,7 +66,12 @@ def select_hex(hex):
     print(hex)
     print(state.possible_actions)
     print("Server sending move options", hex)
-    opts = list(state.possible_actions_for_hex(hex))
+    opts = []
+    for action in state.possible_actions:
+        # Currently only moves supporeted
+        if isinstance(action, Move):
+            if action.origin == hex:
+                opts.append(action.destination)
     print(state.bee_move)
     print(opts)
     emit("moveoptions", json.dumps([{"q": h.q, "r": h.r, "h": state.hive.height(h) } for h in opts]))

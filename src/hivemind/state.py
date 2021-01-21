@@ -159,13 +159,6 @@ class State:
                     opts.append(Move(origin, destination))
         return tuple(opts) if opts else (Pass(),)
 
-    def possible_actions_for_hex(self, hex: Hex) -> Iterator[Action]:
-        for action in self.possible_actions:
-            # Currently only moves supporeted
-            if isinstance(action, Move):
-                if action.origin == hex:
-                    yield action.destination
-
     def children(self) -> Tuple[Action]:
         return tuple(self + action for action in self.possible_actions)
 
