@@ -29,7 +29,7 @@ const far = 100;
 const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
 // Set camera position
-camera.position.set( 0, -7, 5 );
+camera.position.set( 0, -15, 7 );
 camera.lookAt(0, 0, 0);
 
 const scene = new THREE.Scene();
@@ -40,7 +40,7 @@ scene.add( ambientLight );
 
 // Creates a fog to hide that the ground is finite
 scene.background = new THREE.Color( BG );
-scene.fog = new THREE.Fog( BG , 11, 44 );
+scene.fog = new THREE.Fog( BG , 30, far );
 
 // Control for moving around the scene
 const controls = new ORBIT.OrbitControls (camera, renderer.domElement);
@@ -72,10 +72,10 @@ const flatHexGeometry = new THREE.BufferGeometry().setFromPoints( points );
 const flatHexMaterial = new THREE.LineBasicMaterial( { color: FG } );
 const flatHexLine = new THREE.Line(flatHexGeometry, flatHexMaterial);
 var planeGroup = new THREE.Group();
-for (var q=-100; q<100; q++ ){
-    for (var r=-100; r<100; r++){
+for (var q=-200; q<200; q++ ){
+    for (var r=-200; r<200; r++){
         const hex = new HEX.Hex(q, r);
-        if (hex.len() < 66) {
+        if (hex.len() < 100) {
             const {x, y} = layout.hexToPixel(hex);
             var flatHexTile = flatHexLine.clone();
             flatHexTile.position.set(x, y, -0.25);
