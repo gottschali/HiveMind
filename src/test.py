@@ -4,7 +4,7 @@ from hivemind.hive import *
 from hivemind.hex import *
 
 root = Root()
-print(root.unique_availables())
+print(root._unique_availables)
 print(root.possible_actions)
 state = root
 i = 0
