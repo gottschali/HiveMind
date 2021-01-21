@@ -26,8 +26,7 @@ class Hive(dict):
         return self[hex][-1]
 
     def get_root_hex(self):
-        if len(self):
-            return next(iter(self))
+        return next(iter(self))
 
     def remove_stone(self, hex: Hex):
         """
