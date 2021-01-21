@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>{% block title %}{% endblock %} - HiveMind</title>
+<title>{% block title %}{% endblock %} HiveMind</title>
 <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"\>
 
@@ -12,17 +12,13 @@
 </head>
 
 <body>
-    <header>
-    <nav>
+<header>
         <h1>HiveMind</h1>
-        <ul>
-            <li><a href="{{ url_for('index') }}">Home</a> </li>
-        </ul>
-    </nav>
-    </header>
+</header>
 
 <section class="content">
     {% block content %}
+
     {% endblock %}
 </section>
 </body>
