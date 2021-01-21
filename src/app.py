@@ -1,7 +1,6 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 
-import random
 import json
 
 from hivemind.state import *
@@ -41,7 +40,7 @@ def test_disconnect():
 def test_move(message):
     print("Move requested from client")
     global state
-    state = state.next_state()
+    state = state.next_state(random.choice)
     json_state = state.to_json()
     print(json_state)
     emit("sendstate", json_state)
@@ -51,7 +50,7 @@ def auto_move(message):
     print("AutoMove requested from client")
     global state
     for i in range(50):
-        state = state.next_state()
+        state = state.next_state(random.choice)
         json_state = state.to_json()
         emit("sendstate", json_state)
         socketio.sleep(0.020)
