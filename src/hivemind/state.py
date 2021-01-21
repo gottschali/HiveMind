@@ -48,23 +48,18 @@ class State:
     - turn_number: int
     Derivable from the atomic information
     - _bee_move
-    - _availables
+    - availables
 
     Only valid states are representable.
     Root is the only starting point and every state is an ancestor of it.
     Any child is yielded from the application of a valid action on the parent state.
     """
-    # TODO: good naming
-    # TODO: Private functions
-    # - avoid recomputation
-    # TODO: behaviour when no moves possible for a player
-    # TODO: Root state as subclass, better ini
-    # TODO: beemove
 
     def __repr__(self):
-        return f"State({self.hive}, {self._bee_move}, {self.turn_number}, {self.availables})"
+        return f"State({self.hive}, {self.turn_number})"
 
     def to_json(self):
+        # TODO
         dump = {}
         dump["hive"] = []
         for hex, stack in self.hive.items():
@@ -102,7 +97,6 @@ class State:
         elif isinstance(action, Drop):
             stone = action.stone
             if stone.insect == Insect.BEE:
-                # TODO setter
                 # Update that the bee is dropped
                 new_state._bee_move[self.current_team.value] = True
             # Remove the dropped stone from the availables and add it to the hive
@@ -164,6 +158,7 @@ class State:
         return tuple(self + action for action in self.possible_actions)
 
     def next_state(self, policy=random.choice) -> "State":
+        """ Takes a policy function that has to select an action out of the tuple ot possibles """
         return self + policy(self.possible_actions)
 
 
@@ -174,8 +169,8 @@ class Root(State):
         self._bee_move = [False, False]
         self.turn_number = 0
         insects = (Insect.BEE,
-                    Insect.SPIDER, Insect.SPIDER,
-                    Insect.ANT, Insect.ANT, Insect.ANT,
-                    Insect.GRASSHOPPER, Insect.GRASSHOPPER, Insect.GRASSHOPPER,
-                    Insect.BEETLE, Insect.BEETLE)
+                   Insect.SPIDER, Insect.SPIDER,
+                   Insect.ANT, Insect.ANT, Insect.ANT,
+                   Insect.GRASSHOPPER, Insect.GRASSHOPPER, Insect.GRASSHOPPER,
+                   Insect.BEETLE, Insect.BEETLE)
         self.availables = [Stone(insect, team) for insect in insects for team in list(Team)]
