@@ -251,7 +251,6 @@ class Hive(dict):
 
 
     def generate_moves(self, team):
-        logger.debug(f"Generating moves for team {team}")
         for hex, stone in self.get_hex_and_stones_of_team(team):
             logger.debug(f"Found {hex, stone} belonging to {team}")
             if self.height(hex) == 1 and hex in self.one_hive:
