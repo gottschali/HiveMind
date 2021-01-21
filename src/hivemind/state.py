@@ -14,10 +14,10 @@ logger = logging.getLogger(__name__)
 
 class Action:
     """ Base class for abstract game action that can be performed in a turn """
-    def __eq__(self, other):
+    def __eq__(self, other: Action) -> bool:
         return self.__dict__ == other.__dict__
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         args = ", ".join((v.__repr__() for v in self.__dict__.values()))
         return f"{type(self).__name__}({args})"
 
@@ -114,16 +114,6 @@ class State:
             del new_state.__dict__["possible_actions"]
         logger.debug(f"Created new state {new_state}")
         return new_state
-
-    def validate_action(self, action: Action) -> bool:
-        logger.debug(f"Validating action: {action}")
-        # TODO Bee latest played in fourth turn
-        if isinstance(action, Move):
-            return self.validate_move(action)
-        elif isinstance(action, Drop):
-            return self.validate_drop(action)
-        else:
-            raise Exception("Action must be either a Move or a Drop")
 
     @property
     def game_result(self):
