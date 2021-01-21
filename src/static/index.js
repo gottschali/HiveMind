@@ -142,6 +142,52 @@ function makeHighlightInstances(hexes) {
     });
 }
 
+var dropArr = [];
+var dropGroup = new THREE.Group();
+dropGroup.position.set(0, 0, -10);
+camera.add(dropGroup);
+scene.add(camera);
+function compareStone(a, b) {
+    return (a.team == b.team) ? a.name < b.name : a.team < b.team;
+}
+function makeDropTileInstances(arr) {
+    arr.sort(compareStone);
+    dropGroup.clear();
+    dropArr.length = 0; 
+    var x = -13;
+    var prev = null;
+    var dy = 0;
+    for (const stone of arr) {
+        console.log(stone);
+        if (prev != null && stone.team == prev.team && stone.name == prev.name) {
+            dy += 1;
+        } else {
+            dy = 0;
+            x += 2;
+        }
+        prev = stone;
+        var material = new THREE.MeshStandardMaterial({color: (stone.team ? MAGENTA : YELLOW),
+                                                   polygonOffset: true,
+                                                   polygonOffsetFactor: 5, // positive value pushes polygon further away
+                                                   polygonOffsetUnits: 1,
+                                                   map: textures[insectMap[stone.name]],
+                                                   roughness: 0.5,
+                                                   metalness: 0.5,
+                                                  });
+        // Add a wireframe
+        const tile = new THREE.Mesh(hexGeometry, material);
+        tile.rotateX(Math.PI / 2);
+        tile.rotateY(Math.PI / 4);
+        tile.position.set(x, 5 + dy, 0);
+        tile.insect = stone.name;
+        tile.add( wireframe.clone() ); // Don't add to the scene directly, make it a child
+        dropGroup.add(tile);
+        console.log(tile);
+        dropArr.push(tile);
+    }
+}
+
+
 // contains all insects
 var tile_group = new THREE.Group();
 scene.add(tile_group);
@@ -181,6 +227,7 @@ function drawState(json) {
         tileArray.push(newInst);
         tile_group.add(newInst);
     }
+    makeDropTileInstances(state.availables);
 }
 
 // Connect to the Socket.IO server.
