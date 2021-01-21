@@ -77,6 +77,20 @@ def select_hex(hex):
     emit("moveoptions", json.dumps([{"q": h.q, "r": h.r, "h": state.hive.height(h) } for h in opts]))
 
 
+@socketio.on("selectdrop")
+def select_drop(payload):
+    insect = Insect(int(payload["data"]))
+    global action_type
+    global origin
+    print(insect)
+    origin = insect
+    action_type = Drop
+    print(state.possible_actions)
+    # opts = [a.destination for a in state.possible_actions if isinstance(a, Drop)]
+    opts = list(state.hive.generate_drops(state.current_team))
+    print("Server sending drop options",opts)
+    emit("moveoptions", json.dumps([{"q": h.q, "r": h.r, "h": 0} for h in opts]))
+
 @socketio.on("targethex")
 def target_hex(hex):
     global state
