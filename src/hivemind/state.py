@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 class Action:
     """ Base class for abstract game action that can be performed in a turn """
-    def __eq__(self, other: Action) -> bool:
+    def __eq__(self, other: "Action") -> bool:
         return self.__dict__ == other.__dict__
 
     def __repr__(self) -> str:
