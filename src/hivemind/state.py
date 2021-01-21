@@ -40,22 +40,26 @@ class Pass(Action):
 
 
 class State:
+    """
+    State contains all information to completely describe each state of the game
+    and some helper functions/attributes to optimize the processing.
+    Necessary information is:
+    - hive: Dict[Hex: List[Stone]]
+    - turn_number: int
+    Derivable from the atomic information
+    - _bee_move
+    - _availables
+
+    Only valid states are representable.
+    Root is the only starting point and every state is an ancestor of it.
+    Any child is yielded from the application of a valid action on the parent state.
+    """
     # TODO: good naming
     # TODO: Private functions
-    # TODO Define specifications (immutability)
-    # - Where is verification needed
     # - avoid recomputation
-    # - lazy computation: only if necessary
     # TODO: behaviour when no moves possible for a player
     # TODO: Root state as subclass, better ini
     # TODO: beemove
-
-
-    def __init__(self, hive, bee_move, turn_number, availables):
-        self.hive = hive
-        self._bee_move = bee_move
-        self.turn_number = turn_number
-        self.availables = availables
 
     def __repr__(self):
         return f"State({self.hive}, {self._bee_move}, {self.turn_number}, {self.availables})"
