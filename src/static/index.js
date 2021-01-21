@@ -19,7 +19,7 @@ const GREEN = '#859900';
 // Draw on the canvas
 const canvas = document.querySelector('#c');
 const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
-renderer.setClearColor(FG); // background color
+renderer.setClearColor(BG); // background color
 
 // Defines the camera pyramid slant
 const fov = 80; // field of view
@@ -29,7 +29,7 @@ const far = 100;
 const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
 // Set camera position
-camera.position.set( 0, -15, 7 );
+camera.position.set( 0, -15, 20 );
 camera.lookAt(0, 0, 0);
 
 const scene = new THREE.Scene();
@@ -39,8 +39,9 @@ ambientLight.position.set( 10, -10, 15 );
 scene.add( ambientLight );
 
 // Creates a fog to hide that the ground is finite
-scene.background = new THREE.Color( BG );
-scene.fog = new THREE.Fog( BG , 30, far );
+// Disabled for performance
+// scene.background = new THREE.Color( BG );
+// scene.fog = new THREE.Fog( BG , 30, far );
 
 // Control for moving around the scene
 const controls = new ORBIT.OrbitControls (camera, renderer.domElement);
@@ -51,6 +52,7 @@ controls.maxAzimuthAngle = Math.PI / 2;
 controls.minAzimuthAngle = -Math.PI / 2;
 controls.maxDistance = 90;
 controls.minDistance = 5;
+controls.update();
 
 // Setting up Hexlib
 const orientation = HEX.Layout.flat;
@@ -72,15 +74,15 @@ const flatHexGeometry = new THREE.BufferGeometry().setFromPoints( points );
 const flatHexMaterial = new THREE.LineBasicMaterial( { color: FG } );
 const flatHexLine = new THREE.Line(flatHexGeometry, flatHexMaterial);
 var planeGroup = new THREE.Group();
-for (var q=-200; q<200; q++ ){
-    for (var r=-200; r<200; r++){
-        const hex = new HEX.Hex(q, r);
-        if (hex.len() < 100) {
-            const {x, y} = layout.hexToPixel(hex);
-            var flatHexTile = flatHexLine.clone();
-            flatHexTile.position.set(x, y, -0.25);
-            planeGroup.add(flatHexTile);
-        }
+const radius = 10;
+for (var q = -radius; q <= radius; q++) {
+    var r1 = Math.max(-radius, -q - radius);
+    var r2 = Math.min( radius, -q + radius);
+    for (var r = r1; r <= r2; r++) {
+        const {x, y} = layout.hexToPixel(new HEX.Hex(q, r));
+        var flatHexTile = flatHexLine.clone();
+        flatHexTile.position.set(x, y, -0.25);
+        planeGroup.add(flatHexTile);
     }
 }
 scene.add(planeGroup);
@@ -140,6 +142,7 @@ function makeHighlightInstances(hexes) {
         highlightGroup.add(tile);
         highlightArray.push(tile);
     });
+    render();
 }
 
 var dropArr = [];
@@ -193,7 +196,6 @@ var tile_group = new THREE.Group();
 scene.add(tile_group);
 
 function render() {
-    controls.update();
     if (resizeRendererTodisplaySize(renderer)) {
         // update camera settings if the screen is resized
         camera.aspect = canvas.clientWidth / canvas.clientHeight;
@@ -201,7 +203,7 @@ function render() {
     }
     renderer.render(scene, camera); // Actual rendering
     // continue looping
-    requestAnimationFrame(render);
+    // requestAnimationFrame(render);
 }
 
 function resizeRendererTodisplaySize(renderer) {
@@ -228,6 +230,7 @@ function drawState(json) {
         tile_group.add(newInst);
     }
     makeDropTileInstances(state.availables);
+    render();
 }
 
 // Connect to the Socket.IO server.
@@ -324,6 +327,7 @@ function onDocumentMouseDown( event ) {
     var intersectsDrop = raycaster.intersectObjects( dropArr );
     console.log(intersects, intersectsTarget, intersectsDrop);
     if ( intersectsTarget.length > 0 ) {
+
         var target = intersectsTarget[ 0 ];
         const newHex = layout.pixelToHex(target.point).round();
         console.log(newHex);
@@ -368,5 +372,12 @@ function onDocumentMouseDown( event ) {
 }
 canvas.addEventListener( "click", onDocumentMouseDown );
 
-render(); // Start the render loop
+// call this only in static scenes (i.e., if there is no animation loop)
+controls.addEventListener( 'change', render ); 
 
+window.addEventListener('resize', render);
+window.addEventListener('keydown', (e) => {
+    e.preventDefault();
+});
+
+render(); // Init Render
