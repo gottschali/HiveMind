@@ -199,22 +199,6 @@ class Hive(dict):
             if self.height(b) >= hh:
                 yield b
 
-    def generate_moves_for_stone(self, stone: Stone, hex: Hex) -> Iterator[Hex]:
-        """ Yield possible move destination hexes for insect by name """
-        if stone.insect == Insect.BEE:
-            return self.generate_walks_from_hex(hex)
-        elif stone.insect == Insect.SPIDER:
-            return self.generate_spider_walks_from_hex(hex)
-        elif stone.insect == Insect.ANT:
-            return self.generate_any_walks_from_hex(hex)
-        elif stone.insect == Insect.GRASSHOPPER:
-            return self.generate_jumps_from_hex(hex)
-        elif stone.insect == Insect.BEETLE:
-            return self.generate_climbs_from_hex(hex)
-        else:
-            # TODO better excpetion
-            raise Exception("Unknown insect")
-
     def generate_drops(self, team: Team) -> Iterator[Hex]:
         """ Finds hexes on which an insect of team could be dropped """
         empty_hexes = set()
@@ -240,14 +224,28 @@ class Hive(dict):
         else: # The hive is empty -> only the Origin is valid / everything is valid
             yield Hex()
 
+    def _generate_moves_from(self, hex: Hex) -> Iterator[Hex]:
+        """ Yield possible move destination hexes for insect by name """
+        stone = self.at(hex)
+        if stone.insect == Insect.BEE:
+            yield from self.generate_walks_from_hex(hex)
+        elif stone.insect == Insect.SPIDER:
+            yield from self.generate_spider_walks_from_hex(hex)
+        elif stone.insect == Insect.ANT:
+            yield from self.generate_any_walks_from_hex(hex)
+        elif stone.insect == Insect.GRASSHOPPER:
+            yield from self.generate_jumps_from_hex(hex)
+        elif stone.insect == Insect.BEETLE:
+            yield from self.generate_climbs_from_hex(hex)
+        else:
+            # TODO better excpetion
+            raise Exception("Unknown insect")
+
+
     def generate_moves(self, team):
         articulation_points = self.one_hive()
         for hex in (hex for hex in self if self.at(hex).team == team):
-            stone = self.at(hex)
-            logger.debug(f"Found {hex, stone} belonging to {team}")
             if self.height(hex) == 1 and hex in articulation_points:
-                logger.debug(f"{hex, stone} can't be moved due to one-hive")
                 continue
-            for destination in self.generate_moves_for_stone(stone, hex):
-                logger.debug(f"Found destination {destination} for {stone} at {hex}")
+            for destination in self._generate_moves_from(hex):
                 yield hex, destination
