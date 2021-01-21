@@ -1,6 +1,6 @@
 from copy import deepcopy
 import logging
-from typing import Iterator, List, Set
+from typing import Iterator, List
 from functools import cached_property
 import random
 import json
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 class Action:
     """ Base class for abstract game action that can be performed in a turn """
-    def __eq__(self, other: "Action") -> bool:
+    def __eq__(self, other: Action) -> bool:
         return self.__dict__ == other.__dict__
 
     def __repr__(self) -> str:
@@ -118,13 +118,12 @@ class State:
     @property
     def game_result(self):
         """ If a queen is completely surrounded the other player wins """
-        # Maybe move to Hive
         white_lost = black_lost = False
         for hex, stones in self.hive.items():
             stone = stones[0]
             if stone.insect == Insect.BEE:
                 if self.hive.hex_surrounded(hex):
-                    if stone.team == Team.WHITE:
+                    if stone.team == team.WHITE:
                         white_lost = True
                     else:
                         black_lost = True
@@ -132,37 +131,40 @@ class State:
 
     def is_game_over(self) -> bool:
         """ Check if the game is over """
-        return not (self.game_result is None)
+        return not self.game_result is None
 
-    @cached_property
-    def _unique_availables(self) -> Set[Stone]:
-        """ Returns the unique availables Stones that can be dropped by the current team """
+    def unique_availables(self):
+        # Unique only from team
         return {a for a in self.availables if a.team == self.current_team}
 
-    @cached_property
-    def possible_actions(self) -> List[Action]:
+    def generate_actions(self) -> Iterator[Move]:
         """ Generate all legal actions for the current state """
         # TODO DRY
-        opts = []
         if self.turn_number == 0:
-            return (Drop(stone, Hex(0, 0)) for stone in self._unique_availables)
+            # TODO oneline
+            for stone in self.unique_availables():
+                yield Drop(stone, Hex(0, 0))
         elif self.turn_number == 1:
             root = self.hive.get_root_hex()
             # TODO oneline
             for hex in root.neighbors():
-                for stone in self._unique_availables():
+                for stone in self.unique_availables():
                     yield Drop(stone,hex)
         elif self.turn_number >= 6 and not self.bee_move:
             for drop_hex in self.hive.generate_drops(self.current_team):
                 yield Drop(Stone(Insect.BEE, self.current_team), drop_hex)
         else:
             for drop_hex in self.hive.generate_drops(self.current_team):
-                for stone in self._unique_availables():
+                for stone in self.unique_availables():
                     yield Drop(stone, drop_hex)
             if self.bee_move:
                 for origin, destination in self.hive.generate_moves(self.current_team):
                     yield Move(origin, destination)
-        return tuple(opts) if opts else (Pass(),)
+
+    @cached_property
+    def possible_actions(self):
+        opts = tuple(self.generate_actions())
+        return opts if opts else (Pass(),)
 
     def possible_actions_for_hex(self, hex):
         for action in self.possible_actions:
