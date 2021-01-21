@@ -160,9 +160,10 @@ class State:
         return tuple(opts) if opts else (Pass(),)
 
     def children(self) -> Tuple[Action]:
+        """ Returns a tuple of all possible child states """
         return tuple(self + action for action in self.possible_actions)
 
-    def next_state(self, policy=random.choice):
+    def next_state(self, policy=random.choice) -> "State":
         return self + policy(self.possible_actions)
 
 
