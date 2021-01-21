@@ -106,6 +106,19 @@ def target_hex(hex):
             raise e
         json_state = state.to_json()
         emit("sendstate", json_state)
+    if action_type == Drop:
+        move = Drop(Stone(origin, state.current_team), destination)
+        print("Server making move", move)
+        # TODO make that raise excpetion
+        print("Possible", state.possible_actions)
+        print("move", move)
+        try:
+            state = state + move
+        except Exception as e:
+            raise e
+        json_state = state.to_json()
+        emit("sendstate", json_state)
+
     else:
         raise NotImplementedError
 
