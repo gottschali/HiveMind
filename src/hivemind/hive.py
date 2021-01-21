@@ -11,9 +11,8 @@ logger = logging.getLogger(__name__)
 
 class Hive(dict):
     """
-    Datastructure for the relationship between the insects in a hive.
-    There resides atleast one insect at every key, but they may be staked.
-    As keys Hex are used.
+    Datastructure to store stones in a hive.
+    There resides atleast one stone at every key, but they may be stacked.
     Example:
        Hive[Hex(0, 0)] = [Bee(True), Beetle(False)]
     """
@@ -241,11 +240,12 @@ class Hive(dict):
         else: # The hive is empty -> only the Origin is valid / everything is valid
             yield Hex()
 
-
     def generate_moves(self, team):
-        for hex, stone in self.get_hex_and_stones_of_team(team):
+        articulation_points = self.one_hive()
+        for hex in (hex for hex in self if self.at(hex).team == team):
+            stone = self.at(hex)
             logger.debug(f"Found {hex, stone} belonging to {team}")
-            if self.height(hex) == 1 and hex in self.one_hive():
+            if self.height(hex) == 1 and hex in articulation_points:
                 logger.debug(f"{hex, stone} can't be moved due to one-hive")
                 continue
             for destination in self.generate_moves_for_stone(stone, hex):
