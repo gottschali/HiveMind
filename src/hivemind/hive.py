@@ -2,7 +2,7 @@ import math
 import logging
 from copy import deepcopy
 from collections import deque
-from typing import Iterator, List, Tuple
+from typing import Generator, Iterator, List, Tuple
 
 from .hex import Hex
 from .insect import Insect, Stone, Team
@@ -199,7 +199,7 @@ class Hive(dict):
                 yield b
 
     def generate_drops(self, team: Team) -> Iterator[Hex]:
-        """ Finds hexes on which an insect of team could be dropped """
+        """ Finds hexes on which a stone of team could be dropped """
         empty_hexes = set()
         visited = {}
         def dfs(node, parent):
@@ -217,13 +217,12 @@ class Hive(dict):
             # Find empty hexes adjacent to the hive
             root = self._get_root()
             dfs(root, None)
-            logger.debug(f"Found empty hexes {empty_hexes}")
             # Not the most efficient solution though
             yield from filter(lambda hex: self.neighbor_team(hex, team), empty_hexes)
         else: # The hive is empty -> only the Origin is valid / everything is valid
-            yield Hex()
+            yield Hex(0, 0)
 
-    def _generate_moves_from(self, hex: Hex) -> Iterator[Hex]:
+    def _generate_moves_from(self, hex: Hex) -> Generator[Hex]:
         """ Yield possible move destination hexes for insect by name """
         stone = self.at(hex)
         if stone.insect == Insect.BEE:
