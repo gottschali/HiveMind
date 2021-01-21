@@ -34,6 +34,10 @@ class Drop(Action):
         self.stone = stone
         self.destination = destination
 
+class Pass(Action):
+    """ When no action is possible you have to pass """
+    pass
+
 
 class State:
     # TODO: good naming
@@ -90,12 +94,11 @@ class State:
         assert action in self.possible_actions
         new_state = deepcopy(self)
         new_hive = new_state.hive
-        destination = action.destination
         if isinstance(action, Move):
             # Remove the stone from the old position and add it at the new one
             stone = new_hive.stone_at_hex(action.origin)
             new_hive.remove_stone(action.origin)
-            new_hive.add_stone(destination, stone)
+            new_hive.add_stone(action.destination, stone)
         elif isinstance(action, Drop):
             stone = action.stone
             if stone.insect == Insect.BEE:
@@ -104,7 +107,7 @@ class State:
                 new_state._bee_move[self.current_team.value] = True
             # Remove the dropped stone from the availables and add it to the hive
             new_state.availables.remove(stone)
-            new_hive.add_stone(destination, stone)
+            new_hive.add_stone(action.destination, stone)
         new_state.turn_number += 1
         # Unset them so they are recomputed on the new state
         for attr in ("articulation_points", "possible_actions"):
@@ -171,7 +174,8 @@ class State:
 
     @cached_property
     def possible_actions(self):
-        return tuple(self.generate_actions())
+        opts = tuple(self.generate_actions())
+        return opts if opts else (Pass(),)
 
     def possible_actions_for_hex(self, hex):
         for action in self.possible_actions:
