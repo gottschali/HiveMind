@@ -11,13 +11,15 @@ from .hex import Hex
 
 logger = logging.getLogger(__name__)
 
-# TODO: Origin hex constant
 
-# TODO common things, like custom namedtuple
-# TODO: comparison on action
 class Action:
     """ Base class for abstract game action that can be performed in a turn """
-    pass
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
+    def __repr__(self):
+        args = ", ".join((v.__repr__() for v in self.__dict__.values()))
+        return f"{type(self).__name__}({args})"
 
 class Move(Action):
     """ Move from a origin Hex to a destination Hex """
@@ -25,23 +27,12 @@ class Move(Action):
         self.origin = origin
         self.destination = destination
 
-    def __eq__(self, other):
-        return isinstance(other, Move) and (self.origin, self.destination) ==  (other.origin, other.destination)
-
-    def __repr__(self):
-        return f"Move({self.origin}, {self.destination})"
 
 class Drop(Action):
     """ Drop a stone to a destination Hex """
     def __init__(self, stone: Stone, destination: Hex):
         self.stone = stone
         self.destination = destination
-
-    def __eq__(self, other):
-        return isinstance(other, Drop) and (self.stone, self.destination) ==  (other.stone, other.destination)
-
-    def __repr__(self):
-        return f"Drop('{self.stone}', {self.destination})"
 
 
 class State:
