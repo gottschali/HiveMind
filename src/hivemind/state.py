@@ -72,7 +72,13 @@ class State:
                 temp["height"] = height
                 temp["name"] = stone.insect.value
                 temp["team"] = stone.team.value
-        # dump["availables"] = self.availables
+        dump["availables"] = []
+        for stone in self.availables:
+            dump["availables"].append({})
+            temp = dump["availables"][-1]
+            temp["name"] = stone.insect.value
+            temp["team"] = stone.team.value
+
         # TODO: add more information
         return json.dumps(dump)
 
