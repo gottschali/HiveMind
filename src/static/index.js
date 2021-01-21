@@ -283,6 +283,11 @@ $(document).ready(function() {
         socket.emit('auto_move', {data: 'RequestAutoMove'});
         return false;
     });
+    $('form#resetgame').submit(function(event) {
+        console.log("Client requesting reset");
+        socket.emit('reset');
+        return false;
+    });
     // Request the first move by default
     socket.emit('test', {data: 'RequestMove'});
 });

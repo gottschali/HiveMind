@@ -55,6 +55,14 @@ def auto_move(message):
         emit("sendstate", json_state)
         socketio.sleep(0.020)
 
+@socketio.on("reset")
+def auto_move():
+    print("Resetting to root")
+    global state
+    state = Root()
+    json_state = state.to_json()
+    emit("sendstate", json_state)
+
 @socketio.on("selecthex")
 def select_hex(hex):
     global action_type
