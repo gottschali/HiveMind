@@ -286,6 +286,11 @@ function emitSelectHex(hex) {
     socket.emit('selecthex', {'data': hex});
 }
 
+function emitSelectDrop(insect){
+    console.log("Client selected insect for drop", insect);
+    socket.emit('selectdrop', {'data': insect});
+}
+
 function emitTargetHex(hex) {
     console.log("Client makes move", hex);
     // -> app.py
@@ -296,11 +301,13 @@ function emitTargetHex(hex) {
 }
 
 var previousSelection = null;
+var dropSelection = null;
 
 const IDLE = "idle";
 const WAITING = "waiting";
 const SELECTED = "selected";
 var state = IDLE;
+
 
 function onDocumentMouseDown( event ) {
     console.log("state: ", state);
@@ -314,8 +321,8 @@ function onDocumentMouseDown( event ) {
     raycaster.setFromCamera( mouse3D, camera );
     var intersects = raycaster.intersectObjects( tileArray );
     var intersectsTarget = raycaster.intersectObjects( highlightArray );
-    console.log(intersects, intersectsTarget);
-
+    var intersectsDrop = raycaster.intersectObjects( dropArr );
+    console.log(intersects, intersectsTarget, intersectsDrop);
     if ( intersectsTarget.length > 0 ) {
         var target = intersectsTarget[ 0 ];
         const newHex = layout.pixelToHex(target.point).round();
@@ -324,8 +331,18 @@ function onDocumentMouseDown( event ) {
         // TODO: abstract state change
         highlightGroup.clear();
         emitTargetHex(newHex);
-        }
+    }
+    else if (intersectsDrop.length > 0) {
+        var drop = intersectsDrop[ 0 ].object;
+        console.log(drop);
+        dropSelection = drop.insect;
+        previousSelection = null;
+        state = SELECTED;
+        console.log("selected drop", dropSelection);
+        emitSelectDrop(dropSelection);
+    }
     else if ( intersects.length > 0 ) {
+        dropSelection = null;
         var selected = intersects[ 0 ];
         console.log("selected-highligh", selected, previousSelection);
         if (previousSelection !== null && previousSelection.id == selected.object.id) {
