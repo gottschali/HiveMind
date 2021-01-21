@@ -200,8 +200,8 @@ class Hive(dict):
 
     def generate_drops(self, team: Team) -> Iterator[Hex]:
         """ Finds hexes on which a stone of team could be dropped """
-        empty_hexes = set()
         visited = {}
+        # Maybe make iterative
         def dfs(node, parent):
             if node in visited:
                 return
@@ -210,19 +210,17 @@ class Hive(dict):
                 if neighbor == parent:
                     continue
                 if neighbor not in self:
-                    empty_hexes.add(neighbor)
+                    if self.at(node).team == team:
+                        if self.neighbor_team(neighbor, team):
+                            yield neighbor
                 else:
-                    dfs(neighbor, node)
+                    yield from dfs(neighbor, node)
         if self:
-            # Find empty hexes adjacent to the hive
-            root = self._get_root()
-            dfs(root, None)
-            # Not the most efficient solution though
-            yield from filter(lambda hex: self.neighbor_team(hex, team), empty_hexes)
+            yield from dfs(self._get_root(), None)
         else: # The hive is empty -> only the Origin is valid / everything is valid
             yield Hex(0, 0)
 
-    def _generate_moves_from(self, hex: Hex) -> Generator[Hex]:
+    def _generate_moves_from(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Yield possible move destination hexes for insect by name """
         stone = self.at(hex)
         if stone.insect == Insect.BEE:
