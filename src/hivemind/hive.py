@@ -67,11 +67,11 @@ class Hive(dict):
     def generate_walks_from_hex(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Find neigboring hexes that can be reached in one move (only on the first level)"""
         for a, b, c in hex.circle_iterator():
-            if self.height(b): # The destination is occupied
+            if b in self: # The destination is occupied
                 continue
             # One of a and c must be occupied as the insect must keep contact to the hive
             # But not both otherwise it cannot pass -> XOR
-            if (self.height(a)) ^ (self.height(c)):
+            if (a in self) ^ (c in self):
                 yield b
 
     def generate_any_walks_from_hex(self, hex: Hex, func=None) -> Generator[Hex, None, None]:
