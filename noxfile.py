@@ -1,9 +1,20 @@
 import nox
+import tempfile
 
+nox.options.sessions = "lint", "mypy", "tests"
+locations = "src/hivemind", "tests"
 
-nox.options.sessions = "lint", "tests"
-locations = "src", "tests", "noxfile.py"
-
+def install_with_constraints(session, *args, **kwargs):
+    with tempfile.NamedTemporaryFile() as requirements:
+        session.run(
+            "poetry",
+            "export",
+            "--dev",
+            "--format=requirements.txt",
+            f"--output={requirements.name}",
+            external=True,
+        )
+        session.install(f"--constraint={requirements.name}", *args, **kwargs)
 
 @nox.session
 def tests(session):
