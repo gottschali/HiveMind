@@ -1,12 +1,14 @@
 # Adapted from -- http://www.redblobgames.com/grids/hexagons/
 from typing import Generator, Tuple
 
+
 class Hex:
     """
     Represents a tile in a hexagonal grid.
     q and r represent the axial coordinates.
     The third cube coordinate s is calculated implicitly.
     """
+
     directions = (
         (+1, -1, 0),
         (+1, 0, -1),
@@ -14,7 +16,8 @@ class Hex:
         (-1, +1, 0),
         (-1, 0, +1),
         (0, -1, +1),
-        )
+    )
+
     def __init__(self, q: int = 0, r: int = 0, _=None):
         self.q = q
         self.r = r
@@ -60,5 +63,3 @@ class Hex:
     def adjacent(self, other: "Hex") -> bool:
         """ Returns whether two hexes share a common side """
         return other in self.neighbours()
-
-

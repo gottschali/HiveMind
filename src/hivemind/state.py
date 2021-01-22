@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 class Action:
     """ Base class for abstract game action that can be performed in a turn """
+
     def __eq__(self, other: object) -> bool:
         return self.__dict__ == other.__dict__
 
@@ -21,8 +22,10 @@ class Action:
         args = ", ".join((v.__repr__() for v in self.__dict__.values()))
         return f"{type(self).__name__}({args})"
 
+
 class Move(Action):
     """ Move from a origin Hex to a destination Hex """
+
     def __init__(self, origin: Hex, destination: Hex):
         self.origin = origin
         self.destination = destination
@@ -30,12 +33,15 @@ class Move(Action):
 
 class Drop(Action):
     """ Drop a stone to a destination Hex """
+
     def __init__(self, stone: Stone, destination: Hex):
         self.stone = stone
         self.destination = destination
 
+
 class Pass(Action):
     """ When no action is possible you have to pass """
+
     pass
 
 
@@ -54,16 +60,27 @@ class State:
     Root is the only starting point and every state is an ancestor of it.
     Any child is yielded from the application of a valid action on the parent state.
     """
+
     def __init__(self):
         self.hive = Hive()
         self._bee_move = [False, False]
         self.turn_number = 0
-        insects = (Insect.BEE,
-                   Insect.SPIDER, Insect.SPIDER,
-                   Insect.ANT, Insect.ANT, Insect.ANT,
-                   Insect.GRASSHOPPER, Insect.GRASSHOPPER, Insect.GRASSHOPPER,
-                   Insect.BEETLE, Insect.BEETLE)
-        self.availables = [Stone(insect, team) for insect in insects for team in list(Team)]
+        insects = (
+            Insect.BEE,
+            Insect.SPIDER,
+            Insect.SPIDER,
+            Insect.ANT,
+            Insect.ANT,
+            Insect.ANT,
+            Insect.GRASSHOPPER,
+            Insect.GRASSHOPPER,
+            Insect.GRASSHOPPER,
+            Insect.BEETLE,
+            Insect.BEETLE,
+        )
+        self.availables = [
+            Stone(insect, team) for insect in insects for team in list(Team)
+        ]
 
     def __repr__(self):
         return f"State({self.hive}, {self.turn_number})"
@@ -143,9 +160,9 @@ class State:
         opts: List[Action] = []
         drop_stones = self._unique_availables()
         if self.turn_number == 0:
-             return tuple(Drop(stone, Hex(0, 0)) for stone in drop_stones)
+            return tuple(Drop(stone, Hex(0, 0)) for stone in drop_stones)
         elif self.turn_number == 1:
-             return tuple(Drop(stone, Hex(0, -1)) for stone in drop_stones)
+            return tuple(Drop(stone, Hex(0, -1)) for stone in drop_stones)
         elif self.turn_number >= 6 and not self.move_allowed:
             for drop_hex in self.hive.generate_drops(self.current_team):
                 opts.append(Drop(Stone(Insect.BEE, self.current_team), drop_hex))
@@ -165,4 +182,3 @@ class State:
     def next_state(self, policy=random.choice) -> "State":
         """ Takes a policy function that has to select an action out of the tuple ot possibles """
         return self + policy(self.possible_actions)
-

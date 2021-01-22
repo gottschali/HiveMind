@@ -7,6 +7,7 @@ from .insect import Insect, Stone, Team
 
 logger = logging.getLogger(__name__)
 
+
 class Hive(dict):
     """
     Datastructure to store stones in a hive.
@@ -14,6 +15,7 @@ class Hive(dict):
     Example:
        Hive[Hex(0, 0)] = [Bee(True), Beetle(False)]
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -51,7 +53,15 @@ class Hive(dict):
                         white_lost = True
                     else:
                         black_lost = True
-        return 0 if white_lost and black_lost else 1 if white_lost else -1 if black_lost else None
+        return (
+            0
+            if white_lost and black_lost
+            else 1
+            if white_lost
+            else -1
+            if black_lost
+            else None
+        )
 
     def neighbours(self, hex: Hex) -> Tuple[Hex, ...]:
         """ Yields all neighbouring hexes that are occupied """
@@ -63,10 +73,12 @@ class Hive(dict):
     def height(self, hex: Hex) -> int:
         return len(self[hex]) if hex in self else 0
 
-    def generate_single_walks(self, hex: Hex, ignore=None) -> Generator[Hex, None, None]:
+    def generate_single_walks(
+        self, hex: Hex, ignore=None
+    ) -> Generator[Hex, None, None]:
         """ Find neigboring hexes that can be reached in one move (only on the first level)"""
         for a, b, c in hex.circle_iterator():
-            if b in self: # The destination is occupied
+            if b in self:  # The destination is occupied
                 continue
             # One of a and c must be occupied as the insect must keep contact to the hive
             # But not both otherwise it cannot pass -> XOR
@@ -115,25 +127,25 @@ class Hive(dict):
 
     def generate_jumps(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Yield all hexes that a grasshopper can jump to """
-        for d in Hex.directions: # Consider all possible directions
+        for d in Hex.directions:  # Consider all possible directions
             offset = Hex(*d)
-            if hex + offset in self: # It must jump over atleast one insect
+            if hex + offset in self:  # It must jump over atleast one insect
                 i = 2
-                while hex + offset * i in self: # continue until an empty hex is found
+                while hex + offset * i in self:  # continue until an empty hex is found
                     i += 1
                 yield hex + offset * i
 
     def generate_climbs(self, hex: Hex) -> Generator[Hex, None, None]:
         # TODO Check the rulebook
         hh = self.height(hex)
-        if hh > 1: # I. The insect is on elevated level
+        if hh > 1:  # I. The insect is on elevated level
             for a, b, c in hex.circle_iterator():
                 if self.height(b) < hh:
                     # Blocked if both sides have high larger equal to the own height
                     # II.1 The insect moves on the same level or jump down
                     if (self.height(a) < hh) or (self.height(c) < hh):
                         yield b
-        else: # II. The insect is on the ground level, move normal there
+        else:  # II. The insect is on the ground level, move normal there
             yield from self.generate_single_walks(hex)
         # III. Climbing up
         for a, b, c in hex.circle_iterator():
@@ -145,9 +157,13 @@ class Hive(dict):
 
     def generate_drops(self, team: Team) -> Tuple[Hex, ...]:
         """ Finds hexes on which a stone of team could be dropped """
+
         def check_neigbour_team(hex: Hex) -> bool:
             """ Checks if all adjacent hexes of hex are uniquely of the same team """
-            return all(self.at(neighbour).team == team for neighbour in self.neighbours(hex))
+            return all(
+                self.at(neighbour).team == team for neighbour in self.neighbours(hex)
+            )
+
         candidates: Set[Hex] = set()
         for node in self:
             candidates.update(e for e in node.neighbours() if not e in self)
@@ -170,6 +186,7 @@ class Hive(dict):
         visited = set()
         index = {}
         articulation_points = set()
+
         def dfs(node, parent, counter):
             """ Performs a depth first search on node at depth counter """
             visited.add(node)
@@ -178,12 +195,12 @@ class Hive(dict):
             lowlink[node] = counter
             children = 0
             for neighbour in self.neighbours(node):
-                if neighbour == parent: # Prevent infinite loops
+                if neighbour == parent:  # Prevent infinite loops
                     continue
-                if neighbour in visited: # A backlink is found
+                if neighbour in visited:  # A backlink is found
                     lowlink[node] = min(lowlink[node], index[neighbour])
                 else:
-                    dfs(neighbour, node, counter) # Recurse the dfs on the child
+                    dfs(neighbour, node, counter)  # Recurse the dfs on the child
                     # Backpropagate the lowest link
                     # An ancestor further down in the tree may have higher backlink
                     lowlink[node] = min(lowlink[node], lowlink[neighbour])
@@ -197,20 +214,20 @@ class Hive(dict):
                         # Else the node is the only link to the upper tree
                         # it is necessarily an articulation point
                         articulation_points.add(node)
-                    children += 1 # A neighbour that is not visited is a new child
+                    children += 1  # A neighbour that is not visited is a new child
             if parent == None and children >= 2:
                 # Root has no parent and is articulation point iff it has more than 1 children
                 #      R
                 #     / \
                 #   ...  ...
                 articulation_points.add(node)
+
         try:
             root = self._get_root()
             dfs(root, None, 0)
         except StopIteration:
             pass
         return articulation_points
-
 
     def _generate_moves_from(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Generator that yield possible move destination hexes for the stone at hex """
