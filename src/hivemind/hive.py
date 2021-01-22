@@ -220,7 +220,7 @@ class Hive(dict):
             yield Hex(0, 0)
 
     def _generate_moves_from(self, hex: Hex) -> Generator[Hex, None, None]:
-        """ Yield possible move destination hexes for insect by name """
+        """ Generator that yield possible move destination hexes for the stone at hex """
         move_map = {
             Insect.BEE: self.generate_walks_from_hex,
             Insect.SPIDER: self.generate_spider_walks_from_hex,
@@ -231,8 +231,10 @@ class Hive(dict):
         yield from move_map[self.at(hex).insect](hex)
 
     def generate_moves(self, team: Team) -> Generator[Tuple[Hex, Hex], None, None]:
+        """ Generator that yield pairs of origin, destination for moves for a team """
         articulation_points = self.one_hive()
         for hex in (hex for hex in self if self.at(hex).team == team):
+            # The stone is not moveable if it violates the 'one hive' property
             if self.height(hex) == 1 and hex in articulation_points:
                 continue
             for destination in self._generate_moves_from(hex):
