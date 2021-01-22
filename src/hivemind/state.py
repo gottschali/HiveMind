@@ -133,10 +133,9 @@ class State:
         opts = []
         drop_stones = self._unique_availables()
         if self.turn_number == 0:
-            opts = [Drop(stone, Hex(0, 0)) for stone in drop_stones]
+             return tuple(Drop(stone, Hex(0, 0)) for stone in drop_stones)
         elif self.turn_number == 1:
-            neighbours = self.hive._get_root().neighbours()
-            opts = [Drop(stone, hex) for stone in drop_stones for hex in neighbours]
+             return tuple(Drop(stone, Hex(0, -1)) for stone in drop_stones)
         elif self.turn_number >= 6 and not self.move_allowed:
             for drop_hex in self.hive.generate_drops(self.current_team):
                 opts.append(Drop(Stone(Insect.BEE, self.current_team), drop_hex))
