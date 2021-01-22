@@ -47,7 +47,7 @@ class State:
     - hive: Dict[Hex: List[Stone]]
     - turn_number: int
     Derivable from the atomic information
-    - _bee_move
+    - move_allowed
     - availables
 
     Only valid states are representable.
@@ -87,7 +87,7 @@ class State:
         return Team.WHITE if self.turn_number % 2 else Team.BLACK
 
     @property
-    def bee_move(self) -> bool:
+    def move_allowed(self) -> bool:
         return self._bee_move[self.current_team.value]
 
     def __add__(self, action: Action) -> "State":
@@ -137,14 +137,14 @@ class State:
         elif self.turn_number == 1:
             neighbours = self.hive._get_root().neighbours()
             opts = [Drop(stone, hex) for stone in drop_stones for hex in neighbours]
-        elif self.turn_number >= 6 and not self.bee_move:
+        elif self.turn_number >= 6 and not self.move_allowed:
             for drop_hex in self.hive.generate_drops(self.current_team):
                 opts.append(Drop(Stone(Insect.BEE, self.current_team), drop_hex))
         else:
             if drop_stones:
                 for drop_hex in self.hive.generate_drops(self.current_team):
                     opts.extend(Drop(stone, drop_hex) for stone in drop_stones)
-            if self.bee_move:
+            if self.move_allowed:
                 for origin, destination in self.hive.generate_moves(self.current_team):
                     opts.append(Move(origin, destination))
         return tuple(opts) if opts else (Pass(),)

@@ -80,7 +80,7 @@ def select_hex(hex):
         if isinstance(action, Move):
             if action.origin == hex:
                 opts.append(action.destination)
-    print(state.bee_move)
+    print(state.move_allowed)
     print(opts)
     emit("moveoptions", json.dumps([{"q": h.q, "r": h.r, "h": state.hive.height(h) } for h in opts]))
 
