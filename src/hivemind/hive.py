@@ -53,7 +53,7 @@ class Hive(dict):
                         black_lost = True
         return 0 if white_lost and black_lost else 1 if white_lost else -1 if black_lost else None
 
-    def neighbours(self, hex: Hex) -> Tuple[Hex]:
+    def neighbours(self, hex: Hex) -> Tuple[Hex, ...]:
         """ Yields all neighbouring hexes that are occupied """
         return tuple(neighbour for neighbour in hex.neighbours() if neighbour in self)
 
@@ -143,12 +143,12 @@ class Hive(dict):
             if self.height(b) >= hh and not (ha > hh and hc > hh):
                 yield b
 
-    def generate_drops(self, team: Team) -> Tuple[Hex, None, None]:
+    def generate_drops(self, team: Team) -> Tuple[Hex, ...]:
         """ Finds hexes on which a stone of team could be dropped """
         def check_neigbour_team(hex: Hex) -> bool:
             """ Checks if all adjacent hexes of hex are uniquely of the same team """
             return all(self.at(neighbour).team == team for neighbour in self.neighbours(hex))
-        candidates = set()
+        candidates: Hex = set()
         for node in self:
             candidates.update(e for e in node.neighbours() if not e in self)
         drops = tuple(filter(check_neigbour_team, candidates))

@@ -128,7 +128,7 @@ class State:
         return {a for a in self.availables if a.team == self.current_team}
 
     @cached_property
-    def possible_actions(self) -> Tuple[Action]:
+    def possible_actions(self) -> Tuple[Action, ...]:
         """ Generate all legal actions for the current state """
         opts = []
         drop_stones = self._unique_availables()
@@ -148,7 +148,7 @@ class State:
                     opts.append(Move(origin, destination))
         return tuple(opts) if opts else (Pass(),)
 
-    def children(self) -> Tuple[Action]:
+    def children(self) -> Tuple[Action, ...]:
         """ Returns a tuple of all possible child states """
         return tuple(self + action for action in self.possible_actions)
 
