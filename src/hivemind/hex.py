@@ -1,5 +1,5 @@
 # Adapted from -- http://www.redblobgames.com/grids/hexagons/
-from typing import Generator, Tuple
+from typing import Any, Generator, Tuple
 
 
 class Hex:
@@ -18,7 +18,7 @@ class Hex:
         (0, -1, +1),
     )
 
-    def __init__(self, q: int = 0, r: int = 0, _=None):
+    def __init__(self, q: int = 0, r: int = 0, _: Any = None):
         self.q = q
         self.r = r
         self.s = -(q + r)

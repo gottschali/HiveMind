@@ -1,13 +1,13 @@
-from copy import deepcopy
-import logging
-from typing import *
-from functools import cached_property
-import random
 import json
+import logging
+import random
+from copy import deepcopy
+from functools import cached_property
+from typing import *
 
-from .insect import Insect, Team, Stone
-from .hive import Hive
 from .hex import Hex
+from .hive import Hive
+from .insect import Insect, Stone, Team
 
 logger = logging.getLogger(__name__)
 

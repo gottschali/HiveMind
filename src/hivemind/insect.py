@@ -1,6 +1,7 @@
 from enum import IntEnum
 from typing import NamedTuple
 
+
 # Enumeration for all Insect classes
 class Insect(IntEnum):
     BEE = 1
