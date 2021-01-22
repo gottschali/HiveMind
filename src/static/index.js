@@ -69,8 +69,10 @@ var textures = {};
 names.forEach( name => textures[name] = loader.load( `./static/assets/${name}.jpeg` ) );
 
 // Add a flat hex plane
-const points = [];
-layout.polygonCorners(new HEX.Hex(0, 0)).forEach(({x, y}) => points.push( new THREE.Vector3(x, y, 0)));
+var points = [];
+var corners =  layout.polygonCorners(new HEX.Hex(0, 0));
+corners.forEach(({x, y}) => points.push( new THREE.Vector3(x, y, 0)));
+points.push(corners[0]);
 const flatHexGeometry = new THREE.BufferGeometry().setFromPoints( points );
 const flatHexMaterial = new THREE.LineBasicMaterial( { color: FG } );
 const flatHexLine = new THREE.Line(flatHexGeometry, flatHexMaterial);
