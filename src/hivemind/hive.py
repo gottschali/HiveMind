@@ -40,10 +40,6 @@ class Hive(dict):
         else:
             self[hex].append(stone)
 
-    def hex_surrounded(self, hex: Hex) -> bool:
-        """ Tests if all surrounding hexes of hex are occupied """
-        return all(n in self for n in hex.neighbors())
-
     def neighbors(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Yields all neighboring hexes that are occupied """
         return (neighbor for neighbor in hex.neighbors() if neighbor in self)
