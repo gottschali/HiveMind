@@ -1,5 +1,3 @@
-import pytest
-
 from hivemind.hex import Hex
 
 
