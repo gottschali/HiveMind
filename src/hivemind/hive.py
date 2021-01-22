@@ -64,7 +64,7 @@ class Hive(dict):
     def height(self, hex: Hex) -> int:
         return len(self[hex]) if hex in self else 0
 
-    def generate_walks_from_hex(self, hex: Hex) -> Generator[Hex, None, None]:
+    def generate_single_walks(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Find neigboring hexes that can be reached in one move (only on the first level)"""
         for a, b, c in hex.circle_iterator():
             if b in self: # The destination is occupied
@@ -74,7 +74,7 @@ class Hive(dict):
             if (a in self) ^ (c in self):
                 yield b
 
-    def generate_any_walks_from_hex(self, hex: Hex, func=None) -> Generator[Hex, None, None]:
+    def generate_walks(self, hex: Hex, func=None) -> Generator[Hex, None, None]:
         """
         Runs a BFS on the edge of the hive. Return all hexes that are reachable this way
         Func can be a unary function that filters out distances
@@ -96,7 +96,7 @@ class Hive(dict):
         while queue:
             vertex = queue.popleft()
             visited.add(vertex)
-            for neighbour in new.generate_walks_from_hex(vertex):
+            for neighbour in new.generate_single_walks(vertex):
                 if neighbour in visited:
                     continue
                 parent[neighbour] = vertex
@@ -110,11 +110,11 @@ class Hive(dict):
             visited.discard(hex)
             yield from visited
 
-    def generate_spider_walks_from_hex(self, hex: Hex) -> Generator[Hex, None, None]:
+    def generate_spider_walks(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Finds hexes that can be reached in three steps """
-        return self.generate_any_walks_from_hex(hex, lambda x: x == 3)
+        return self.generate_walks(hex, lambda x: x == 3)
 
-    def generate_jumps_from_hex(self, hex: Hex) -> Generator[Hex, None, None]:
+    def generate_jumps(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Yield all hexes that a grasshopper can jump to """
         for d in Hex.directions: # Consider all possible directions
             offset = Hex(*d)
@@ -124,7 +124,7 @@ class Hive(dict):
                     i += 1
                 yield hex + offset * i
 
-    def generate_climbs_from_hex(self, hex: Hex) -> Generator[Hex, None, None]:
+    def generate_climbs(self, hex: Hex) -> Generator[Hex, None, None]:
         # TODO Verify correctness
         hh = self.height(hex)
         if hh > 1: # I. The insect is on elevated level
@@ -135,7 +135,7 @@ class Hive(dict):
                     if (self.height(a) < hh) or (self.height(c) < hh):
                         yield b
         else: # II. The insect is on the ground level, move normal there
-            yield from self.generate_walks_from_hex(hex)
+            yield from self.generate_single_walks(hex)
         # III. Climbing up is always possible
         for b in self.neighbours(hex):
             if self.height(b) >= hh:
@@ -213,11 +213,11 @@ class Hive(dict):
     def _generate_moves_from(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Generator that yield possible move destination hexes for the stone at hex """
         move_map = {
-            Insect.BEE: self.generate_walks_from_hex,
-            Insect.SPIDER: self.generate_spider_walks_from_hex,
-            Insect.ANT: self.generate_any_walks_from_hex,
-            Insect.GRASSHOPPER: self.generate_jumps_from_hex,
-            Insect.BEETLE: self.generate_climbs_from_hex,
+            Insect.BEE: self.generate_single_walks,
+            Insect.SPIDER: self.generate_spider_walks,
+            Insect.ANT: self.generate_walks,
+            Insect.GRASSHOPPER: self.generate_jumps,
+            Insect.BEETLE: self.generate_climbs,
         }
         yield from move_map[self.at(hex).insect](hex)
 
