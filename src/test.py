@@ -20,7 +20,7 @@ console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 
 logger.info('Starting logger')
-a = Root()
+a = State()
 b = a + Drop(Stone(Insect.BEE, Team.BLACK), Hex(0, 0)) # 0
 logger.debug(b.possible_actions)
 c = b + Drop(Stone(Insect.ANT, Team.WHITE), Hex(0, -1)) # 1
@@ -30,7 +30,7 @@ logger.debug(e.possible_actions)
 
 console_handler.setLevel(logging.WARNING)
 def fuzz(n):
-    state = Root()
+    state = State()
     for i in trange(n):
         try:
             state = state.next_state()
