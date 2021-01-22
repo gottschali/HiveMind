@@ -117,17 +117,7 @@ class State:
 
     @property
     def game_result(self):
-        """ If a queen is completely surrounded the other player wins. A draw is also possible """
-        white_lost = black_lost = False
-        for hex, stack in self.hive.items():
-            stone = stack[0]
-            if stone.insect == Insect.BEE:
-                if all(n in self.hive for n in hex.neighbors()):
-                    if stone.team == Team.WHITE:
-                        white_lost = True
-                    else:
-                        black_lost = True
-        return 0 if white_lost and black_lost else 1 if white_lost else -1 if black_lost else None
+        return self.hive.game_result
 
     def is_game_over(self) -> bool:
         """ Check if the game is over """

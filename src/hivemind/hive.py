@@ -40,9 +40,23 @@ class Hive(dict):
         else:
             self[hex].append(stone)
 
-    def neighbours(self, hex: Hex) -> Generator[Hex, None, None]:
+    @property
+    def game_result(self):
+        """ If a queen is completely surrounded the other player wins. A draw is also possible """
+        white_lost = black_lost = False
+        for hex, stack in self.values():
+            stone = stack[0]
+            if stone.insect == Insect.BEE:
+                if len(self.neighbours(hex)) == 6:
+                    if stone.team == Team.WHITE:
+                        white_lost = True
+                    else:
+                        black_lost = True
+        return 0 if white_lost and black_lost else 1 if white_lost else -1 if black_lost else None
+
+    def neighbours(self, hex: Hex) -> Tuple[Hex]:
         """ Yields all neighbouring hexes that are occupied """
-        return (neighbour for neighbour in hex.neighbours() if neighbour in self)
+        return tuple(neighbour for neighbour in hex.neighbours() if neighbour in self)
 
     def highest_neighbour_stones(self, hex: Hex) -> Generator[Stone, None, None]:
         """ Yields the highest adjacent insects """
