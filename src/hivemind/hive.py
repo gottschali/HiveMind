@@ -87,7 +87,7 @@ class Hive(dict):
         """
         visited = set()
         distance = {}
-        queue = deque()
+        queue: Hex = deque()
         queue.append(hex)
         distance[hex] = 0
         visited.add(hex)
