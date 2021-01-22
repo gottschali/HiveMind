@@ -28,26 +28,21 @@ def index():
 
 @socketio.on("connect")
 def test_connect():
-    print("Server Connected")
     emit("my response", {"data": "Connected"})
 
 @socketio.on("disconnect")
 def test_disconnect():
-    print("Server Disconnected")
     emit("disconnect_ack", {"data": "Disconnected"})
 
 @socketio.on("test")
 def test_move(message):
-    print("Move requested from client")
     global state
     state = state.next_state()
     json_state = state.to_json()
-    print(json_state)
     emit("sendstate", json_state)
 
 @socketio.on("auto_move")
 def auto_move(message):
-    print("AutoMove requested from client")
     global state
     for i in range(50):
         state = state.next_state()
@@ -57,7 +52,6 @@ def auto_move(message):
 
 @socketio.on("reset")
 def auto_move():
-    print("Resetting to root")
     global state
     state = State()
     json_state = state.to_json()
@@ -67,21 +61,15 @@ def auto_move():
 def select_hex(hex):
     global action_type
     global origin
-    print(hex)
     hex = Hex(hex["data"]["q"], hex["data"]["r"])
     origin = hex
     action_type = Move
-    print(hex)
-    print(state.possible_actions)
-    print("Server sending move options", hex)
     opts = []
     for action in state.possible_actions:
         # Currently only moves supporeted
         if isinstance(action, Move):
             if action.origin == hex:
                 opts.append(action.destination)
-    print(state.move_allowed)
-    print(opts)
     emit("moveoptions", json.dumps([{"q": h.q, "r": h.r, "h": state.hive.height(h) } for h in opts]))
 
 
@@ -90,23 +78,17 @@ def select_drop(payload):
     insect = Insect(int(payload["data"]))
     global action_type
     global origin
-    print(insect)
     origin = insect
     action_type = Drop
-    print(state.possible_actions)
-    # opts = [a.destination for a in state.possible_actions if isinstance(a, Drop)]
-    opts = list(state.hive.generate_drops(state.current_team))
-    print("Server sending drop options",opts)
+    opts = [a.destination for a in state.possible_actions if isinstance(a, Drop)]
     emit("moveoptions", json.dumps([{"q": h.q, "r": h.r, "h": 0} for h in opts]))
 
 @socketio.on("targethex")
 def target_hex(hex):
     global state
     destination = Hex(hex["data"]["q"], hex["data"]["r"])
-    print(destination)
     if action_type == Move:
         move = Move(origin, destination)
-        print("Server making move", move)
         # TODO make that raise excpetion
         try:
             state = state + move
@@ -116,10 +98,7 @@ def target_hex(hex):
         emit("sendstate", json_state)
     if action_type == Drop:
         move = Drop(Stone(origin, state.current_team), destination)
-        print("Server making move", move)
         # TODO make that raise excpetion
-        print("Possible", state.possible_actions)
-        print("move", move)
         try:
             state = state + move
         except Exception as e:
