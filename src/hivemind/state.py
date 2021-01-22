@@ -158,7 +158,7 @@ class State:
                     opts.append(Move(origin, destination))
         return tuple(opts) if opts else (Pass(),)
 
-    def children(self) -> Tuple[Action, ...]:
+    def children(self) -> Tuple[State, ...]:
         """ Returns a tuple of all possible child states """
         return tuple(self + action for action in self.possible_actions)
 
