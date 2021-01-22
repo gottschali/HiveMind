@@ -34,3 +34,8 @@ def lint(session):
     session.install("flake8", "flake8-black", "flake8-import-order")
     session.run("flake8", *args)
 
+@nox.session
+def mypy(session):
+    args = session.posargs or locations
+    install_with_constraints(session, "mypy")
+    session.run("mypy", *args)
