@@ -22,12 +22,13 @@ class Hive(dict):
         return f"Hive({super().__repr__()})"
 
     def at(self, hex: Hex) -> Stone:
+        """ Returns the highest stone at hex """
         return self[hex][-1]
 
     def remove_stone(self, hex: Hex):
         """
-        Removes the highest stone from the hive at hex.
-        If it was the only one the key gets deleted.
+        Removes the highest stone from the hive at hex
+        If it was the only one the key gets deleted to preserve the invariant
         """
         self[hex].pop()
         if not len(self[hex]):
