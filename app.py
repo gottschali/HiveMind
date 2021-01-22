@@ -109,7 +109,8 @@ def target_hex(hex):
     else:
         raise NotImplementedError
 
-
+def main():
+    socketio.run(app)
 
 if __name__ == '__main__':
-    socketio.run(app)
+    main()
