@@ -16,6 +16,12 @@ def black(session):
     session.run("black", *args)
 
 @nox.session
+def isort(session):
+    args = session.posargs or locations
+    session.install("isort")
+    session.run("isort", *args)
+
+@nox.session
 def lint(session):
     args = session.posargs or locations
     session.install("flake8",
