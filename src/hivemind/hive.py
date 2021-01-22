@@ -58,11 +58,6 @@ class Hive(dict):
         """ Yields all neighbouring hexes that are occupied """
         return tuple(neighbour for neighbour in hex.neighbours() if neighbour in self)
 
-    def neighbour_team(self, hex: Hex, team: Team) -> bool:
-        """ Checks if all adjacent hexes of hex are uniquely of the same team """
-        logger.debug(list(self.at(neighbour).team for neighbour in self.neighbours(hex)))
-        return all(self.at(neighbour).team == team for neighbour in self.neighbours(hex))
-
     def _get_root(self):
         return next(iter(self))
 
@@ -150,6 +145,9 @@ class Hive(dict):
     def generate_drops(self, team: Team) -> Generator[Hex, None, None]:
         """ Finds hexes on which a stone of team could be dropped """
         visited = {}
+        def check_neigbour_team(hex: Hex) -> bool:
+            """ Checks if all adjacent hexes of hex are uniquely of the same team """
+            return all(self.at(neighbour).team == team for neighbour in self.neighbours(hex))
         # Maybe make iterative
         def dfs(node, parent):
             if node in visited:
@@ -160,13 +158,15 @@ class Hive(dict):
                     continue
                 if neighbour not in self:
                     if self.at(node).team == team:
-                        if self.neighbour_team(neighbour, team):
+                        if check_neigbour_team(neighbour):
                             yield neighbour
                 else:
                     yield from dfs(neighbour, node)
         if self:
             yield from dfs(self._get_root(), None)
-        else: # The hive is empty -> only the Origin is valid / everything is valid
+        else:
+            # The hive is empty -> every hex would be valid
+            # wlog return only the Origin
             yield Hex(0, 0)
 
     def _one_hive(self) -> Set[Hex]:
