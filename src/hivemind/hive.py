@@ -124,7 +124,7 @@ class Hive(dict):
                 yield hex + offset * i
 
     def generate_climbs(self, hex: Hex) -> Generator[Hex, None, None]:
-        # TODO Verify correctness
+        # TODO Check the rulebook
         hh = self.height(hex)
         if hh > 1: # I. The insect is on elevated level
             for a, b, c in hex.circle_iterator():
@@ -135,9 +135,12 @@ class Hive(dict):
                         yield b
         else: # II. The insect is on the ground level, move normal there
             yield from self.generate_single_walks(hex)
-        # III. Climbing up is always possible
-        for b in self.neighbours(hex):
-            if self.height(b) >= hh:
+        # III. Climbing up
+        for a, b, c in hex.circle_iterator():
+            ha = self.height(b)
+            hb = self.height(b)
+            hc = self.height(c)
+            if self.height(b) >= hh and not (ha > hh and hc > hh):
                 yield b
 
     def generate_drops(self, team: Team) -> Tuple[Hex, None, None]:
