@@ -11,7 +11,7 @@ repository = "https://github.com/aliuakbar/HiveMind"
 
 exclude = ["notes"]
 
-keywords = ["game", "boardgame"]
+keywords = ["game", "boardgame", "hex"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
@@ -36,7 +36,7 @@ source = ["src"]
 
 [tool.coverage.run]
 branch = true
-source = ["hivemind", "mcts"]
+source = ["hivemind"]
 
 [tool.coverage.report]
 show_missing = true
