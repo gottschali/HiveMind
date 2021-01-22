@@ -79,39 +79,39 @@ class Hive(dict):
                 if (a in self and a != ignore) ^ (c in self and c != ignore):
                     yield b
 
-    def generate_walks(self, hex: Hex, func=None) -> Generator[Hex, None, None]:
+    def generate_walks(self, hex: Hex, target=None) -> Generator[Hex, None, None]:
         """
         Runs a BFS on the edge of the hive. Return all hexes that are reachable this way
-        Func can be a unary function that filters out distances
+        Target specifies the length of which walks are searched
+        If it is omitted all walks are yielded
         """
         visited = set()
-        parent = {}
         distance = {}
         queue = deque()
         queue.append(hex)
-        parent[hex] = None
         distance[hex] = 0
         visited.add(hex)
         while queue:
             vertex = queue.popleft()
             visited.add(vertex)
-            for neighbour in self.generate_single_walks(vertex, hex):
+            if target is None:
+                if vertex != hex:
+                    yield vertex
+            else:
+                d = distance[vertex]
+                if d > target:
+                    continue
+                if d == target:
+                    yield vertex
+            for neighbour in self.generate_single_walks(vertex, ignore=hex):
                 if neighbour in visited:
                     continue
-                parent[neighbour] = vertex
                 distance[neighbour] = distance[vertex] + 1
                 queue.append(neighbour)
-        if not (func is None):
-            for h, d in distance.items():
-                if func(d):
-                    yield h
-        else:
-            visited.discard(hex)
-            yield from visited
 
     def generate_spider_walks(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Finds hexes that can be reached in three steps """
-        return self.generate_walks(hex, lambda x: x == 3)
+        return self.generate_walks(hex, target=3)
 
     def generate_jumps(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Yield all hexes that a grasshopper can jump to """
