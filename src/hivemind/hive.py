@@ -87,7 +87,7 @@ class Hive(dict):
         """
         visited = set()
         distance = {}
-        queue: Hex = deque()
+        queue: deque[Hex] = deque()
         queue.append(hex)
         distance[hex] = 0
         visited.add(hex)
@@ -148,7 +148,7 @@ class Hive(dict):
         def check_neigbour_team(hex: Hex) -> bool:
             """ Checks if all adjacent hexes of hex are uniquely of the same team """
             return all(self.at(neighbour).team == team for neighbour in self.neighbours(hex))
-        candidates: Hex = set()
+        candidates: Set[Hex] = set()
         for node in self:
             candidates.update(e for e in node.neighbours() if not e in self)
         drops = tuple(filter(check_neigbour_team, candidates))
