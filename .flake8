@@ -5,8 +5,6 @@ ignore = E203,E501,W503
 max-line-length = 88
 import-order-style = google
 application-import-names = hivemind, mcts, tests
-
-[flake8]
 per-file-ignores =
     tests/*:S101,ANN
     noxfile.py:ANN
