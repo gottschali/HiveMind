@@ -1,6 +1,6 @@
 import logging
 from collections import deque
-from typing import Generator, Tuple, Set
+from typing import *
 
 from .hex import Hex
 from .insect import Insect, Stone, Team
