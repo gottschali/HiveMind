@@ -1,7 +1,7 @@
 import logging
 from copy import deepcopy
 from collections import deque
-from typing import Generator, List, Tuple
+from typing import Generator, Tuple, Set
 
 from .hex import Hex
 from .insect import Insect, Stone, Team
@@ -73,7 +73,7 @@ class Hive(dict):
             if (self.height(a)) ^ (self.height(c)):
                 yield b
 
-    def generate_any_walks_from_hex(self, hex: Hex, func=None) -> List[Hex]:
+    def generate_any_walks_from_hex(self, hex: Hex, func=None) -> Generator[Hex, None, None]:
         """
         Runs a BFS on the edge of the hive. Return all hexes that are reachable this way
         Func can be a unary function that filters out distances
@@ -110,7 +110,7 @@ class Hive(dict):
             visited.discard(hex)
             yield from visited
 
-    def generate_spider_walks_from_hex(self, hex: Hex) -> List[Hex]:
+    def generate_spider_walks_from_hex(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Finds hexes that can be reached in three steps """
         return self.generate_any_walks_from_hex(hex, lambda x: x == 3)
 
@@ -163,7 +163,7 @@ class Hive(dict):
         else: # The hive is empty -> only the Origin is valid / everything is valid
             yield Hex(0, 0)
 
-    def _one_hive(self) -> List[Hex]:
+    def _one_hive(self) -> Set[Hex]:
         """
         Finds articulation stones of the hive graph
         That are hexes that if removed would seperate the hive in at least 2 components
@@ -184,41 +184,36 @@ class Hive(dict):
             index[node] = counter
             lowlink[node] = counter
             children = 0
-            for neighbor in self.neighbors(node):
-                if neighbor == parent: # That's where we cam from
+            for neighbour in self.neighbors(node):
+                if neighbour == parent: # Prevent infinite loops
                     continue
-                if neighbor in visited: # A backlink is found
-                    lowlink[node] = min(lowlink[node], index[neighbor])
+                if neighbour in visited: # A backlink is found
+                    lowlink[node] = min(lowlink[node], index[neighbour])
                 else:
-                    dfs(neighbor, node, counter) # Recurse the dfs on the child
-                    lowlink[node] = min(lowlink[node], lowlink[neighbor])
+                    dfs(neighbour, node, counter) # Recurse the dfs on the child
                     # Backpropagate the lowest link
-                    #     |
-                    #     n: 1
-                    #   /  .: 2 -> 1
-                    #  /   .: ... -> 1
-                    #  node: 1
-                    if lowlink[neighbor] >= index[node] and parent != None:
-                        # If the neighbor has a backlink the node must not be an articulation point as
-                        # it has atleast another connection
-                        # But if the node is the lowest link it the only link to the upper tree
+                    # An ancestor further down in the tree may have higher backlink
+                    lowlink[node] = min(lowlink[node], lowlink[neighbour])
+                    # +----v
+                    # ^    |
+                    # |    v
+                    # ^----+
+                    if lowlink[neighbour] >= index[node] and parent != None:
+                        # If the neighbour has a backlink
+                        # The node may be removed as it has at least another connection
+                        # Else the node is the only link to the upper tree
                         # it is necessarily an articulation point
-                        #            k  ..
-                        #          /    |
-                        #         |    v
-                        #          \   |
-                        #           \ n
                         articulation_points.add(node)
                     children += 1 # A neighbor that is not visited is a new child
             if parent == None and children >= 2:
-                # Root has no parent and is articulation point if it has more than 1 children
-                #      R     Removal of R would remove the link between the subtrees
+                # Root has no parent and is articulation point iff it has more than 1 children
+                #      R
                 #     / \
                 #   ...  ...
                 articulation_points.add(node)
         try:
             root = self._get_root()
-            dfs(root, None, counter)
+            dfs(root, None, 0)
         except StopIteration:
             pass
         return articulation_points
