@@ -19,6 +19,7 @@ numpy = "^1.19.2"
 websockets = "^8.1"
 flask-socketio = "^5.0.1"
 flask_socketio = "^5.0.1"
+tqdm = "^4.56.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.2"
