@@ -221,21 +221,14 @@ class Hive(dict):
 
     def _generate_moves_from(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Yield possible move destination hexes for insect by name """
-        stone = self.at(hex)
-        if stone.insect == Insect.BEE:
-            yield from self.generate_walks_from_hex(hex)
-        elif stone.insect == Insect.SPIDER:
-            yield from self.generate_spider_walks_from_hex(hex)
-        elif stone.insect == Insect.ANT:
-            yield from self.generate_any_walks_from_hex(hex)
-        elif stone.insect == Insect.GRASSHOPPER:
-            yield from self.generate_jumps_from_hex(hex)
-        elif stone.insect == Insect.BEETLE:
-            yield from self.generate_climbs_from_hex(hex)
-        else:
-            # TODO better excpetion
-            raise Exception("Unknown insect")
-
+        move_map = {
+            Insect.BEE: self.generate_walks_from_hex,
+            Insect.SPIDER: self.generate_spider_walks_from_hex,
+            Insect.ANT: self.generate_any_walks_from_hex,
+            Insect.GRASSHOPPER: self.generate_jumps_from_hex,
+            Insect.BEETLE: self.generate_climbs_from_hex,
+        }
+        yield from move_map[self.at(hex).insect](hex)
 
     def generate_moves(self, team: Team) -> Generator[Tuple[Hex, Hex], None, None]:
         articulation_points = self.one_hive()
