@@ -52,17 +52,17 @@ class Hex:
     def __mul__(self, scalar: int) -> "Hex":
         return Hex(self.q * scalar, self.r * scalar)
 
-    def neighbors(self) -> Iterator["Hex"]:
+    def neighbours(self) -> Iterator["Hex"]:
         return (self + direction for direction in self.directions)
 
     def circle_iterator(self) -> Iterator[Tuple["Hex", "Hex", "Hex"]]:
-        """ Yields 6 tuples of 3 neighboring hexes """
-        neighbors = list(self.neighbors())
+        """ Yields 6 tuples of 3 neighbouring hexes """
+        neighbours = list(self.neighbours())
         for i in range(6):
-            yield neighbors[i], neighbors[(i + 1) % 6], neighbors[(i + 2) % 6]
+            yield neighbours[i], neighbours[(i + 1) % 6], neighbours[(i + 2) % 6]
 
     def adjacent(self, other: "Hex") -> bool:
         """ Returns whether two hexes share a common side """
-        return other in self.neighbors()
+        return other in self.neighbours()
 
 
