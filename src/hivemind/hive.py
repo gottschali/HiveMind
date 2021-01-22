@@ -1,5 +1,4 @@
 import logging
-from copy import deepcopy
 from collections import deque
 from typing import Generator, Tuple, Set
 
@@ -64,27 +63,27 @@ class Hive(dict):
     def height(self, hex: Hex) -> int:
         return len(self[hex]) if hex in self else 0
 
-    def generate_single_walks(self, hex: Hex) -> Generator[Hex, None, None]:
+    def generate_single_walks(self, hex: Hex, ignore=None) -> Generator[Hex, None, None]:
         """ Find neigboring hexes that can be reached in one move (only on the first level)"""
         for a, b, c in hex.circle_iterator():
             if b in self: # The destination is occupied
                 continue
             # One of a and c must be occupied as the insect must keep contact to the hive
             # But not both otherwise it cannot pass -> XOR
-            if (a in self) ^ (c in self):
-                yield b
+            if ignore is None:
+                if (a in self) ^ (c in self):
+                    yield b
+            else:
+                # Ignore the origin of the walk such that it does act like it is not a part of the hive
+                # Else it could use "itself" as a stepping stone
+                if (a in self and a != ignore) ^ (c in self and c != ignore):
+                    yield b
 
     def generate_walks(self, hex: Hex, func=None) -> Generator[Hex, None, None]:
         """
         Runs a BFS on the edge of the hive. Return all hexes that are reachable this way
         Func can be a unary function that filters out distances
         """
-        # Otherwise dict keys get changed
-        # VERY UGLY
-        new = deepcopy(self)
-        # Remove the insect temporarily, otherwise the insect uses itself to move along
-        tmp = new[hex]
-        del new[hex]
         visited = set()
         parent = {}
         distance = {}
@@ -96,7 +95,7 @@ class Hive(dict):
         while queue:
             vertex = queue.popleft()
             visited.add(vertex)
-            for neighbour in new.generate_single_walks(vertex):
+            for neighbour in self.generate_single_walks(vertex, hex):
                 if neighbour in visited:
                     continue
                 parent[neighbour] = vertex
