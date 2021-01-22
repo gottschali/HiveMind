@@ -18,7 +18,7 @@ socketio = SocketIO(app)
 # - state for each session
 # In future threading/async
 
-state = Root()
+state = State()
 action_type = None
 origin = None
 
@@ -59,7 +59,7 @@ def auto_move(message):
 def auto_move():
     print("Resetting to root")
     global state
-    state = Root()
+    state = State()
     json_state = state.to_json()
     emit("sendstate", json_state)
 

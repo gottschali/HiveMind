@@ -54,6 +54,16 @@ class State:
     Root is the only starting point and every state is an ancestor of it.
     Any child is yielded from the application of a valid action on the parent state.
     """
+    def __init__(self):
+        self.hive = Hive()
+        self._bee_move = [False, False]
+        self.turn_number = 0
+        insects = (Insect.BEE,
+                   Insect.SPIDER, Insect.SPIDER,
+                   Insect.ANT, Insect.ANT, Insect.ANT,
+                   Insect.GRASSHOPPER, Insect.GRASSHOPPER, Insect.GRASSHOPPER,
+                   Insect.BEETLE, Insect.BEETLE)
+        self.availables = [Stone(insect, team) for insect in insects for team in list(Team)]
 
     def __repr__(self):
         return f"State({self.hive}, {self.turn_number})"
@@ -156,16 +166,3 @@ class State:
         """ Takes a policy function that has to select an action out of the tuple ot possibles """
         return self + policy(self.possible_actions)
 
-
-class Root(State):
-
-    def __init__(self):
-        self.hive = Hive()
-        self._bee_move = [False, False]
-        self.turn_number = 0
-        insects = (Insect.BEE,
-                   Insect.SPIDER, Insect.SPIDER,
-                   Insect.ANT, Insect.ANT, Insect.ANT,
-                   Insect.GRASSHOPPER, Insect.GRASSHOPPER, Insect.GRASSHOPPER,
-                   Insect.BEETLE, Insect.BEETLE)
-        self.availables = [Stone(insect, team) for insect in insects for team in list(Team)]
