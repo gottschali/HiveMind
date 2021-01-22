@@ -40,19 +40,19 @@ class Hive(dict):
         else:
             self[hex].append(stone)
 
-    def neighbors(self, hex: Hex) -> Generator[Hex, None, None]:
-        """ Yields all neighboring hexes that are occupied """
-        return (neighbor for neighbor in hex.neighbors() if neighbor in self)
+    def neighbours(self, hex: Hex) -> Generator[Hex, None, None]:
+        """ Yields all neighbouring hexes that are occupied """
+        return (neighbour for neighbour in hex.neighbours() if neighbour in self)
 
-    def highest_neighbor_stones(self, hex: Hex) -> Generator[Stone, None, None]:
+    def highest_neighbour_stones(self, hex: Hex) -> Generator[Stone, None, None]:
         """ Yields the highest adjacent insects """
-        for n in self.neighbors(hex):
+        for n in self.neighbours(hex):
             yield self[n][-1]
 
-    def neighbor_team(self, hex: Hex, team: Team) -> bool:
+    def neighbour_team(self, hex: Hex, team: Team) -> bool:
         """ Checks if all adjacent hexes of hex are uniquely of the same team """
-        logger.debug(list(self.at(neighbor).team for neighbor in self.neighbors(hex)))
-        return all(self.at(neighbor).team == team for neighbor in self.neighbors(hex))
+        logger.debug(list(self.at(neighbour).team for neighbour in self.neighbours(hex)))
+        return all(self.at(neighbour).team == team for neighbour in self.neighbours(hex))
 
     def _get_root(self):
         return next(iter(self))
@@ -92,12 +92,12 @@ class Hive(dict):
         while queue:
             vertex = queue.popleft()
             visited.add(vertex)
-            for neighbor in new.generate_walks_from_hex(vertex):
-                if neighbor in visited:
+            for neighbour in new.generate_walks_from_hex(vertex):
+                if neighbour in visited:
                     continue
-                parent[neighbor] = vertex
-                distance[neighbor] = distance[vertex] + 1
-                queue.append(neighbor)
+                parent[neighbour] = vertex
+                distance[neighbour] = distance[vertex] + 1
+                queue.append(neighbour)
         logger.debug(f"The calculated distance map is {distance}")
         if not (func is None):
             for h, d in distance.items():
@@ -134,7 +134,7 @@ class Hive(dict):
         else: # II. The insect is on the ground level, move normal there
             yield from self.generate_walks_from_hex(hex)
         # III. Climbing up is always possible
-        for b in self.neighbors(hex):
+        for b in self.neighbours(hex):
             if self.height(b) >= hh:
                 yield b
 
@@ -146,15 +146,15 @@ class Hive(dict):
             if node in visited:
                 return
             visited[node] = True
-            for neighbor in node.neighbors():
-                if neighbor == parent:
+            for neighbour in node.neighbours():
+                if neighbour == parent:
                     continue
-                if neighbor not in self:
+                if neighbour not in self:
                     if self.at(node).team == team:
-                        if self.neighbor_team(neighbor, team):
-                            yield neighbor
+                        if self.neighbour_team(neighbour, team):
+                            yield neighbour
                 else:
-                    yield from dfs(neighbor, node)
+                    yield from dfs(neighbour, node)
         if self:
             yield from dfs(self._get_root(), None)
         else: # The hive is empty -> only the Origin is valid / everything is valid
@@ -181,7 +181,7 @@ class Hive(dict):
             index[node] = counter
             lowlink[node] = counter
             children = 0
-            for neighbour in self.neighbors(node):
+            for neighbour in self.neighbours(node):
                 if neighbour == parent: # Prevent infinite loops
                     continue
                 if neighbour in visited: # A backlink is found
@@ -201,7 +201,7 @@ class Hive(dict):
                         # Else the node is the only link to the upper tree
                         # it is necessarily an articulation point
                         articulation_points.add(node)
-                    children += 1 # A neighbor that is not visited is a new child
+                    children += 1 # A neighbour that is not visited is a new child
             if parent == None and children >= 2:
                 # Root has no parent and is articulation point iff it has more than 1 children
                 #      R
