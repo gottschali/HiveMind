@@ -1,6 +1,6 @@
 import logging
 from collections import deque
-from typing import Callable, Dict, Generator, Iterable, Set, Tuple
+from typing import Callable, Dict, Generator, Iterable, Set, Tuple, Union
 
 from .hex import Hex
 from .insect import Insect, Stone, Team
@@ -16,17 +16,17 @@ class Hive(dict):
        Hive[Hex(0, 0)] = [Bee(True), Beetle(False)]
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Hive({super().__repr__()})"
 
     def at(self, hex: Hex) -> Stone:
         """ Returns the highest stone at hex """
         return self[hex][-1]
 
-    def remove_stone(self, hex: Hex):
+    def remove_stone(self, hex: Hex) -> None:
         """
         Removes the highest stone from the hive at hex
         If it was the only one the key gets deleted to preserve the invariant
@@ -42,7 +42,7 @@ class Hive(dict):
             self[hex].append(stone)
 
     @property
-    def game_result(self):
+    def game_result(self) -> Union[None, int]:
         """ If a Bee is completely surrounded the other player wins. A draw is also possible """
         white_lost = black_lost = False
         for hex, stack in self.values():
@@ -67,14 +67,14 @@ class Hive(dict):
         """ Yields all neighbouring hexes that are occupied """
         return tuple(neighbour for neighbour in hex.neighbours() if neighbour in self)
 
-    def _get_root(self):
+    def _get_root(self) -> Hex:
         return next(iter(self))
 
     def height(self, hex: Hex) -> int:
         return len(self[hex]) if hex in self else 0
 
     def generate_single_walks(
-        self, hex: Hex, ignore=None
+        self, hex: Hex, ignore: Hex = None
     ) -> Generator[Hex, None, None]:
         """ Find neigboring hexes that can be reached in one move (only on the first level)"""
         for a, b, c in hex.circle_iterator():
@@ -91,7 +91,9 @@ class Hive(dict):
                 if (a in self and a != ignore) ^ (c in self and c != ignore):
                     yield b
 
-    def generate_walks(self, hex: Hex, target=None) -> Generator[Hex, None, None]:
+    def generate_walks(
+        self, hex: Hex, target: int = None
+    ) -> Generator[Hex, None, None]:
         """
         Runs a BFS on the edge of the hive. Return all hexes that are reachable this way
         Target specifies the length of which walks are searched
@@ -152,7 +154,7 @@ class Hive(dict):
             ha = self.height(b)
             hb = self.height(b)
             hc = self.height(c)
-            if self.height(b) >= hh and not (ha > hh and hc > hh):
+            if hb >= hh and not (ha > hh and hc > hh):
                 yield b
 
     def generate_drops(self, team: Team) -> Tuple[Hex, ...]:
@@ -166,7 +168,7 @@ class Hive(dict):
 
         candidates: Set[Hex] = set()
         for node in self:
-            candidates.update(e for e in node.neighbours() if not e in self)
+            candidates.update(e for e in node.neighbours() if e not in self)
         drops = tuple(filter(check_neigbour_team, candidates))
         # The hive is empty -> every hex would be valid
         # wlog return only the Origin
@@ -187,7 +189,7 @@ class Hive(dict):
         index = {}
         articulation_points = set()
 
-        def dfs(node, parent, counter):
+        def dfs(node: Hex, parent: Union[Hex, None], counter: int) -> None:
             """ Performs a depth first search on node at depth counter """
             visited.add(node)
             counter += 1
@@ -208,14 +210,14 @@ class Hive(dict):
                     # ^    |
                     # |    v
                     # ^----+
-                    if lowlink[neighbour] >= index[node] and parent != None:
+                    if lowlink[neighbour] >= index[node] and parent is not None:
                         # If the neighbour has a backlink
                         # The node may be removed as it has at least another connection
                         # Else the node is the only link to the upper tree
                         # it is necessarily an articulation point
                         articulation_points.add(node)
                     children += 1  # A neighbour that is not visited is a new child
-            if parent == None and children >= 2:
+            if parent is None and children >= 2:
                 # Root has no parent and is articulation point iff it has more than 1 children
                 #      R
                 #     / \

@@ -39,8 +39,11 @@ class Hex:
     def __hash__(self) -> int:
         return hash(self._coords)
 
-    def __add__(self, other) -> "Hex":
-        return Hex(self.q + other[0], self.r + other[1])
+    def __add__(self, other: "Hex") -> "Hex":
+        return Hex(self.q + other.q, self.r + other.r)
+
+    def __len__(self) -> int:
+        return len(self._coords)
 
     def __sub__(self, other: "Hex") -> "Hex":
         return Hex(self.q - other[0], self.r - other[1])
@@ -52,7 +55,7 @@ class Hex:
         return Hex(self.q * scalar, self.r * scalar)
 
     def neighbours(self) -> Generator["Hex", None, None]:
-        return (self + direction for direction in self.directions)
+        return (self + Hex(*direction) for direction in self.directions)
 
     def circle_iterator(self) -> Generator[Tuple["Hex", "Hex", "Hex"], None, None]:
         """ Yields 6 tuples of 3 neighbouring hexes """

@@ -3,7 +3,7 @@ import logging
 import random
 from copy import deepcopy
 from functools import cached_property
-from typing import Callable, List, Set, Tuple
+from typing import Any, Callable, Dict, List, Set, Tuple, Union
 
 from .hex import Hex
 from .hive import Hive
@@ -26,7 +26,7 @@ class Action:
 class Move(Action):
     """ Move from a origin Hex to a destination Hex """
 
-    def __init__(self, origin: Hex, destination: Hex):
+    def __init__(self, origin: Hex, destination: Hex) -> None:
         self.origin = origin
         self.destination = destination
 
@@ -34,7 +34,7 @@ class Move(Action):
 class Drop(Action):
     """ Drop a stone to a destination Hex """
 
-    def __init__(self, stone: Stone, destination: Hex):
+    def __init__(self, stone: Stone, destination: Hex) -> None:
         self.stone = stone
         self.destination = destination
 
@@ -61,7 +61,7 @@ class State:
     Any child is yielded from the application of a valid action on the parent state.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.hive = Hive()
         self._bee_move = [False, False]
         self.turn_number = 0
@@ -82,12 +82,12 @@ class State:
             Stone(insect, team) for insect in insects for team in list(Team)
         ]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"State({self.hive}, {self.turn_number})"
 
-    def to_json(self):
+    def to_json(self) -> str:
         # TODO
-        dump = {}
+        dump: Dict[str, Any] = {}
         dump["hive"] = []
         for hex, stack in self.hive.items():
             for height, stone in enumerate(stack):
@@ -143,7 +143,7 @@ class State:
         return new_state
 
     @property
-    def game_result(self):
+    def game_result(self) -> Union[None, int]:
         return self.hive.game_result
 
     def is_game_over(self) -> bool:
