@@ -141,8 +141,9 @@ class State:
             for drop_hex in self.hive.generate_drops(self.current_team):
                 opts.append(Drop(Stone(Insect.BEE, self.current_team), drop_hex))
         else:
-            for drop_hex in self.hive.generate_drops(self.current_team):
-                opts.extend(Drop(stone, drop_hex) for stone in drop_stones)
+            if drop_stones:
+                for drop_hex in self.hive.generate_drops(self.current_team):
+                    opts.extend(Drop(stone, drop_hex) for stone in drop_stones)
             if self.bee_move:
                 for origin, destination in self.hive.generate_moves(self.current_team):
                     opts.append(Move(origin, destination))
