@@ -168,11 +168,14 @@ class Hive(dict):
         Finds articulation stones of the hive graph
         That are hexes that if removed would seperate the hive in at least 2 components
         Height is not accounted
+
+        Computes the DFS tree, nodes numbered with counter
+        A backlink is an edge that goes up in the DFS tree
+        Lowlink keeps track of the lowest node that can be visited by going down the tree
         """
         lowlink = {}
         visited = set()
         index = {}
-        counter = 0
         articulation_points = set()
         def dfs(node, parent, counter):
             """ Performs a depth first search on node at depth counter """
