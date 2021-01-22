@@ -21,11 +21,11 @@ class Hex:
         self.s = -(q + r)
         self._coords = (self.q, self.r, self.s)
 
-    def __eq__(self, other: "Hex") -> bool:
-        try:
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, Hex):
             return self.q == other.q and self.r == other.r
-        except:
-            return False
+        else:
+            return self._coords == other
 
     def __getitem__(self, index: int) -> int:
         return self._coords[index]
