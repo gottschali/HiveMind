@@ -1,6 +1,6 @@
 from copy import deepcopy
 import logging
-from typing import Iterator, List, Set, Tuple
+from typing import *
 from functools import cached_property
 import random
 import json
@@ -140,7 +140,7 @@ class State:
     @cached_property
     def possible_actions(self) -> Tuple[Action, ...]:
         """ Generate all legal actions for the current state """
-        opts = []
+        opts: List[Action] = []
         drop_stones = self._unique_availables()
         if self.turn_number == 0:
              return tuple(Drop(stone, Hex(0, 0)) for stone in drop_stones)
