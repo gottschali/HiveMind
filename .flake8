@@ -1,7 +1,12 @@
 # .flake8
 [flake8]
-select = B,B9,BLK,C,E,F,W,I
+select = B,B9,BLK,C,E,F,W,I,ANN
 ignore = E203,E501,W503
 max-line-length = 88
 import-order-style = google
 application-import-names = hivemind, mcts, tests
+
+[flake8]
+per-file-ignores =
+    tests/*:S101,ANN
+    noxfile.py:ANN
