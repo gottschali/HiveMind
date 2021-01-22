@@ -102,7 +102,6 @@ class Hive(dict):
                 parent[neighbour] = vertex
                 distance[neighbour] = distance[vertex] + 1
                 queue.append(neighbour)
-        logger.debug(f"The calculated distance map is {distance}")
         if not (func is None):
             for h, d in distance.items():
                 if func(d):

@@ -2,7 +2,7 @@ import * as THREE from './three.module.js';
 import * as HEX from './hexlib.js';
 import * as ORBIT from './OrbitControls.js';
 
-const BLACK = '#1E212B';
+const BLACK = '#000000';
 const BG = '#002b36';
 const FG = '#fdf6e3';
 const WHITE = "#ffffff";
