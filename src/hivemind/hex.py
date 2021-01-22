@@ -18,7 +18,7 @@ class Hex:
         (0, -1, +1),
     )
 
-    def __init__(self, q: int = 0, r: int = 0, _: Any = None):
+    def __init__(self, q: int = 0, r: int = 0, _: Any = None) -> None:
         self.q = q
         self.r = r
         self.s = -(q + r)

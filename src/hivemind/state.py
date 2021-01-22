@@ -3,7 +3,7 @@ import logging
 import random
 from copy import deepcopy
 from functools import cached_property
-from typing import *
+from typing import Callable, List, Set, Tuple
 
 from .hex import Hex
 from .hive import Hive
@@ -175,10 +175,12 @@ class State:
                     opts.append(Move(origin, destination))
         return tuple(opts) if opts else (Pass(),)
 
-    def children(self) -> Tuple[State, ...]:
+    def children(self) -> Tuple["State", ...]:
         """ Returns a tuple of all possible child states """
         return tuple(self + action for action in self.possible_actions)
 
-    def next_state(self, policy=random.choice) -> "State":
+    def next_state(
+        self, policy: Callable[[Tuple["Action", ...]], "Action"] = random.choice
+    ) -> "State":
         """ Takes a policy function that has to select an action out of the tuple ot possibles """
         return self + policy(self.possible_actions)
