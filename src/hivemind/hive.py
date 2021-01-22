@@ -60,62 +60,6 @@ class Hive(dict):
     def _get_root(self):
         return next(iter(self))
 
-    def one_hive(self) -> List[Hex]:
-        """
-        Finds articulation points of hive-graph
-        These are insects that if removed would seperate the hive into atleast two components.
-        """
-        lowlink = {}
-        visited = set()
-        index = {}
-        counter = 0
-        articulation_points = set()
-        def dfs(node, parent, counter):
-            """ Performs a depth first search on node at depth counter """
-            visited.add(node)
-            counter += 1
-            index[node] = counter
-            lowlink[node] = counter
-            children = 0
-            for neighbor in self.neighbors(node):
-                if neighbor == parent: # That's where we cam from
-                    continue
-                if neighbor in visited: # A backlink is found
-                    lowlink[node] = min(lowlink[node], index[neighbor])
-                else:
-                    dfs(neighbor, node, counter) # Recurse the dfs on the child
-                    lowlink[node] = min(lowlink[node], lowlink[neighbor])
-                    # Backpropagate the lowest link
-                    #     |
-                    #     n: 1
-                    #   /  .: 2 -> 1
-                    #  /   .: ... -> 1
-                    #  node: 1
-                    if lowlink[neighbor] >= index[node] and parent != None:
-                        # If the neighbor has a backlink the node must not be an articulation point as
-                        # it has atleast another connection
-                        # But if the node is the lowest link it the only link to the upper tree
-                        # it is necessarily an articulation point
-                        #            k  ..
-                        #          /    |
-                        #         |    v
-                        #          \   |
-                        #           \ n
-                        articulation_points.add(node)
-                    children += 1 # A neighbor that is not visited is a new child
-            if parent == None and children >= 2:
-                # Root has no parent and is articulation point if it has more than 1 children
-                #      R     Removal of R would remove the link between the subtrees
-                #     / \
-                #   ...  ...
-                articulation_points.add(node)
-        try:
-            root = self._get_root()
-            dfs(root, None, counter)
-        except StopIteration:
-            pass
-        return articulation_points
-
     def height(self, hex: Hex) -> int:
         return len(self[hex]) if hex in self else 0
 
@@ -219,6 +163,64 @@ class Hive(dict):
         else: # The hive is empty -> only the Origin is valid / everything is valid
             yield Hex(0, 0)
 
+    def _one_hive(self) -> List[Hex]:
+        """
+        Finds articulation stones of the hive graph
+        That are hexes that if removed would seperate the hive in at least 2 components
+        Height is not accounted
+        """
+        lowlink = {}
+        visited = set()
+        index = {}
+        counter = 0
+        articulation_points = set()
+        def dfs(node, parent, counter):
+            """ Performs a depth first search on node at depth counter """
+            visited.add(node)
+            counter += 1
+            index[node] = counter
+            lowlink[node] = counter
+            children = 0
+            for neighbor in self.neighbors(node):
+                if neighbor == parent: # That's where we cam from
+                    continue
+                if neighbor in visited: # A backlink is found
+                    lowlink[node] = min(lowlink[node], index[neighbor])
+                else:
+                    dfs(neighbor, node, counter) # Recurse the dfs on the child
+                    lowlink[node] = min(lowlink[node], lowlink[neighbor])
+                    # Backpropagate the lowest link
+                    #     |
+                    #     n: 1
+                    #   /  .: 2 -> 1
+                    #  /   .: ... -> 1
+                    #  node: 1
+                    if lowlink[neighbor] >= index[node] and parent != None:
+                        # If the neighbor has a backlink the node must not be an articulation point as
+                        # it has atleast another connection
+                        # But if the node is the lowest link it the only link to the upper tree
+                        # it is necessarily an articulation point
+                        #            k  ..
+                        #          /    |
+                        #         |    v
+                        #          \   |
+                        #           \ n
+                        articulation_points.add(node)
+                    children += 1 # A neighbor that is not visited is a new child
+            if parent == None and children >= 2:
+                # Root has no parent and is articulation point if it has more than 1 children
+                #      R     Removal of R would remove the link between the subtrees
+                #     / \
+                #   ...  ...
+                articulation_points.add(node)
+        try:
+            root = self._get_root()
+            dfs(root, None, counter)
+        except StopIteration:
+            pass
+        return articulation_points
+
+
     def _generate_moves_from(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Generator that yield possible move destination hexes for the stone at hex """
         move_map = {
@@ -232,7 +234,7 @@ class Hive(dict):
 
     def generate_moves(self, team: Team) -> Generator[Tuple[Hex, Hex], None, None]:
         """ Generator that yield pairs of origin, destination for moves for a team """
-        articulation_points = self.one_hive()
+        articulation_points = self._one_hive()
         for hex in (hex for hex in self if self.at(hex).team == team):
             # The stone is not moveable if it violates the 'one hive' property
             if self.height(hex) == 1 and hex in articulation_points:
