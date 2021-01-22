@@ -214,7 +214,7 @@ class Hive(dict):
 
     def _generate_moves_from(self, hex: Hex) -> Generator[Hex, None, None]:
         """ Generator that yield possible move destination hexes for the stone at hex """
-        move_map = {
+        move_map: Dict[Insect, Callable[[Hex], Iterable[Hex]]] = {
             Insect.BEE: self.generate_single_walks,
             Insect.SPIDER: self.generate_spider_walks,
             Insect.ANT: self.generate_walks,
