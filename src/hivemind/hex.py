@@ -1,9 +1,5 @@
 # Adapted from -- http://www.redblobgames.com/grids/hexagons/
-
-
-import math
-from typing import Iterator, Tuple
-
+from typing import Generator, Tuple
 
 class Hex:
     """
@@ -52,10 +48,10 @@ class Hex:
     def __mul__(self, scalar: int) -> "Hex":
         return Hex(self.q * scalar, self.r * scalar)
 
-    def neighbours(self) -> Iterator["Hex"]:
+    def neighbours(self) -> Generator["Hex", None, None]:
         return (self + direction for direction in self.directions)
 
-    def circle_iterator(self) -> Iterator[Tuple["Hex", "Hex", "Hex"]]:
+    def circle_iterator(self) -> Generator[Tuple["Hex", "Hex", "Hex"], None, None]:
         """ Yields 6 tuples of 3 neighbouring hexes """
         neighbours = list(self.neighbours())
         for i in range(6):
