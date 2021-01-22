@@ -142,32 +142,18 @@ class Hive(dict):
             if self.height(b) >= hh:
                 yield b
 
-    def generate_drops(self, team: Team) -> Generator[Hex, None, None]:
+    def generate_drops(self, team: Team) -> Tuple[Hex, None, None]:
         """ Finds hexes on which a stone of team could be dropped """
-        visited = {}
         def check_neigbour_team(hex: Hex) -> bool:
             """ Checks if all adjacent hexes of hex are uniquely of the same team """
             return all(self.at(neighbour).team == team for neighbour in self.neighbours(hex))
-        # Maybe make iterative
-        def dfs(node, parent):
-            if node in visited:
-                return
-            visited[node] = True
-            for neighbour in node.neighbours():
-                if neighbour == parent:
-                    continue
-                if neighbour not in self:
-                    if self.at(node).team == team:
-                        if check_neigbour_team(neighbour):
-                            yield neighbour
-                else:
-                    yield from dfs(neighbour, node)
-        if self:
-            yield from dfs(self._get_root(), None)
-        else:
-            # The hive is empty -> every hex would be valid
-            # wlog return only the Origin
-            yield Hex(0, 0)
+        candidates = set()
+        for node in self:
+            candidates.update(e for e in node.neighbours() if not e in self)
+        drops = tuple(filter(check_neigbour_team, candidates))
+        # The hive is empty -> every hex would be valid
+        # wlog return only the Origin
+        return drops if drops else (Hex(0, 0),)
 
     def _one_hive(self) -> Set[Hex]:
         """
