@@ -20,16 +20,9 @@ def test_addition():
     assert Hex(-5, 2) + Hex(1, 7) == Hex(-4, 9)
 
 
-def test_neighbors():
-    directions = (
-        (1, 0, -1),
-        (1, 1, 0),
-        (0, 1, 1),
-        (-1, 0, 1),
-        (-1, -1, 0),
-        (0, -1, -1),
-    )
-    assert set((Hex(*e) for e in directions)) == set(Hex(0, 0).neighbors())
+def test_neighbours():
+    for n in Hex(0, 0).neighbours():
+        assert n.adjacent(Hex(0, 0))
 
 
 def test_circle_iterator():
