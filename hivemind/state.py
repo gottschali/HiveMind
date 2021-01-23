@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import json
 import logging
 import random
@@ -12,37 +13,30 @@ from .insect import Insect, Stone, Team
 logger = logging.getLogger(__name__)
 
 
+@dataclass(frozen=True)
 class Action:
     """ Base class for abstract game action that can be performed in a turn """
-
-    def __eq__(self, other: object) -> bool:
-        return self.__dict__ == other.__dict__
-
-    def __repr__(self) -> str:
-        args = ", ".join((v.__repr__() for v in self.__dict__.values()))
-        return f"{type(self).__name__}({args})"
+    pass
 
 
+@dataclass(eq=False)
 class Move(Action):
     """ Move from a origin Hex to a destination Hex """
 
-    def __init__(self, origin: Hex, destination: Hex) -> None:
-        self.origin = origin
-        self.destination = destination
+    origin: Hex
+    destination: Hex
 
 
+@dataclass(eq=False)
 class Drop(Action):
     """ Drop a stone to a destination Hex """
 
-    def __init__(self, stone: Stone, destination: Hex) -> None:
-        self.stone = stone
-        self.destination = destination
+    stone: Stone
+    destination: Hex
 
 
 class Pass(Action):
     """ When no action is possible you have to pass """
-
-    pass
 
 
 class State:
