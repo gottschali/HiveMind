@@ -310,7 +310,7 @@ function emitTargetHex(hex) {
     // listen on new state
     socket.emit('targethex', {'data': hex});
     state = WAITING;
-    socket.emit('test', {data: 'RequestMove'});
+    // socket.emit('test', {data: 'RequestMove'});
 }
 
 var previousSelection = null;
