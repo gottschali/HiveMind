@@ -12,8 +12,7 @@ class Hive(dict):
     """
     Datastructure to store stones in a hive.
     There resides atleast one stone at every key, but they may be stacked.
-    Example:
-       Hive[Hex(0, 0)] = [Bee(True), Beetle(False)]
+    Mapping[Hex, List[Stone,...]]
     """
 
     def __init__(self, *args, **kwargs) -> None:
