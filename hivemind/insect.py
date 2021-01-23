@@ -2,6 +2,9 @@ from enum import IntEnum
 from typing import NamedTuple
 
 
+IntEnum.__repr__ = lambda self: f"{type(self).__name__}.{self.name}"
+
+
 # Enumeration for all Insect classes
 class Insect(IntEnum):
     BEE = 1

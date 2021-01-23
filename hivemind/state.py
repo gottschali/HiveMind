@@ -4,7 +4,7 @@ import random
 from copy import deepcopy
 from dataclasses import dataclass
 from functools import cached_property
-from typing import Any, Callable, Dict, List, Set, Tuple, Union
+from typing import Any, Callable, Dict, List, Set, Tuple, Union, Optional
 
 from .hex import Hex
 from .hive import Hive
@@ -57,10 +57,10 @@ class State:
     Any child is yielded from the application of a valid action on the parent state.
     """
 
-    def __init__(self) -> None:
-        self.hive = Hive()
+    def __init__(self, hive: Optional[Hive] = None, turn_number: Optional[int] = 0) -> None:
+        self.hive = hive if hive is not None else Hive()
         self._bee_move = [False, False]
-        self.turn_number = 0
+        self.turn_number = turn_number
         insects = (
             Insect.BEE,
             Insect.SPIDER,
