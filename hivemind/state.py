@@ -1,8 +1,8 @@
-from dataclasses import dataclass
 import json
 import logging
 import random
 from copy import deepcopy
+from dataclasses import dataclass
 from functools import cached_property
 from typing import Any, Callable, Dict, List, Set, Tuple, Union
 
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 class Action:
     """ Base class for abstract game action that can be performed in a turn """
 
-    def __eq__(self, other: Any):
+    def __eq__(self, other: Any) -> bool:
         return self.__dict__.items() == other.__dict__.items()
 
 
