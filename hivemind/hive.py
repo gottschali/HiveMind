@@ -171,7 +171,7 @@ class Hive(dict):
         drops = tuple(filter(check_neigbour_team, candidates))
         # The hive is empty -> every hex would be valid
         # wlog return only the Origin
-        return drops if drops else (Hex(0, 0),)
+        return drops
 
     def _one_hive(self) -> Set[Hex]:
         """
