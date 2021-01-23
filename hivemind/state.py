@@ -16,7 +16,9 @@ logger = logging.getLogger(__name__)
 @dataclass(frozen=True)
 class Action:
     """ Base class for abstract game action that can be performed in a turn """
-    pass
+
+    def __eq__(self, other: Any):
+        return self.__dict__.items() == other.__dict__.items()
 
 
 @dataclass(eq=False)
