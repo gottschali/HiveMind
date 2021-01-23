@@ -1,5 +1,4 @@
-from hivemind.hive import Hive
-from hivemind.hex import Hex
+from hivemind.state import *
 
 
 def test_remove_stone():
