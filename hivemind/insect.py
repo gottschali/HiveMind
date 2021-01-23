@@ -2,9 +2,6 @@ from enum import IntEnum
 from typing import NamedTuple
 
 
-IntEnum.__repr__ = lambda self: f"{type(self).__name__}.{self.name}"
-
-
 # Enumeration for all Insect classes
 class Insect(IntEnum):
     BEE = 1
@@ -13,10 +10,16 @@ class Insect(IntEnum):
     GRASSHOPPER = 4
     BEETLE = 5
 
+    def __repr__(self) -> str:
+        return f"{type(self).__name__}.{self.name}"
+
 
 class Team(IntEnum):
     WHITE = 0
     BLACK = 1
+
+    def __repr__(self) -> str:
+        return f"{type(self).__name__}.{self.name}"
 
 
 class Stone(NamedTuple):

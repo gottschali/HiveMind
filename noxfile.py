@@ -1,7 +1,7 @@
 import nox
 
 nox.options.sessions = "isort", "black", "lint", "mypy", "tests"
-locations = "hivemind", "tests"
+locations = ("hivemind", )
 
 @nox.session
 def tests(session):
