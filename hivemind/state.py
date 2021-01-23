@@ -176,7 +176,7 @@ class State:
         return tuple(self + action for action in self.possible_actions)
 
     def next_state(
-        self, policy: Callable[[Tuple["Action", ...]], "Action"] = random.choice
+        self, policy: Callable[[Tuple[Action, ...]], Action] = random.choice
     ) -> "State":
         """ Takes a policy function that has to select an action out of the tuple ot possibles """
         return self + policy(self.possible_actions)
