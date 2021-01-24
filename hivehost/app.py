@@ -44,13 +44,15 @@ def play_online():
 
 games = {}
 
+def emit_state(sid):
+    json_state = games[sid].to_json()
+    emit("sendstate", json_state)
+
 @socketio.on("connect")
 def connect_handler():
     # Create a new game
-    games[request.sid] = State()
     print(f"{request.sid} connected")
-    return State().to_json()
-
+    reset_handler()
 
 @socketio.on("disconnect")
 def disconnect_handler():
@@ -58,24 +60,20 @@ def disconnect_handler():
     del games[request.sid]
     print(f"{request.sid} disconnected")
 
+@socketio.on("ai_action")
+def ai_action_handler():
+    games[request.sid] = games[request.sid].next_state()
+    emit_state(request.sid)
 
-@socketio.on("test")
-def move(message):
-    state = games[request.sid].next_state()
-    games[request.sid] = state
-    json_state = state.to_json()
-    emit("sendstate", json_state)
-
-
-@socketio.on("auto_move")
-def auto_move(message):
+@socketio.on("auto_action")
+def auto_action_handler():
     for i in range(50):
-        move(message)
-        socketio.sleep(0.020)
-
+        games[request.sid] = games[request.sid].next_state()
+        emit_state(request.sid)
+        socketio.sleep(0.02)
 
 @socketio.on("reset")
-def reset():
+def reset_handler():
     games[request.sid] = State()
     json_state = State().to_json()
     emit("sendstate", json_state)

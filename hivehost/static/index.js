@@ -166,7 +166,6 @@ function makeDropTileInstances(arr) {
     var prev = null;
     var dy = 0;
     for (const stone of arr) {
-        console.log(stone);
         if (prev != null && stone.team == prev.team && stone.name == prev.name) {
             dy += 1;
         } else {
@@ -190,7 +189,6 @@ function makeDropTileInstances(arr) {
         tile.insect = stone.name;
         tile.add( wireframe.clone() ); // Don't add to the scene directly, make it a child
         dropGroup.add(tile);
-        console.log(tile);
         dropArr.push(tile);
     }
 }
@@ -258,7 +256,6 @@ $(document).ready(function() {
     // section of the page.
     socket.on('sendstate', function(json) {
         console.log("Client received data from server");
-        console.log(json);
         drawState(json);
         state = "IDLE";
         return false;
@@ -266,9 +263,7 @@ $(document).ready(function() {
 
     socket.on('moveoptions', function(json) {
         console.log("Client received options from server");
-        console.log(json);
         var hexes = JSON.parse(json);
-        console.log(hexes);
         makeHighlightInstances(hexes);
         return false;
     });
@@ -277,13 +272,13 @@ $(document).ready(function() {
     // These accept data from the user and send it to the server in a
     // variety of ways
     $('form#test').submit(function(event) {
-        console.log("Client requesting move");
-        socket.emit('test', {data: 'RequestMove'});
+        console.log("Client requesting action");
+        socket.emit('ai_action');
         return false;
     });
     $('form#automove').submit(function(event) {
-        console.log("Client requesting AutoMove");
-        socket.emit('auto_move', {data: 'RequestAutoMove'});
+        console.log("Client requesting auto actions");
+        socket.emit('auto_action');
         return false;
     });
     $('form#resetgame').submit(function(event) {
@@ -291,8 +286,6 @@ $(document).ready(function() {
         socket.emit('reset');
         return false;
     });
-    // Request the first move by default
-    socket.emit('test', {data: 'RequestMove'});
 });
 
 function emitSelectHex(hex) {
@@ -311,7 +304,6 @@ function emitTargetHex(hex) {
     // listen on new state
     socket.emit('targethex', {'data': hex});
     state = WAITING;
-    // socket.emit('test', {data: 'RequestMove'});
 }
 
 var previousSelection = null;
@@ -336,7 +328,6 @@ function onDocumentMouseDown( event ) {
     var intersects = raycaster.intersectObjects( tileArray );
     var intersectsTarget = raycaster.intersectObjects( highlightArray );
     var intersectsDrop = raycaster.intersectObjects( dropArr );
-    console.log(intersects, intersectsTarget, intersectsDrop);
     if ( intersectsTarget.length > 0 ) {
 
         var target = intersectsTarget[ 0 ];
