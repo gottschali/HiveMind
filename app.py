@@ -107,7 +107,7 @@ def target_hex(hex):
         emit("sendstate", json_state)
 
     else:
-        raise NotImplementedError
+        print("No move-type specified")
 
 def main():
     socketio.run(app)
