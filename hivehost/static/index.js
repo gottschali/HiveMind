@@ -66,7 +66,7 @@ const layout = new HEX.Layout(orientation, size, origin);
 const loader = new THREE.TextureLoader();
 var names = ["grasshopper", "bee", "ant", "spider", "beetle"];
 var textures = {};
-names.forEach( name => textures[name] = loader.load( `./static/assets/${name}.jpeg` ) );
+names.forEach( name => textures[name] = loader.load( `../static/assets/${name}.jpeg` ) );
 
 // Add a flat hex plane
 var points = [];

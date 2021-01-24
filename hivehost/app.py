@@ -28,6 +28,19 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/play/self")
+def play_self():
+    return render_template("play.html")
+
+@app.route("/play/ai")
+def play_self():
+    return render_template("play.html")
+
+@app.route("/play/online")
+def play_self():
+    return render_template("play.html")
+
+
 @socketio.on("connect")
 def test_connect():
     emit("my response", {"data": "Connected"})
