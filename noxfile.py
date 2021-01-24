@@ -1,6 +1,6 @@
 import nox
 
-nox.options.sessions = "isort", "black", "lint", "mypy", "tests"
+nox.options.sessions = "format", "lint", "mypy", "tests"
 locations = ("hivemind",)
 more_locations = ("hivemind", "tests", "mcts", ".")
 
