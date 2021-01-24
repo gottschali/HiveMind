@@ -1,7 +1,7 @@
 import logging
 import json
 
-from flask import Flask, render_template
+from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, emit
 
 from hivemind.hex import *
@@ -21,7 +21,6 @@ logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(level
 # - state for each session
 # In future threading/async
 
-state = State()
 action_type = None
 origin = None
 
@@ -43,40 +42,41 @@ def play_ai():
 def play_online():
     return render_template("play.html")
 
+games = {}
 
 @socketio.on("connect")
-def test_connect():
-    print("connected")
+def connect_handler():
+    # Create a new game
+    games[request.sid] = State()
+    print(f"{request.sid} connected")
 
 
 @socketio.on("disconnect")
-def test_disconnect():
-    print("disconnected")
+def disconnect_handler():
+    # Delete the game
+    del games[request.sid]
+    print(f"{request.sid} disconnected")
 
 
 @socketio.on("test")
-def test_move(message):
-    global state
-    state = state.next_state()
+def move(message):
+    state = games[request.sid].next_state()
+    games[request.sid] = state
     json_state = state.to_json()
     emit("sendstate", json_state)
 
 
 @socketio.on("auto_move")
 def auto_move(message):
-    global state
     for i in range(50):
-        state = state.next_state()
-        json_state = state.to_json()
-        emit("sendstate", json_state)
+        move(message)
         socketio.sleep(0.020)
 
 
 @socketio.on("reset")
-def auto_move():
-    global state
-    state = State()
-    json_state = state.to_json()
+def reset():
+    games[request.sid] = State()
+    json_state = State().to_json()
     emit("sendstate", json_state)
 
 
@@ -88,6 +88,7 @@ def select_hex(hex):
     origin = hex
     action_type = Move
     opts = []
+    state = games[request.sid]
     for action in state.possible_actions:
         # Currently only moves supporeted
         if isinstance(action, Move):
@@ -101,6 +102,7 @@ def select_hex(hex):
 
 @socketio.on("selectdrop")
 def select_drop(payload):
+    state = games[request.sid]
     insect = Insect(int(payload["data"]))
     global action_type
     global origin
@@ -112,7 +114,7 @@ def select_drop(payload):
 
 @socketio.on("targethex")
 def target_hex(hex):
-    global state
+    state = games[request.sid]
     destination = Hex(hex["data"]["q"], hex["data"]["r"])
     if action_type == Move:
         move = Move(origin, destination)
