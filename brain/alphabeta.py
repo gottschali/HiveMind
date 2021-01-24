@@ -1,4 +1,5 @@
 import math
+
 from hivemind import *
 
 
@@ -45,6 +46,7 @@ def alphabeta(root, depth=3):
 
     val, action = _alphabeta(root, 0, root.current_team, -math.inf, math.inf)
     return action
+
 
 if __name__ == "__main__":
     s = State()

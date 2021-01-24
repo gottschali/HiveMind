@@ -4,8 +4,8 @@ import logging
 from flask import Flask, render_template, request, session
 from flask_socketio import SocketIO, emit
 
-from hivemind.state import *
 from brain.alphabeta import alphabeta
+from hivemind.state import *
 from mcts.node import MonteCarloTreeSearchNode
 from mcts.search import MonteCarloTreeSearch
 
