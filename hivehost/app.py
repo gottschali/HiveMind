@@ -49,6 +49,7 @@ def connect_handler():
     # Create a new game
     games[request.sid] = State()
     print(f"{request.sid} connected")
+    return State().to_json()
 
 
 @socketio.on("disconnect")

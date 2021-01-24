@@ -248,7 +248,8 @@ $(document).ready(function() {
     // server is established.
     socket.on('connect', function() {
         console.log("Client connected");
-        socket.emit('client_connect', {data: 'I\'m connected!'});
+    }, function(json) { // Callback
+        drawState(json);
     });
 
     // Event handler for server sent data.
