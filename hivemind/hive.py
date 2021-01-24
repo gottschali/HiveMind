@@ -44,7 +44,7 @@ class Hive(dict):
     def game_result(self) -> Union[None, int]:
         """ If a Bee is completely surrounded the other player wins. A draw is also possible """
         white_lost = black_lost = False
-        for hex, stack in self.values():
+        for hex, stack in self.items():
             stone = stack[0]
             if stone.insect == Insect.BEE:
                 if len(self.neighbours(hex)) == 6:
