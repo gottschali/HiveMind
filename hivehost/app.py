@@ -4,8 +4,6 @@ import json
 from flask import Flask, render_template, session, request
 from flask_socketio import SocketIO, emit
 
-from hivemind.hex import *
-from hivemind.hive import *
 from hivemind.state import *
 
 app = Flask(__name__)
@@ -13,11 +11,9 @@ socketio = SocketIO(app)
 
 logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 
-# TODO: Do without starred imports
 # TODO: standardize JSON de-/serialization
 # TODO: Standardized naming for signals
 # TODO: send moveable pieces (one-hive) with state
-# - state for each session
 # In future threading/async
 
 @app.route("/")
