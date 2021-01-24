@@ -12,7 +12,6 @@ socketio = SocketIO(app)
 logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 
 # TODO: standardize JSON de-/serialization
-# TODO: Standardized naming for signals
 # TODO: send moveable pieces (one-hive) with state
 # In future threading/async
 

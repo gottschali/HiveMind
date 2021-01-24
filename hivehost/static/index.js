@@ -70,7 +70,7 @@ names.forEach( name => textures[name] = loader.load( `../static/assets/${name}.j
 
 // Add a flat hex plane
 var points = [];
-var corners =  layout.polygonCorners(new HEX.Hex(0, 0));
+var corners = layout.polygonCorners(new HEX.Hex(0, 0));
 corners.forEach(({x, y}) => points.push( new THREE.Vector3(x, y, 0)));
 points.push(corners[0]);
 const flatHexGeometry = new THREE.BufferGeometry().setFromPoints( points );
@@ -101,19 +101,22 @@ const insectMap = {1: "bee",
                    3: "ant",
                    4: "grasshopper",
                    5: "beetle"};
+
 function makeTileInstance(team, hex, name, height) {
     // Create a 3D object at the position given by hex and height
     // Can be precomputed
-    var material = new THREE.MeshStandardMaterial({color: (team ? MAGENTA : YELLOW),
-                                                   polygonOffset: true,
-                                                   polygonOffsetFactor: 5, // positive value pushes polygon further away
-                                                   polygonOffsetUnits: 1,
-                                                   map: textures[insectMap[name]],
-                                                   roughness: 0.5,
-                                                   metalness: 0.5,
-                                                  });
+    const color = (team ? YELLOW : CYAN);
+    // const materials = [
+        // new THREE.MeshLambertMaterial({color: color}),
+        // new THREE.MeshLambertdMaterial({color: color, map: textures[insectMap[name]]}),
+        // new THREE.MeshLambertMaterial({color: color}),
+    // ];
+    const material = new THREE.MeshLambertMaterial({color: (team ? YELLOW : CYAN),
+                                                    map: textures[insectMap[name]]});
     // Add a wireframe
     const tile = new THREE.Mesh(hexGeometry, material);
+    tileArray.push(tile);
+    tile_group.add(tile);
     tile.add( wireframe.clone() ); // Don't add to the scene directly, make it a child
     const {x, y} = layout.hexToPixel(hex);
     tile.position.set( x, y, height * 0.5 );
@@ -173,13 +176,8 @@ function makeDropTileInstances(arr) {
             x += 2;
         }
         prev = stone;
-        var material = new THREE.MeshStandardMaterial({color: (stone.team ? MAGENTA : YELLOW),
-                                                   polygonOffset: true,
-                                                   polygonOffsetFactor: 5,
-                                                   polygonOffsetUnits: 1,
-                                                   map: textures[insectMap[stone.name]],
-                                                   roughness: 0.5,
-                                                   metalness: 0.5,
+        var material = new THREE.MeshLambertMaterial({color: (stone.team ? YELLOW : CYAN),
+                                                       map: textures[insectMap[stone.name]],
                                                   });
         // Add a wireframe
         const tile = new THREE.Mesh(hexGeometry, material);
@@ -229,8 +227,6 @@ function drawState(json) {
     // TODO: optimize: drop: only add new insect, move: move the object to new destination
     for (const insect of state.hive) {
         var newInst = makeTileInstance(insect.team, new HEX.Hex(insect.q, insect.r), insect.name, insect.height);
-        tileArray.push(newInst);
-        tile_group.add(newInst);
     }
     makeDropTileInstances(state.availables);
     render();
