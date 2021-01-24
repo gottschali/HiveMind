@@ -5,6 +5,9 @@ from flask import Flask, render_template, request, session
 from flask_socketio import SocketIO, emit
 
 from hivemind.state import *
+from brain.alphabeta import alphabeta
+from mcts.node import MonteCarloTreeSearchNode
+from mcts.search import MonteCarloTreeSearch
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -62,7 +65,15 @@ def disconnect_handler():
 
 @socketio.on("ai_action")
 def ai_action_handler():
-    games[request.sid] = games[request.sid].next_state()
+    state = games[request.sid]
+    games[request.sid] = state.next_state()
+
+    # action = alphabeta(state, depth=2)
+    # games[request.sid] = state + action
+    # node = MonteCarloTreeSearchNode(state)
+    # search = MonteCarloTreeSearch(node)
+    # r = search.best_action(100)
+    # games[request.sid] = r.state
     emit_state(request.sid)
 
 
