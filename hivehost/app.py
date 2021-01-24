@@ -1,5 +1,5 @@
-import json
 import logging
+import json
 
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
@@ -11,20 +11,7 @@ from hivemind.state import *
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-
-logging.basicConfig(
-    filename="test.log",
-    filemode="w",
-    format="%(filename)s: %(message)s",
-    level=logging.DEBUG,
-)
-
-logger = logging.getLogger()
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.DEBUG)
-formatter = logging.Formatter("%(levelname)s %(filename)s:  %(message)s")
-console_handler.setFormatter(formatter)
-logger.addHandler(console_handler)
+logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(levelname)s - %(message)s')
 
 # TODO: Do without starred imports
 # TODO: standardize JSON de-/serialization
@@ -59,12 +46,12 @@ def play_online():
 
 @socketio.on("connect")
 def test_connect():
-    logger.debug("Connected")
+    print("connected")
 
 
 @socketio.on("disconnect")
 def test_disconnect():
-    logger.debug("Disconnected")
+    print("disconnected")
 
 
 @socketio.on("test")
