@@ -288,23 +288,25 @@ $(document).ready(function() {
     });
 });
 
-function emitSelectHex(hex) {
-    console.log("Client selected hex", hex);
-    socket.emit('selecthex', {'data': hex});
+
+function emitAction(hex) {
+    // accepts hex as target for drop / move
+    console.log("Action", actionType, firstArg, hex);
+    socket.emit('action', {'type': actionType, 'first': firstArg, 'destination': hex});
 }
 
-function emitSelectDrop(insect){
-    console.log("Client selected insect for drop", insect);
-    socket.emit('selectdrop', {'data': insect});
+function emitOptions() {
+    console.log("Options", actionType, firstArg);
+    socket.emit('options', {'type': actionType, 'first': firstArg},
+                function (json) {
+                    console.log("Client received options from server", json);
+                    var hexes = JSON.parse(json);
+                    makeHighlightInstances(hexes);
+                });
 }
 
-function emitTargetHex(hex) {
-    console.log("Client makes move", hex);
-    // -> app.py
-    // listen on new state
-    socket.emit('targethex', {'data': hex});
-    state = WAITING;
-}
+var firstArg = null;
+var actionType = null;
 
 var previousSelection = null;
 var dropSelection = null;
@@ -336,7 +338,8 @@ function onDocumentMouseDown( event ) {
         state = IDLE;
         // TODO: abstract state change
         highlightGroup.clear();
-        emitTargetHex(newHex);
+        console.log("actiontype", actionType);
+        emitAction(newHex);
     }
     else if (intersectsDrop.length > 0) {
         var drop = intersectsDrop[ 0 ].object;
@@ -345,7 +348,9 @@ function onDocumentMouseDown( event ) {
         previousSelection = null;
         state = SELECTED;
         console.log("selected drop", dropSelection);
-        emitSelectDrop(dropSelection);
+        actionType = "drop";
+        firstArg = dropSelection;
+        emitOptions();
     }
     else if ( intersects.length > 0 ) {
         dropSelection = null;
@@ -367,7 +372,10 @@ function onDocumentMouseDown( event ) {
             const newHex = layout.pixelToHex(selected.point).round();
             console.log(newHex);
             state = SELECTED;
-            emitSelectHex(newHex);
+            actionType = "move";
+            firstArg = newHex;
+
+            emitOptions();
 
         }
     }

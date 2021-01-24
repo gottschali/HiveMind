@@ -16,14 +16,9 @@ logging.basicConfig(filename='app.log', filemode='w', format='%(name)s - %(level
 # TODO: Do without starred imports
 # TODO: standardize JSON de-/serialization
 # TODO: Standardized naming for signals
-# TODO: No gobal state
 # TODO: send moveable pieces (one-hive) with state
 # - state for each session
 # In future threading/async
-
-action_type = None
-origin = None
-
 
 @app.route("/")
 def index():
@@ -79,63 +74,60 @@ def reset_handler():
     emit("sendstate", json_state)
 
 
-@socketio.on("selecthex")
-def select_hex(hex):
-    global action_type
-    global origin
-    hex = Hex(hex["data"]["q"], hex["data"]["r"])
-    origin = hex
-    action_type = Move
-    opts = []
+@socketio.on("action")
+def action_handler(data):
     state = games[request.sid]
-    for action in state.possible_actions:
-        # Currently only moves supporeted
-        if isinstance(action, Move):
-            if action.origin == hex:
-                opts.append(action.destination)
-    emit(
-        "moveoptions",
-        json.dumps([{"q": h.q, "r": h.r, "h": state.hive.height(h)} for h in opts]),
-    )
+    print(f"Action: {data}")
+    action_type = data["type"]
+    first = data["first"]
+    destination = Hex(data["destination"]["q"], data["destination"]["r"])
 
-
-@socketio.on("selectdrop")
-def select_drop(payload):
-    state = games[request.sid]
-    insect = Insect(int(payload["data"]))
-    global action_type
-    global origin
-    origin = insect
-    action_type = Drop
-    opts = [a.destination for a in state.possible_actions if isinstance(a, Drop)]
-    emit("moveoptions", json.dumps([{"q": h.q, "r": h.r, "h": 0} for h in opts]))
-
-
-@socketio.on("targethex")
-def target_hex(hex):
-    state = games[request.sid]
-    destination = Hex(hex["data"]["q"], hex["data"]["r"])
-    if action_type == Move:
-        move = Move(origin, destination)
-        # TODO make that raise excpetion
+    if action_type == "move":
+        origin = Hex(first["q"], first["r"])
+        action = Move(origin, destination)
+        print(action)
+        # TODO make that raise custom excpetion
         try:
-            state = state + move
+            games[request.sid] = state + action
         except Exception as e:
             raise e
-        json_state = state.to_json()
-        emit("sendstate", json_state)
-    if action_type == Drop:
-        move = Drop(Stone(origin, state.current_team), destination)
+        emit_state(request.sid)
+    elif action_type == "drop":
+        insect = Insect(int(first))
+        action = Drop(Stone(insect, state.current_team), destination)
         # TODO make that raise excpetion
+        # Duplication
         try:
-            state = state + move
+            games[request.sid] = state + action
         except Exception as e:
             raise e
-        json_state = state.to_json()
-        emit("sendstate", json_state)
-
+        emit_state(request.sid)
     else:
-        print("No move-type specified")
+        raise Exception(f"Invalid Actiontype {action_type}")
+
+
+@socketio.on("options")
+def options_handler(data):
+    state = games[request.sid]
+    print(f"Options: {data}")
+    action_type = data["type"]
+    first = data["first"]
+    if action_type == "move":
+        origin = Hex(first["q"], first["r"])
+        opts = []
+        for action in state.possible_actions:
+            if isinstance(action, Move):
+                if action.origin == origin:
+                    opts.append(action.destination)
+        return json.dumps([{"q": h.q, "r": h.r, "h": state.hive.height(h)} for h in opts])
+
+    if action_type == "drop":
+        insect = Insect(int(first))
+        opts = [a.destination for a in state.possible_actions if isinstance(a, Drop)]
+        # Reducible
+        return json.dumps([{"q": h.q, "r": h.r, "h": 0} for h in opts])
+    else:
+        raise Exception(f"Invalid Actiontype {action_type}")
 
 
 def main():
