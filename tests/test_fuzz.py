@@ -2,7 +2,8 @@ from hivemind.state import State
 
 
 def test_fuzz():
-    for y in range(10):
+    """ Check that always computing the next state does not raise errors """
+    for y in range(5):
         state = State()
-        for i in range(100):
+        for i in range(50):
             state = state.next_state()

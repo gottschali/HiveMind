@@ -1,5 +1,7 @@
-import numpy as np
 from collections import defaultdict
+
+import numpy as np
+
 
 class MonteCarloTreeSearchNode:
     def __init__(self, state, parent=None):
@@ -82,5 +84,3 @@ class MonteCarloTreeSearchNode:
     def rollout_policy(self, possible_actions):
         """ How to choose from possible moves -> Move """
         return np.random.choice(possible_actions)
-
-

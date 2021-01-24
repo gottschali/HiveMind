@@ -1,18 +1,19 @@
+import logging
+
 from hivemind.state import State
 from mcts.node import MonteCarloTreeSearchNode
 from mcts.search import MonteCarloTreeSearch
 
-import logging
-
 LEVEL = logging.WARN
 
-logging.basicConfig(filename='test.log', filemode="w", format='%(filename)s: %(message)s',
-                    level=LEVEL)
+logging.basicConfig(
+    filename="test.log", filemode="w", format="%(filename)s: %(message)s", level=LEVEL
+)
 
 logger = logging.getLogger()
 console_handler = logging.StreamHandler()
 console_handler.setLevel(LEVEL)
-formatter = logging.Formatter('%(levelname)s %(filename)s:  %(message)s')
+formatter = logging.Formatter("%(levelname)s %(filename)s:  %(message)s")
 console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 
