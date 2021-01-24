@@ -1,4 +1,5 @@
 import json
+import logging
 
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
@@ -9,6 +10,21 @@ from hivemind.state import *
 
 app = Flask(__name__)
 socketio = SocketIO(app)
+
+
+logging.basicConfig(
+    filename="test.log",
+    filemode="w",
+    format="%(filename)s: %(message)s",
+    level=logging.DEBUG,
+)
+
+logger = logging.getLogger()
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter("%(levelname)s %(filename)s:  %(message)s")
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
 
 # TODO: Do without starred imports
 # TODO: standardize JSON de-/serialization
