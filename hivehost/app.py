@@ -49,22 +49,22 @@ def play_self():
     return render_template("play.html")
 
 @app.route("/play/ai")
-def play_self():
+def play_ai():
     return render_template("play.html")
 
 @app.route("/play/online")
-def play_self():
+def play_online():
     return render_template("play.html")
 
 
 @socketio.on("connect")
 def test_connect():
-    emit("my response", {"data": "Connected"})
+    logger.debug("Connected")
 
 
 @socketio.on("disconnect")
 def test_disconnect():
-    emit("disconnect_ack", {"data": "Disconnected"})
+    logger.debug("Disconnected")
 
 
 @socketio.on("test")
