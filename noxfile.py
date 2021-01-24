@@ -2,7 +2,7 @@ import nox
 
 nox.options.sessions = "format", "lint", "mypy", "tests"
 locations = ("hivemind",)
-more_locations = ("hivemind", "tests", "mcts", ".")
+more_locations = ("hivemind", "tests", "mcts", "brain", ".")
 
 
 @nox.session
