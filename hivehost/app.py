@@ -81,29 +81,17 @@ def action_handler(data):
     action_type = data["type"]
     first = data["first"]
     destination = Hex(data["destination"]["q"], data["destination"]["r"])
-
     if action_type == "move":
         origin = Hex(first["q"], first["r"])
         action = Move(origin, destination)
-        print(action)
-        # TODO make that raise custom excpetion
-        try:
-            games[request.sid] = state + action
-        except Exception as e:
-            raise e
-        emit_state(request.sid)
     elif action_type == "drop":
         insect = Insect(int(first))
         action = Drop(Stone(insect, state.current_team), destination)
-        # TODO make that raise excpetion
-        # Duplication
-        try:
-            games[request.sid] = state + action
-        except Exception as e:
-            raise e
-        emit_state(request.sid)
-    else:
-        raise Exception(f"Invalid Actiontype {action_type}")
+    try:
+        games[request.sid] = state + action
+    except Exception as e:
+        raise e
+    emit_state(request.sid)
 
 
 @socketio.on("options")
