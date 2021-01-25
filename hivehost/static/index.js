@@ -1,225 +1,15 @@
-import * as THREE from './three.module.js';
-import * as HEX from './hexlib.js';
-import * as ORBIT from './OrbitControls.js';
+import {Raycaster, Vector3} from './three.module.js';
 
+import {Painter} from './modules/drawing.js';
 import * as CONSTANTS from './modules/constants.js';
 
 
-// Draw on the canvas
 const canvas = document.querySelector('#c');
-const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
-renderer.setClearColor(CONSTANTS.BG); // background color
-renderer.setSize(window.innerWidth, window.innerHeight);
+var Paint = new Painter(canvas);
 
-// Defines the camera pyramid slant
-const fov = 80; // field of view
-const aspect = window.innerWidth / window.innerHeight;  // the canvas default
-const near = 0.1;
-const far = 100;
-const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-
-// Set camera position
-camera.position.set( 0, -15, 20 );
-camera.lookAt(0, 0, 0);
-
-const scene = new THREE.Scene();
-
-var ambientLight = new THREE.AmbientLight( CONSTANTS.WHITE , 1 );
-ambientLight.position.set( 10, -10, 15 );
-scene.add( ambientLight );
-
-// Creates a fog to hide that the ground is finite
-// Disabled for performance
-// scene.background = new THREE.Color( BG );
-// scene.fog = new THREE.Fog( BG , 30, far );
 
 // Control for moving around the scene
-const controls = new ORBIT.OrbitControls (camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.5;
-controls.enableZoom = true;
-controls.maxAzimuthAngle = Math.PI / 2;
-controls.minAzimuthAngle = -Math.PI / 2;
-controls.maxDistance = 90;
-controls.minDistance = 5;
-controls.update();
 
-// Setting up Hexlib
-const orientation = HEX.Layout.flat;
-const size = new HEX.Point(1, 1);
-const origin = new HEX.Point(0, 0);
-const layout = new HEX.Layout(orientation, size, origin);
-
-// Preload all images and store the textures in a hashmap for every insect
-// TODO: Load the texture only on top and not on all sides
-const loader = new THREE.TextureLoader();
-var names = ["grasshopper", "bee", "ant", "spider", "beetle"];
-var textures = {};
-names.forEach( name => textures[name] = loader.load( `../static/assets/${name}.jpeg` ) );
-
-// Add a flat hex plane
-var points = [];
-var corners = layout.polygonCorners(new HEX.Hex(0, 0));
-corners.forEach(({x, y}) => points.push( new THREE.Vector3(x, y, 0)));
-points.push(corners[0]);
-const flatHexGeometry = new THREE.BufferGeometry().setFromPoints( points );
-const flatHexMaterial = new THREE.LineBasicMaterial( { color: CONSTANTS.FG } );
-const flatHexLine = new THREE.Line(flatHexGeometry, flatHexMaterial);
-var planeGroup = new THREE.Group();
-const radius = 10;
-for (var q = -radius; q <= radius; q++) {
-    var r1 = Math.max(-radius, -q - radius);
-    var r2 = Math.min( radius, -q + radius);
-    for (var r = r1; r <= r2; r++) {
-        const {x, y} = layout.hexToPixel(new HEX.Hex(q, r));
-        var flatHexTile = flatHexLine.clone();
-        flatHexTile.position.set(x, y, -0.25);
-        planeGroup.add(flatHexTile);
-    }
-}
-scene.add(planeGroup);
-
-// radiusTop, radiusBottom, height, radialSegments
-const hexGeometry = new THREE.CylinderBufferGeometry( 1, 1, 0.5, 6 );
-const wireframeGeometry = new THREE.EdgesGeometry( hexGeometry );
-const wireframeMaterial = new THREE.LineBasicMaterial( { color: CONSTANTS.BLACK, linewidth: 5 });
-const wireframe = new THREE.LineSegments( wireframeGeometry, wireframeMaterial );
-
-const insectMap = {1: "bee",
-                   2: "spider",
-                   3: "ant",
-                   4: "grasshopper",
-                   5: "beetle"};
-
-function makeTileInstance(team, hex, name, height) {
-    // Create a 3D object at the position given by hex and height
-    // Can be precomputed
-    const color = (team ? CONSTANTS.YELLOW : CONSTANTS.CYAN);
-    // const materials = [
-        // new THREE.MeshLambertMaterial({color: color}),
-        // new THREE.MeshLambertdMaterial({color: color, map: textures[insectMap[name]]}),
-        // new THREE.MeshLambertMaterial({color: color}),
-    // ];
-    const material = new THREE.MeshLambertMaterial({color: color,
-                                                    map: textures[insectMap[name]]});
-    // Add a wireframe
-    const tile = new THREE.Mesh(hexGeometry, material);
-    tileArray.push(tile);
-    tile_group.add(tile);
-    tile.add( wireframe.clone() ); // Don't add to the scene directly, make it a child
-    const {x, y} = layout.hexToPixel(hex);
-    tile.position.set( x, y, height * 0.5 );
-    tile.rotateX(Math.PI / 2);
-    tile.rotateY(Math.PI / 6);
-    return tile;
-}
-
-var highlightMaterial = new THREE.MeshStandardMaterial({color: CONSTANTS.FG,
-                                                        polygonOffset: true,
-                                                        polygonOffsetFactor: 0,
-                                                        polygonOffsetUnits: 0,
-                                                        transparent: true,
-                                                        opacity: 0.3,
-                                                       });
-
-var highlightGroup= new THREE.Group();
-var highlightArray = [];
-scene.add(highlightGroup);
-function makeHighlightInstances(hexes) {
-    highlightGroup.clear();
-    highlightArray.length = 0;
-    hexes.forEach( ({q, r, h}) => {
-        const {x, y} = layout.hexToPixel(new HEX.Hex(q, r));
-        const tile = new THREE.Mesh(hexGeometry, highlightMaterial);
-        tile.position.set( x, y, h * 0.5 );
-        tile.rotateX(Math.PI / 2);
-        tile.rotateY(Math.PI / 6);
-        highlightGroup.add(tile);
-        highlightArray.push(tile);
-    });
-    render();
-}
-
-var dropArr = [];
-var dropGroup = new THREE.Group();
-dropGroup.position.set(0, 0, -10);
-camera.add(dropGroup);
-scene.add(camera);
-function compareStone(a, b) {
-    return (a.team == b.team) ? a.name < b.name : a.team < b.team;
-}
-
-const dropGeometry = new THREE.CylinderBufferGeometry( 0.1, 0.1, 0.05, 0.6 );
-function makeDropTileInstances(arr) {
-    arr.sort(compareStone);
-    dropGroup.clear();
-    dropArr.length = 0; 
-    var x = -10;
-    var prev = null;
-    var dy = 0;
-    for (const stone of arr) {
-        if (prev != null && stone.team == prev.team && stone.name == prev.name) {
-            dy += 1;
-        } else {
-            dy = 0;
-            x += 2;
-        }
-        prev = stone;
-        var material = new THREE.MeshLambertMaterial({color: (stone.team ? CONSTANTS.YELLOW : CONSTANTS.CYAN),
-                                                       map: textures[insectMap[stone.name]],
-                                                  });
-        // Add a wireframe
-        const tile = new THREE.Mesh(hexGeometry, material);
-        tile.rotateX(Math.PI / 2);
-        tile.rotateY(Math.PI / 4);
-        tile.position.set(x, 10 + dy, -10);
-        tile.insect = stone.name;
-        tile.add( wireframe.clone() ); // Don't add to the scene directly, make it a child
-        dropGroup.add(tile);
-        dropArr.push(tile);
-    }
-}
-
-
-// contains all insects
-var tile_group = new THREE.Group();
-scene.add(tile_group);
-
-function render() {
-    if (resizeRendererTodisplaySize(renderer)) {
-        // update camera settings if the screen is resized
-        camera.aspect = canvas.clientWidth / canvas.clientHeight;
-        camera.updateProjectionMatrix();
-    }
-    renderer.render(scene, camera); // Actual rendering
-    // continue looping
-    // requestAnimationFrame(render);
-}
-
-function resizeRendererTodisplaySize(renderer) {
-    const pixelRatio = window.devicePixelRatio;
-    const width = canvas.clientWidth * pixelRatio | 0;
-    const height = canvas.clientHeight * pixelRatio | 0;
-    const needResize = canvas.width !== width || canvas.height !== height;
-    if (needResize) {
-        renderer.setSize(width, height, false);
-    }
-    return needResize;
-}
-var tileArray = [];
-
-function drawState(json) {
-    var state = JSON.parse(json);
-    // clear the previous hexes
-    tile_group.clear();
-    tileArray.length = 0;
-    // TODO: optimize: drop: only add new insect, move: move the object to new destination
-    for (const insect of state.hive) {
-        var newInst = makeTileInstance(insect.team, new HEX.Hex(insect.q, insect.r), insect.name, insect.height);
-    }
-    makeDropTileInstances(state.availables);
-    render();
-}
 
 // Connect to the Socket.IO server.
 // The connection URL has the following format, relative to the current page:
@@ -232,7 +22,7 @@ $(document).ready(function() {
     socket.on('connect', function() {
         console.log("Client connected");
     }, function(json) { // Callback
-        drawState(json);
+        Paint.drawState(json);
     });
 
     // Event handler for server sent data.
@@ -240,16 +30,9 @@ $(document).ready(function() {
     // to the client. The data is then displayed in the "Received"
     // section of the page.
     socket.on('sendstate', function(json) {
-        console.log("Client received data from server");
-        drawState(json);
+        console.log("Received State");
+        Paint.drawState(json);
         state = "IDLE";
-        return false;
-    });
-
-    socket.on('moveoptions', function(json) {
-        console.log("Client received options from server");
-        var hexes = JSON.parse(json);
-        makeHighlightInstances(hexes);
         return false;
     });
 
@@ -257,17 +40,17 @@ $(document).ready(function() {
     // These accept data from the user and send it to the server in a
     // variety of ways
     $('form#test').submit(function(event) {
-        console.log("Client requesting action");
+        console.log("Client requests Action");
         socket.emit('ai_action');
         return false;
     });
     $('form#automove').submit(function(event) {
-        console.log("Client requesting auto actions");
+        console.log("Client requesting AUTO actions");
         socket.emit('auto_action');
         return false;
     });
     $('form#resetgame').submit(function(event) {
-        console.log("Client requesting reset");
+        console.log("Client reset");
         socket.emit('reset');
         return false;
     });
@@ -286,7 +69,7 @@ function emitOptions() {
                 function (json) {
                     console.log("Client received options from server", json);
                     var hexes = JSON.parse(json);
-                    makeHighlightInstances(hexes);
+                    Paint.makeHighlightInstances(hexes);
                 });
 }
 
@@ -306,23 +89,25 @@ function onDocumentMouseDown( event ) {
     console.log("state: ", state);
     if (state === WAITING) return;
     event.preventDefault();
-    var mouse3D = new THREE.Vector3(
+    var mouse3D = new Vector3(
         ( ( event.clientX - canvas.offsetLeft ) / canvas.width ) * 2 - 1,
         -( ( event.clientY - canvas.offsetTop ) / canvas.height ) * 2 + 1,
           0.5 );
-    var raycaster =  new THREE.Raycaster();
-    raycaster.setFromCamera( mouse3D, camera );
-    var intersects = raycaster.intersectObjects( tileArray );
-    var intersectsTarget = raycaster.intersectObjects( highlightArray );
-    var intersectsDrop = raycaster.intersectObjects( dropArr );
+    var raycaster =  new Raycaster();
+    raycaster.setFromCamera( mouse3D, Paint.camera );
+
+    var intersects = raycaster.intersectObjects( Paint.tileArray );
+    var intersectsTarget = raycaster.intersectObjects( Paint.highlightArray );
+    var intersectsDrop = raycaster.intersectObjects( Paint.dropArr );
+    console.log(intersectsTarget);
     if ( intersectsTarget.length > 0 ) {
 
         var target = intersectsTarget[ 0 ];
-        const newHex = layout.pixelToHex(target.point).round();
+        const newHex = Paint.layout.pixelToHex(target.point).round();
         console.log(newHex);
         state = IDLE;
         // TODO: abstract state change
-        highlightGroup.clear();
+        Paint.highlightGroup.clear();
         console.log("actiontype", actionType);
         emitAction(newHex);
     }
@@ -354,7 +139,7 @@ function onDocumentMouseDown( event ) {
             previousSelection = selected.object;
             previousSelection.previous = selected.object.material.color.getHex();
             selected.object.material.color.set( CONSTANTS.GREEN );
-            const newHex = layout.pixelToHex(selected.point).round();
+            const newHex = Paint.layout.pixelToHex(selected.point).round();
             console.log(newHex);
             state = SELECTED;
             actionType = "move";
@@ -368,11 +153,11 @@ function onDocumentMouseDown( event ) {
 canvas.addEventListener( "click", onDocumentMouseDown );
 
 // call this only in static scenes (i.e., if there is no animation loop)
-controls.addEventListener( 'change', render ); 
+Paint.controls.addEventListener( 'change', Paint.render.bind(Paint) ); 
 
-window.addEventListener('resize', render);
+window.addEventListener('resize', Paint.render);
 window.addEventListener('keydown', (e) => {
     e.preventDefault();
 });
 
-render(); // Init Render
+Paint.render(); // Init Render
