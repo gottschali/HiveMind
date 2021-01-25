@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>{% block title %}{% endblock %} HiveMind</title>
-<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
-<link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"\>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Ali Gottschall">
+    <title>{% block title %}{% endblock %} HiveMind</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link type="text/css" rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"\>
 
 {% block head %}
 {% endblock %}
 </head>
 
 <body>
-<header>
+    <header>
         <h1>HiveMind</h1>
-</header>
+    </header>
 
-<section class="content">
-    {% block content %}
+    <section class="content">
+        {% block content %}
 
-    {% endblock %}
-</section>
+        {% endblock %}
+    </section>
 </body>
 </html>
