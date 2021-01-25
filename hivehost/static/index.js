@@ -66,11 +66,11 @@ const layout = new HEX.Layout(orientation, size, origin);
 const loader = new THREE.TextureLoader();
 var names = ["grasshopper", "bee", "ant", "spider", "beetle"];
 var textures = {};
-names.forEach( name => textures[name] = loader.load( `./static/assets/${name}.jpeg` ) );
+names.forEach( name => textures[name] = loader.load( `../static/assets/${name}.jpeg` ) );
 
 // Add a flat hex plane
 var points = [];
-var corners =  layout.polygonCorners(new HEX.Hex(0, 0));
+var corners = layout.polygonCorners(new HEX.Hex(0, 0));
 corners.forEach(({x, y}) => points.push( new THREE.Vector3(x, y, 0)));
 points.push(corners[0]);
 const flatHexGeometry = new THREE.BufferGeometry().setFromPoints( points );
@@ -101,19 +101,22 @@ const insectMap = {1: "bee",
                    3: "ant",
                    4: "grasshopper",
                    5: "beetle"};
+
 function makeTileInstance(team, hex, name, height) {
     // Create a 3D object at the position given by hex and height
     // Can be precomputed
-    var material = new THREE.MeshStandardMaterial({color: (team ? MAGENTA : YELLOW),
-                                                   polygonOffset: true,
-                                                   polygonOffsetFactor: 5, // positive value pushes polygon further away
-                                                   polygonOffsetUnits: 1,
-                                                   map: textures[insectMap[name]],
-                                                   roughness: 0.5,
-                                                   metalness: 0.5,
-                                                  });
+    const color = (team ? YELLOW : CYAN);
+    // const materials = [
+        // new THREE.MeshLambertMaterial({color: color}),
+        // new THREE.MeshLambertdMaterial({color: color, map: textures[insectMap[name]]}),
+        // new THREE.MeshLambertMaterial({color: color}),
+    // ];
+    const material = new THREE.MeshLambertMaterial({color: (team ? YELLOW : CYAN),
+                                                    map: textures[insectMap[name]]});
     // Add a wireframe
     const tile = new THREE.Mesh(hexGeometry, material);
+    tileArray.push(tile);
+    tile_group.add(tile);
     tile.add( wireframe.clone() ); // Don't add to the scene directly, make it a child
     const {x, y} = layout.hexToPixel(hex);
     tile.position.set( x, y, height * 0.5 );
@@ -166,7 +169,6 @@ function makeDropTileInstances(arr) {
     var prev = null;
     var dy = 0;
     for (const stone of arr) {
-        console.log(stone);
         if (prev != null && stone.team == prev.team && stone.name == prev.name) {
             dy += 1;
         } else {
@@ -174,13 +176,8 @@ function makeDropTileInstances(arr) {
             x += 2;
         }
         prev = stone;
-        var material = new THREE.MeshStandardMaterial({color: (stone.team ? MAGENTA : YELLOW),
-                                                   polygonOffset: true,
-                                                   polygonOffsetFactor: 5,
-                                                   polygonOffsetUnits: 1,
-                                                   map: textures[insectMap[stone.name]],
-                                                   roughness: 0.5,
-                                                   metalness: 0.5,
+        var material = new THREE.MeshLambertMaterial({color: (stone.team ? YELLOW : CYAN),
+                                                       map: textures[insectMap[stone.name]],
                                                   });
         // Add a wireframe
         const tile = new THREE.Mesh(hexGeometry, material);
@@ -190,7 +187,6 @@ function makeDropTileInstances(arr) {
         tile.insect = stone.name;
         tile.add( wireframe.clone() ); // Don't add to the scene directly, make it a child
         dropGroup.add(tile);
-        console.log(tile);
         dropArr.push(tile);
     }
 }
@@ -231,8 +227,6 @@ function drawState(json) {
     // TODO: optimize: drop: only add new insect, move: move the object to new destination
     for (const insect of state.hive) {
         var newInst = makeTileInstance(insect.team, new HEX.Hex(insect.q, insect.r), insect.name, insect.height);
-        tileArray.push(newInst);
-        tile_group.add(newInst);
     }
     makeDropTileInstances(state.availables);
     render();
@@ -248,7 +242,8 @@ $(document).ready(function() {
     // server is established.
     socket.on('connect', function() {
         console.log("Client connected");
-        socket.emit('client_connect', {data: 'I\'m connected!'});
+    }, function(json) { // Callback
+        drawState(json);
     });
 
     // Event handler for server sent data.
@@ -257,7 +252,6 @@ $(document).ready(function() {
     // section of the page.
     socket.on('sendstate', function(json) {
         console.log("Client received data from server");
-        console.log(json);
         drawState(json);
         state = "IDLE";
         return false;
@@ -265,9 +259,7 @@ $(document).ready(function() {
 
     socket.on('moveoptions', function(json) {
         console.log("Client received options from server");
-        console.log(json);
         var hexes = JSON.parse(json);
-        console.log(hexes);
         makeHighlightInstances(hexes);
         return false;
     });
@@ -276,13 +268,13 @@ $(document).ready(function() {
     // These accept data from the user and send it to the server in a
     // variety of ways
     $('form#test').submit(function(event) {
-        console.log("Client requesting move");
-        socket.emit('test', {data: 'RequestMove'});
+        console.log("Client requesting action");
+        socket.emit('ai_action');
         return false;
     });
     $('form#automove').submit(function(event) {
-        console.log("Client requesting AutoMove");
-        socket.emit('auto_move', {data: 'RequestAutoMove'});
+        console.log("Client requesting auto actions");
+        socket.emit('auto_action');
         return false;
     });
     $('form#resetgame').submit(function(event) {
@@ -290,28 +282,27 @@ $(document).ready(function() {
         socket.emit('reset');
         return false;
     });
-    // Request the first move by default
-    socket.emit('test', {data: 'RequestMove'});
 });
 
-function emitSelectHex(hex) {
-    console.log("Client selected hex", hex);
-    socket.emit('selecthex', {'data': hex});
+
+function emitAction(hex) {
+    // accepts hex as target for drop / move
+    console.log("Action", actionType, firstArg, hex);
+    socket.emit('action', {'type': actionType, 'first': firstArg, 'destination': hex});
 }
 
-function emitSelectDrop(insect){
-    console.log("Client selected insect for drop", insect);
-    socket.emit('selectdrop', {'data': insect});
+function emitOptions() {
+    console.log("Options", actionType, firstArg);
+    socket.emit('options', {'type': actionType, 'first': firstArg},
+                function (json) {
+                    console.log("Client received options from server", json);
+                    var hexes = JSON.parse(json);
+                    makeHighlightInstances(hexes);
+                });
 }
 
-function emitTargetHex(hex) {
-    console.log("Client makes move", hex);
-    // -> app.py
-    // listen on new state
-    socket.emit('targethex', {'data': hex});
-    state = WAITING;
-    socket.emit('test', {data: 'RequestMove'});
-}
+var firstArg = null;
+var actionType = null;
 
 var previousSelection = null;
 var dropSelection = null;
@@ -335,7 +326,6 @@ function onDocumentMouseDown( event ) {
     var intersects = raycaster.intersectObjects( tileArray );
     var intersectsTarget = raycaster.intersectObjects( highlightArray );
     var intersectsDrop = raycaster.intersectObjects( dropArr );
-    console.log(intersects, intersectsTarget, intersectsDrop);
     if ( intersectsTarget.length > 0 ) {
 
         var target = intersectsTarget[ 0 ];
@@ -344,7 +334,8 @@ function onDocumentMouseDown( event ) {
         state = IDLE;
         // TODO: abstract state change
         highlightGroup.clear();
-        emitTargetHex(newHex);
+        console.log("actiontype", actionType);
+        emitAction(newHex);
     }
     else if (intersectsDrop.length > 0) {
         var drop = intersectsDrop[ 0 ].object;
@@ -353,7 +344,9 @@ function onDocumentMouseDown( event ) {
         previousSelection = null;
         state = SELECTED;
         console.log("selected drop", dropSelection);
-        emitSelectDrop(dropSelection);
+        actionType = "drop";
+        firstArg = dropSelection;
+        emitOptions();
     }
     else if ( intersects.length > 0 ) {
         dropSelection = null;
@@ -375,7 +368,10 @@ function onDocumentMouseDown( event ) {
             const newHex = layout.pixelToHex(selected.point).round();
             console.log(newHex);
             state = SELECTED;
-            emitSelectHex(newHex);
+            actionType = "move";
+            firstArg = newHex;
+
+            emitOptions();
 
         }
     }

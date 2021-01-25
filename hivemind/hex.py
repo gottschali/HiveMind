@@ -30,6 +30,9 @@ class Hex:
         else:
             return self._coords == other
 
+    def __lt__(self, other: "Hex") -> bool:
+        return self.q < other.q if self.q != other.q else self.r < other.r
+
     def __getitem__(self, index: int) -> int:
         return self._coords[index]
 

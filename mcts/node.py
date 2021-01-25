@@ -1,5 +1,7 @@
-import numpy as np
 from collections import defaultdict
+
+import numpy as np
+
 
 class MonteCarloTreeSearchNode:
     def __init__(self, state, parent=None):
@@ -43,21 +45,13 @@ class MonteCarloTreeSearchNode:
         current_rollout_board = self.state
         # TODO
         while not current_rollout_board.is_game_over():
-            if current_rollout_board.turn_number > 200:
+            if current_rollout_board.turn_number > 100:
                 print("Too many moves, treat as stalemate")
                 return 0
             possible_actions = current_rollout_board.possible_actions
             action = self.rollout_policy(possible_actions)
-            new = current_rollout_board + action
-            while new is None:
-                possible_actions.remove(action)
-                print("INCONSISTENCE between Generation and Validation")
-                if not possible_actions:
-                    print("No more moves found")
-                    return 0
-                action = self.rollout_policy(possible_actions)
-                new = current_rollout_board + action
-            current_rollout_board = new
+            current_rollout_board = current_rollout_board + action
+        print(current_rollout_board.game_result)
         return current_rollout_board.game_result
 
     def backpropagate(self, result):
@@ -82,5 +76,3 @@ class MonteCarloTreeSearchNode:
     def rollout_policy(self, possible_actions):
         """ How to choose from possible moves -> Move """
         return np.random.choice(possible_actions)
-
-

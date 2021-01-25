@@ -12,8 +12,7 @@ class Hive(dict):
     """
     Datastructure to store stones in a hive.
     There resides atleast one stone at every key, but they may be stacked.
-    Example:
-       Hive[Hex(0, 0)] = [Bee(True), Beetle(False)]
+    Mapping[Hex, List[Stone,...]]
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -45,7 +44,7 @@ class Hive(dict):
     def game_result(self) -> Union[None, int]:
         """ If a Bee is completely surrounded the other player wins. A draw is also possible """
         white_lost = black_lost = False
-        for hex, stack in self.values():
+        for hex, stack in self.items():
             stone = stack[0]
             if stone.insect == Insect.BEE:
                 if len(self.neighbours(hex)) == 6:
@@ -172,7 +171,7 @@ class Hive(dict):
         drops = tuple(filter(check_neigbour_team, candidates))
         # The hive is empty -> every hex would be valid
         # wlog return only the Origin
-        return drops if drops else (Hex(0, 0),)
+        return drops
 
     def _one_hive(self) -> Set[Hex]:
         """
