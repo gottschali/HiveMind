@@ -2,24 +2,13 @@ import * as THREE from './three.module.js';
 import * as HEX from './hexlib.js';
 import * as ORBIT from './OrbitControls.js';
 
-const BLACK = '#000000';
-const BG = '#002b36';
-const FG = '#fdf6e3';
-const WHITE = "#ffffff";
+import * as CONSTANTS from './modules/constants.js';
 
-const YELLOW = '#b58900';
-const ORANGE = '#cb4b16';
-const RED = '#dc322f';
-const MAGENTA = '#d33682';
-const VIOLET = '#6c71c4';
-const BLUE = '#268bd2';
-const CYAN = '#2aa198';
-const GREEN = '#859900';
 
 // Draw on the canvas
 const canvas = document.querySelector('#c');
 const renderer = new THREE.WebGLRenderer({canvas, antialias: true});
-renderer.setClearColor(BG); // background color
+renderer.setClearColor(CONSTANTS.BG); // background color
 renderer.setSize(window.innerWidth, window.innerHeight);
 
 // Defines the camera pyramid slant
@@ -35,7 +24,7 @@ camera.lookAt(0, 0, 0);
 
 const scene = new THREE.Scene();
 
-var ambientLight = new THREE.AmbientLight( WHITE , 1 );
+var ambientLight = new THREE.AmbientLight( CONSTANTS.WHITE , 1 );
 ambientLight.position.set( 10, -10, 15 );
 scene.add( ambientLight );
 
@@ -74,7 +63,7 @@ var corners = layout.polygonCorners(new HEX.Hex(0, 0));
 corners.forEach(({x, y}) => points.push( new THREE.Vector3(x, y, 0)));
 points.push(corners[0]);
 const flatHexGeometry = new THREE.BufferGeometry().setFromPoints( points );
-const flatHexMaterial = new THREE.LineBasicMaterial( { color: FG } );
+const flatHexMaterial = new THREE.LineBasicMaterial( { color: CONSTANTS.FG } );
 const flatHexLine = new THREE.Line(flatHexGeometry, flatHexMaterial);
 var planeGroup = new THREE.Group();
 const radius = 10;
@@ -93,7 +82,7 @@ scene.add(planeGroup);
 // radiusTop, radiusBottom, height, radialSegments
 const hexGeometry = new THREE.CylinderBufferGeometry( 1, 1, 0.5, 6 );
 const wireframeGeometry = new THREE.EdgesGeometry( hexGeometry );
-const wireframeMaterial = new THREE.LineBasicMaterial( { color: BLACK, linewidth: 5 });
+const wireframeMaterial = new THREE.LineBasicMaterial( { color: CONSTANTS.BLACK, linewidth: 5 });
 const wireframe = new THREE.LineSegments( wireframeGeometry, wireframeMaterial );
 
 const insectMap = {1: "bee",
@@ -105,13 +94,13 @@ const insectMap = {1: "bee",
 function makeTileInstance(team, hex, name, height) {
     // Create a 3D object at the position given by hex and height
     // Can be precomputed
-    const color = (team ? YELLOW : CYAN);
+    const color = (team ? CONSTANTS.YELLOW : CONSTANTS.CYAN);
     // const materials = [
         // new THREE.MeshLambertMaterial({color: color}),
         // new THREE.MeshLambertdMaterial({color: color, map: textures[insectMap[name]]}),
         // new THREE.MeshLambertMaterial({color: color}),
     // ];
-    const material = new THREE.MeshLambertMaterial({color: (team ? YELLOW : CYAN),
+    const material = new THREE.MeshLambertMaterial({color: color,
                                                     map: textures[insectMap[name]]});
     // Add a wireframe
     const tile = new THREE.Mesh(hexGeometry, material);
@@ -125,7 +114,7 @@ function makeTileInstance(team, hex, name, height) {
     return tile;
 }
 
-var highlightMaterial = new THREE.MeshStandardMaterial({color: FG,
+var highlightMaterial = new THREE.MeshStandardMaterial({color: CONSTANTS.FG,
                                                         polygonOffset: true,
                                                         polygonOffsetFactor: 0,
                                                         polygonOffsetUnits: 0,
@@ -176,7 +165,7 @@ function makeDropTileInstances(arr) {
             x += 2;
         }
         prev = stone;
-        var material = new THREE.MeshLambertMaterial({color: (stone.team ? YELLOW : CYAN),
+        var material = new THREE.MeshLambertMaterial({color: (stone.team ? CONSTANTS.YELLOW : CONSTANTS.CYAN),
                                                        map: textures[insectMap[stone.name]],
                                                   });
         // Add a wireframe
@@ -364,7 +353,7 @@ function onDocumentMouseDown( event ) {
             }
             previousSelection = selected.object;
             previousSelection.previous = selected.object.material.color.getHex();
-            selected.object.material.color.set( GREEN );
+            selected.object.material.color.set( CONSTANTS.GREEN );
             const newHex = layout.pixelToHex(selected.point).round();
             console.log(newHex);
             state = SELECTED;
