@@ -22,6 +22,7 @@ logging.basicConfig(
 
 
 @app.route("/")
+@app.route("/index")
 def index():
     return render_template("index.html")
 
@@ -139,7 +140,7 @@ def options_handler(data):
 
 
 def main():
-    socketio.run(app)
+    socketio.run(app, debug=True)
 
 
 if __name__ == "__main__":
