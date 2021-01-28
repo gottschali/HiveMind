@@ -106,10 +106,7 @@ def action_handler(data):
     elif action_type == "drop":
         insect = Insect(int(first))
         action = Drop(Stone(insect, state.current_team), destination)
-    try:
-        games[request.sid] = state + action
-    except Exception as e:
-        raise e
+    games[request.sid] = state + action
     emit_state(request.sid)
 
 
