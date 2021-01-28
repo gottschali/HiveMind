@@ -70,7 +70,7 @@ var actionType = null;
 var previousSelection = null;
 var dropSelection = null;
 
-const GAMETYPE = "single";
+const GAMETYPE = "ai";
 const IDLE = "idle";
 const WAITING = "waiting";
 const SELECTED = "selected";
@@ -146,10 +146,6 @@ function onDocumentMouseDown( event ) {
 Paint.controls.addEventListener( 'change', Paint.render.bind(Paint) );
 
 window.addEventListener('resize', Paint.render.bind(Paint));
-// window.addEventListener('keydown', (e) => {
-    // e.preventDefault();
-// });
-
 canvas.addEventListener( "click", onDocumentMouseDown );
 
 Paint.render(); // Init Render
