@@ -108,6 +108,7 @@ def action_handler(data):
         action = Drop(Stone(insect, state.current_team), destination)
     games[request.sid] = state + action
     emit_state(request.sid)
+    return True
 
 
 @socketio.on("options")
