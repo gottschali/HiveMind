@@ -71,27 +71,7 @@ const WAITING = "waiting";
 const SELECTED = "selected";
 var state = IDLE;
 
-class Game {
-    constructor(player0, player1) {
-        this.player0 = player0;
-        this.player1 = player1;
-        this.current_player = 0;
-    }
-}
-class Player {
-
-}
-Player.prototype = {
-    action: function(args) {
-        
-    }
-}
-class LocalPlayer extends Player {
-    constructor() {
-        super();
-        canvas.addEventListener( "click", this.onDocumentMouseDown );
-    }
-    onDocumentMouseDown( event ) {
+function onDocumentMouseDown( event ) {
         console.log("state: ", state);
         if (state === WAITING) return;
         event.preventDefault();
@@ -156,13 +136,6 @@ class LocalPlayer extends Player {
             }
         }
     }
-}
-class AIPlayer extends Player {
-    constructor() {
-        super();
-    }
-
-}
 
 const localPlayer = new LocalPlayer();
 const aiPlayer = new AIPlayer();
@@ -170,11 +143,13 @@ const game = new Game(localPlayer, localPlayer);
 
 
 // call this only in static scenes (i.e., if there is no animation loop)
-Paint.controls.addEventListener( 'change', Paint.render.bind(Paint) ); 
+Paint.controls.addEventListener( 'change', Paint.render.bind(Paint) );
 
 window.addEventListener('resize', Paint.render.bind(Paint));
 // window.addEventListener('keydown', (e) => {
     // e.preventDefault();
 // });
+
+canvas.addEventListener( "click", this.onDocumentMouseDown );
 
 Paint.render(); // Init Render
