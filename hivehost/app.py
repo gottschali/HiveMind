@@ -2,7 +2,7 @@ import json
 import logging
 
 from flask import Flask, render_template, request, session
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, join_room
 
 from brain.alphabeta import alphabeta
 from hivemind.state import *
@@ -32,7 +32,7 @@ def play_self():
     return render_template("play.html")
 
 
-@app.route("/play/ai")
+
 def play_ai():
     return render_template("play.html")
 
@@ -43,11 +43,12 @@ def play_online():
 
 
 games = {}
-
+rooms = {}
 
 def emit_state(sid):
-    json_state = games[sid].to_json()
-    emit("sendstate", json_state)
+    room = rooms[request.sid]
+    json_state = games[room].to_json()
+    emit("sendstate", json_state, room=room)
 
 
 @socketio.on("connect")
@@ -60,14 +61,16 @@ def connect_handler():
 @socketio.on("disconnect")
 def disconnect_handler():
     # Delete the game
-    del games[request.sid]
+    room = rooms[request.sid]
+    del games[room]
     print(f"{request.sid} disconnected")
 
 
 @socketio.on("ai_action")
 def ai_action_handler():
-    state = games[request.sid]
-    games[request.sid] = state.next_state()
+    room = rooms[request.sid]
+    state = games[room]
+    games[room] = state.next_state()
 
     # action = alphabeta(state, depth=2)
     # games[request.sid] = state + action
@@ -80,22 +83,31 @@ def ai_action_handler():
 
 @socketio.on("auto_action")
 def auto_action_handler():
+    room = rooms[request.sid]
     for i in range(50):
-        games[request.sid] = games[request.sid].next_state()
+        games[room] = games[room].next_state()
         emit_state(request.sid)
         socketio.sleep(0.02)
 
 
 @socketio.on("reset")
 def reset_handler():
+    rooms[request.sid] = request.sid
     games[request.sid] = State()
-    json_state = State().to_json()
-    emit("sendstate", json_state)
+    emit_state(request.sid)
+
+@socketio.on("joingame")
+def join_game_handler():
+    room = "room"
+    rooms[request.sid] = room
+    games[room] = State()
+    join_room(room)
 
 
 @socketio.on("action")
 def action_handler(data):
-    state = games[request.sid]
+    room = rooms[request.sid]
+    state = games[room]
     print(f"Action: {data}")
     action_type = data["type"]
     first = data["first"]
@@ -106,14 +118,15 @@ def action_handler(data):
     elif action_type == "drop":
         insect = Insect(int(first))
         action = Drop(Stone(insect, state.current_team), destination)
-    games[request.sid] = state + action
+    games[room] = state + action
     emit_state(request.sid)
     return True
 
 
 @socketio.on("options")
 def options_handler(data):
-    state = games[request.sid]
+    room = rooms[request.sid]
+    state = games[room]
     print(f"Options: {data}")
     action_type = data["type"]
     first = data["first"]

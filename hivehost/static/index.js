@@ -41,6 +41,12 @@ $(document).ready(function() {
         socket.emit('reset');
         return false;
     });
+    $('form#joingame').submit(function(event) {
+        console.log("Client joining game");
+        socket.emit('joingame');
+        GAMETYPE = "online";
+        return false;
+    });
 });
 
 
@@ -70,7 +76,7 @@ var actionType = null;
 var previousSelection = null;
 var dropSelection = null;
 
-const GAMETYPE = "ai";
+let GAMETYPE = "ai";
 const IDLE = "idle";
 const WAITING = "waiting";
 const SELECTED = "selected";
