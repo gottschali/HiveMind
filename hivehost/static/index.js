@@ -137,11 +137,6 @@ function onDocumentMouseDown( event ) {
         }
     }
 
-const localPlayer = new LocalPlayer();
-const aiPlayer = new AIPlayer();
-const game = new Game(localPlayer, localPlayer);
-
-
 // call this only in static scenes (i.e., if there is no animation loop)
 Paint.controls.addEventListener( 'change', Paint.render.bind(Paint) );
 
@@ -150,6 +145,6 @@ window.addEventListener('resize', Paint.render.bind(Paint));
     // e.preventDefault();
 // });
 
-canvas.addEventListener( "click", this.onDocumentMouseDown );
+canvas.addEventListener( "click", onDocumentMouseDown );
 
 Paint.render(); // Init Render
