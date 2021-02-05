@@ -1,11 +1,11 @@
 import json
 import logging
 import uuid
-from datetime import datetime
 
 from flask import Flask, render_template, request, session
 from flask_socketio import SocketIO, emit, join_room
 
+from room import Room
 from brain.alphabeta import alphabeta
 from hivemind.state import *
 from mcts.node import MonteCarloTreeSearchNode
@@ -29,15 +29,6 @@ AI = 0
 SELF = 1
 MULTI = 2
 
-class Room:
-
-    def __init__(self, name, mode=2):
-        self.name = name
-        self.gid = str(int(uuid.uuid1()))
-        self._time = datetime.now()
-        self.time = self._time.strftime("%H:%M:%S")
-        self._connections = 1
-        self._mode = mode
 
 # TODO create room logic
 
