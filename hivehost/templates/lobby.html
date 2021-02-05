@@ -10,9 +10,9 @@
 <table>
     {% for room in rooms %}
     <tr>
-        <td> room.name </td>
-        <td> room.gid </td>
-        <td> room.time </td>
+        <td> {{ room.name }} </td>
+        <td> {{ room.gid }} </td>
+        <td> {{ room.time }} </td>
         <td> <a href={{ "/play/online?gid=" + room.gid }}>Join! </a> </td>
     </tr>
     {% endfor %}
