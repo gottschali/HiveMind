@@ -12,6 +12,8 @@ from mcts.node import MonteCarloTreeSearchNode
 from mcts.search import MonteCarloTreeSearch
 
 app = Flask(__name__)
+app.secret_key = uuid.uuid4().hex
+app.config['SESSION_TYPE'] = 'filesystem'
 socketio = SocketIO(app)
 
 logging.basicConfig(
