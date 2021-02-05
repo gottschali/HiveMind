@@ -1,7 +1,7 @@
 import json
 import logging
 import uuid
-import time
+from datetime import datetime
 
 from flask import Flask, render_template, request, session
 from flask_socketio import SocketIO, emit, join_room
@@ -29,7 +29,8 @@ class Room:
     def __init__(self, name):
         self.name = name
         self.gid = str(int(uuid.uuid1()))
-        self.time = time.time()
+        self._time = datetime.now()
+        self.time = self._time.strftime("%H:%M:%S")
         self._connections = 1
 
 
