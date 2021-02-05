@@ -6,11 +6,6 @@
 {% endblock %}
 
 {% block content %}
-<script>
- server.on('redirect', function(destination) {
-     window.location.href = destination;
- });
-</script>
 
 <table>
     {% for room in rooms %}

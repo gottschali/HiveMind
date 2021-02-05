@@ -120,7 +120,6 @@ def join_game_handler():
     room = "room"
     rooms[request.sid] = room
     games[room] = State()
-    emit("redirect", "/play/online.html")
     join_room(room)
 
 
