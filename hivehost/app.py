@@ -24,14 +24,20 @@ logging.basicConfig(
 # TODO: send moveable pieces (one-hive) with state
 # In future threading/async
 
+# TODO make enum
+AI = 0
+SELF = 1
+MULTI = 2
+
 class Room:
 
-    def __init__(self, name):
+    def __init__(self, name, mode=0):
         self.name = name
         self.gid = str(int(uuid.uuid1()))
         self._time = datetime.now()
         self.time = self._time.strftime("%H:%M:%S")
         self._connections = 1
+        sefl._mode = mode
 
 # TODO create room logic
 
