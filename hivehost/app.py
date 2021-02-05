@@ -4,8 +4,8 @@ import uuid
 
 from flask import Flask, render_template, request, session
 from flask_socketio import SocketIO, emit, join_room
-
 from room import Room
+
 from brain.alphabeta import alphabeta
 from hivemind.state import *
 from mcts.node import MonteCarloTreeSearchNode
@@ -13,7 +13,7 @@ from mcts.search import MonteCarloTreeSearch
 
 app = Flask(__name__)
 app.secret_key = uuid.uuid4().hex
-app.config['SESSION_TYPE'] = 'filesystem'
+app.config["SESSION_TYPE"] = "filesystem"
 socketio = SocketIO(app)
 
 logging.basicConfig(
@@ -32,6 +32,7 @@ MULTI = 2
 
 # TODO create room logic
 
+
 @app.route("/")
 @app.route("/index")
 def index():
@@ -48,15 +49,19 @@ def play():
 def lobby():
     return render_template("lobby.html", rooms=rooms.values())
 
+
 sessions = {}
 rooms = {}
+
 
 def create_room(name):
     gid = str(int(uuid.uuid1()))
     rooms[gid] = Room(gid, name, mode=MULTI)
 
+
 create_room("test")
 create_room("foo bar")
+
 
 def emit_state(gid):
     json_state = rooms[gid].game.to_json()
@@ -70,7 +75,6 @@ def connect_handler():
     print(f"{gid} connected")
     join_room(gid)
     emit_state(gid)
-
 
 
 @socketio.on("disconnect")

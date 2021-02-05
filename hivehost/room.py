@@ -4,7 +4,6 @@ from hivemind.state import State
 
 
 class Room:
-
     def __init__(self, gid, name, mode=2):
         self.gid = gid
         self.name = name
