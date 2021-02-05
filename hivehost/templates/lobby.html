@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<script src="{{url_for('static', filename='jquery-3.5.1.min.js')}}"></script>
+<script src="{{url_for('static', filename='socket.io.js')}}"></script>
+{% endblock %}
+
+{% block content %}
+<script>
+ server.on('redirect', function(destination) {
+     window.location.href = destination;
+ });
+</script>
+
+<table>
+    {% for room in rooms %}
+    <tr>
+        <td> room.name </td>
+        <td> room.gid </td>
+        <td> room.time </td>
+        <td> <a href={{ "/play/online?gid=" + room.gid }}>Join! </a> </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+
