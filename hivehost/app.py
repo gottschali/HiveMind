@@ -1,5 +1,7 @@
 import json
 import logging
+import uuid
+import time
 
 from flask import Flask, render_template, request, session
 from flask_socketio import SocketIO, emit, join_room
@@ -19,6 +21,15 @@ logging.basicConfig(
 # TODO: standardize JSON de-/serialization
 # TODO: send moveable pieces (one-hive) with state
 # In future threading/async
+
+class Room:
+
+    def __init__(self, name):
+        self.name = name
+        self.gid = str(int(uuid.uuid1()))
+        self.time = time.time()
+        self._connections = 1
+
 
 
 @app.route("/")
@@ -41,9 +52,17 @@ def play_ai():
 def play_online():
     return render_template("play.html")
 
+@app.route("/lobby")
+def lobby():
+    return render_template("lobby.html", rooms=rooms)
 
 games = {}
-rooms = {}
+rooms = {
+    Room("a"),
+    Room("b"),
+    Room("c"),
+    Room("d"),
+    }
 
 def emit_state(sid):
     room = rooms[request.sid]
