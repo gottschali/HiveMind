@@ -46,20 +46,20 @@ def play():
 
 @app.route("/lobby")
 def lobby():
-    return render_template("lobby.html", rooms=rooms)
+    return render_template("lobby.html", rooms=rooms.values())
 
 sessions = {}
-games = {}
-rooms = {
-    Room("a"),
-    Room("b"),
-    Room("c"),
-    Room("d"),
-    }
+rooms = {}
+
+def create_room(name):
+    gid = str(int(uuid.uuid1()))
+    rooms[gid] = Room(gid, name, mode=MULTI)
+
+create_room("test")
+create_room("foo bar")
 
 def emit_state(gid):
-    json_state = games[gid].to_json()
-    print(f"Sending state to {gid}")
+    json_state = rooms[gid].game.to_json()
     emit("sendstate", json_state, room=gid)
 
 
@@ -68,9 +68,7 @@ def connect_handler():
     gid = session.get("gid")
     sessions[request.sid] = gid
     print(f"{gid} connected")
-    # Only if game does not exist yet
     join_room(gid)
-    games[gid] = State()
     emit_state(gid)
 
 
@@ -78,31 +76,27 @@ def connect_handler():
 @socketio.on("disconnect")
 def disconnect_handler():
     gid = sessions[request.sid]
-    # Delete the game
-    del games[gid]
+    room = rooms[gid]
+    if room._connections == 1:
+        del rooms[gid]
     print(f"{request.sid} disconnected")
 
 
 @socketio.on("ai_action")
 def ai_action_handler():
     gid = sessions[request.sid]
-    state = games[gid]
-    games[gid] = state.next_state()
+    state = rooms[gid].game
+    rooms[gid].game = state.next_state()
 
-    # action = alphabeta(state, depth=2)
-    # games[request.sid] = state + action
-    # node = MonteCarloTreeSearchNode(state)
-    # search = MonteCarloTreeSearch(node)
-    # r = search.best_action(100)
-    # games[request.sid] = r.state
     emit_state(gid)
 
 
+# Debug only
 @socketio.on("auto_action")
 def auto_action_handler():
     gid = sessions[request.sid]
     for i in range(50):
-        games[gid] = games[gid].next_state()
+        rooms[gid].game = rooms[gid].game.next_state()
         emit_state(gid)
         socketio.sleep(0.02)
 
@@ -110,14 +104,14 @@ def auto_action_handler():
 @socketio.on("reset")
 def reset_handler():
     gid = sessions[request.sid]
-    games[gid] = State()
+    rooms[gid].reset()
     emit_state(gid)
 
 
 @socketio.on("action")
 def action_handler(data):
     gid = sessions[request.sid]
-    state = games[gid]
+    state = rooms[gid].game
     print(f"Action: {data}")
     action_type = data["type"]
     first = data["first"]
@@ -128,7 +122,7 @@ def action_handler(data):
     elif action_type == "drop":
         insect = Insect(int(first))
         action = Drop(Stone(insect, state.current_team), destination)
-    games[gid] = state + action
+    rooms[gid].game = state + action
     emit_state(gid)
     return True
 
@@ -136,7 +130,7 @@ def action_handler(data):
 @socketio.on("options")
 def options_handler(data):
     gid = sessions[request.sid]
-    state = games[gid]
+    state = rooms[gid].game
     print(f"Options: {data}")
     action_type = data["type"]
     first = data["first"]
