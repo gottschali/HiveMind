@@ -31,13 +31,13 @@ MULTI = 2
 
 class Room:
 
-    def __init__(self, name, mode=0):
+    def __init__(self, name, mode=2):
         self.name = name
         self.gid = str(int(uuid.uuid1()))
         self._time = datetime.now()
         self.time = self._time.strftime("%H:%M:%S")
         self._connections = 1
-        sefl._mode = mode
+        self._mode = mode
 
 # TODO create room logic
 
@@ -47,20 +47,11 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/play/self")
-def play_self():
-    return render_template("play.html")
-
-
-
-def play_ai():
-    return render_template("play.html")
-
-
-@app.route("/play/online")
-def play_online():
+@app.route("/play")
+def play():
     session["gid"] = request.args.get("gid")
     return render_template("play.html")
+
 
 @app.route("/lobby")
 def lobby():

@@ -13,7 +13,7 @@
         <td> {{ room.name }} </td>
         <td> {{ room.gid }} </td>
         <td> {{ room.time }} </td>
-        <td> <a href={{ "/play/online?gid=" + room.gid }}>Join! </a> </td>
+        <td> <a href={{ "/play?mode=2&gid=" + room.gid }}>Join! </a> </td>
     </tr>
     {% endfor %}
 </table>
