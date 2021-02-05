@@ -65,16 +65,20 @@ rooms = {
     }
 
 def emit_state(sid):
-    room = rooms[request.sid]
-    json_state = games[room].to_json()
-    emit("sendstate", json_state, room=room)
+    gid = request.args.get("gid")
+    json_state = games[gid].to_json()
+    emit("sendstate", json_state, room=gid)
 
 
 @socketio.on("connect")
 def connect_handler():
-    # Create a new game
+    gid = request.args.get("gid")
     print(f"{request.sid} connected")
-    reset_handler()
+
+    join_room(gid)
+    games[gid] = State()
+    emit_state(request.sid)
+
 
 
 @socketio.on("disconnect")
@@ -114,13 +118,6 @@ def reset_handler():
     rooms[request.sid] = request.sid
     games[request.sid] = State()
     emit_state(request.sid)
-
-@socketio.on("joingame")
-def join_game_handler():
-    room = "room"
-    rooms[request.sid] = room
-    games[room] = State()
-    join_room(room)
 
 
 @socketio.on("action")
