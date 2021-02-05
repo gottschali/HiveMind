@@ -33,7 +33,7 @@ class Room:
         self.time = self._time.strftime("%H:%M:%S")
         self._connections = 1
 
-
+# TODO create room logic
 
 @app.route("/")
 @app.route("/index")
