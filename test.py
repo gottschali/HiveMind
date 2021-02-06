@@ -1,12 +1,11 @@
 import logging
 import time
 
-from tqdm import trange
-
 from hivemind.hex import *
 from hivemind.hive import *
 from hivemind.insect import *
 from hivemind.state import *
+from tqdm import trange
 
 LEVEL = logging.DEBUG
 

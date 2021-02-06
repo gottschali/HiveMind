@@ -2,14 +2,13 @@ import json
 import logging
 import uuid
 
-from flask import Flask, request, session, render_template, flash, redirect
+from flask import Flask, flash, redirect, render_template, request, session
 from flask_socketio import SocketIO, emit, join_room
-from room import Room
-import routes
 from forms import LoginForm
+from hivemind.state import *
+from room import Room
 
 from brain.alphabeta import alphabeta
-from hivemind.state import *
 from mcts.node import MonteCarloTreeSearchNode
 from mcts.search import MonteCarloTreeSearch
 
@@ -39,7 +38,8 @@ MULTI = 2
 @app.route("/")
 @app.route("/index")
 def index():
-    return render_template("index.html")
+    gid = str(int(uuid.uuid1()))
+    return render_template("index.html", gid=gid)
 
 
 @app.route("/play")
@@ -47,13 +47,16 @@ def play():
     session["gid"] = request.args.get("gid")
     return render_template("play.html")
 
+
 def create_room(name):
     gid = str(int(uuid.uuid1()))
     app.rooms[gid] = Room(gid, name, mode=MULTI)
     return gid
 
+
 # Debug Rooms
 create_room("Test Room")
+
 
 @app.route("/lobby", methods=["GET", "POST"])
 def lobby():
@@ -61,8 +64,8 @@ def lobby():
     if form.validate_on_submit():
         roomname = form.roomname.data
         gid = create_room(roomname)
-        flash(f'Room {roomname} created')
-        return redirect(f'/play?gid={gid}&m={MULTI}')
+        flash(f"Room {roomname} created")
+        return redirect(f"/play?gid={gid}&m={MULTI}")
     return render_template("lobby.html", rooms=app.rooms.values(), form=form)
 
 
@@ -118,6 +121,7 @@ def reset_handler():
 @socketio.on("action")
 def action_handler(data):
     gid = app.sessions[request.sid]
+    room = app.rooms[gid]
     state = app.rooms[gid].game
     print(f"Action: {data}")
     action_type = data["type"]
@@ -131,6 +135,8 @@ def action_handler(data):
         action = Drop(Stone(insect, state.current_team), destination)
     app.rooms[gid].game = state + action
     emit_state(gid)
+    if room._mode == AI:
+        ai_action_handler()
     return True
 
 
