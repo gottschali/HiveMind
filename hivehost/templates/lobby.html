@@ -7,6 +7,15 @@
 
 {% block content %}
 
+<form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.roomname.label }} <br>
+        {{ form.roomname(size=32) }}
+    </p>
+    <p> {{ form.submit() }} </p>
+</form>
+
 <table>
     {% for room in rooms %}
     <tr>
