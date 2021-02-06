@@ -1,27 +1,27 @@
 # HiveMind
-## TODO
-* Visual feedback
-    * ~~Illegal move~~
-    * DONE Stone selected
-* Error messages (top bar with information)
-* Proper logging
-* linting / formatting
-* Type Hints
-* Add documentation
-* Refactoring
-* Testing
+![Preview](screen.png)
+
+## Modules
+hivemind: game logic
+hivehost: flask webserver
+brain: intelligence
+
+## Development
+### Poetry
+Managing dependencies
+### Nox
+- linting
+- formatting
+- typing
+- tests
 
 ## Roadmap
-- [x] Select moves
-- [ ] Animate moves
-- [ ] Dropping
-- [ ] AI (MinMax, AlphaBeta, Heuristic)
-- [ ] Networking (Multithread, sessions)
+- [ ] Animations
+  Use libhex things
+  - Movement
+  - Drop animation
+  - On game over: rippling circles outwards
+  - drawing of circles
+- [ ] AI
+- [ ] Tutorial
 - [ ] Flask things
-
-## Nice animations
-Use libhex things:
-- linear interpolation
-- drawing of circles
-- Movement
-- On game over: rippling circles outwards
