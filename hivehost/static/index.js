@@ -44,7 +44,6 @@ $(document).ready(function() {
     $('form#joingame').submit(function(event) {
         console.log("Client joining game");
         socket.emit('joingame');
-        GAMETYPE = "online";
         return false;
     });
 });
@@ -53,11 +52,7 @@ $(document).ready(function() {
 function emitAction(hex) {
     // accepts hex as target for drop / move
     console.log("Action", actionType, firstArg, hex);
-    socket.emit('action', {'type': actionType, 'first': firstArg, 'destination': hex},
-                function(i) {if (GAMETYPE == "ai") {
-                    state = WAITING;
-                    socket.emit('ai_action');
-                }});
+    socket.emit('action', {'type': actionType, 'first': firstArg, 'destination': hex});
 }
 
 function emitOptions() {
@@ -76,7 +71,6 @@ var actionType = null;
 var previousSelection = null;
 var dropSelection = null;
 
-let GAMETYPE = "ai";
 const IDLE = "idle";
 const WAITING = "waiting";
 const SELECTED = "selected";
