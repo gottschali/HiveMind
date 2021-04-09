@@ -92,9 +92,9 @@ export class Game {
     }
 
     // call this only in static scenes (i.e., if there is no animation loop)
-    this.Paint.controls.addEventListener( 'change', this.Paint.render.bind(this.Paint) );
+    this.Paint.controls.addEventListener( "change", this.Paint.render.bind(this.Paint) );
 
-    window.addEventListener('resize', this.Paint.render.bind(this.Paint));
+    window.addEventListener("resize", this.Paint.render.bind(this.Paint));
     this.canvas.addEventListener( "click", onDocumentMouseDown.bind(this) );
 
     this.Paint.render(); // Init Render

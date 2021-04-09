@@ -20,9 +20,22 @@ import {BufferGeometry,
        } from 'three';
 
 import {teams} from '../shared/model/teams.js';
-import textures from './textures.js';
+import MATERIALS from './textures.js';
 
 // TODO use common Hexlib
+
+// radiusTop, radiusBottom, height, radialSegments
+const hexGeometry = new CylinderBufferGeometry( 1, 1, 0.5, 6 );
+const wireframeGeometry = new EdgesGeometry( hexGeometry );
+const wireframeMaterial = new LineBasicMaterial( { color: CONSTANTS.BLACK, linewidth: 5 });
+const wireframe = new LineSegments( wireframeGeometry, wireframeMaterial );
+const highlightMaterial = new MeshStandardMaterial({color: CONSTANTS.FG,
+    polygonOffset: true,
+    polygonOffsetFactor: 0,
+    polygonOffsetUnits: 0,
+    transparent: true,
+    opacity: 0.3,
+});
 
 class Painter {
     constructor(canvas) {
@@ -55,35 +68,20 @@ class Painter {
         this.scene.add( ambientLight );
 
         // Add the ground plane
-        const planeGroup = this.addPlane();
-        this.scene.add(planeGroup);
+        this.addPlane();
 
+        // contains all stones
         this.tile_group = new Group();
         this.scene.add(this.tile_group);
         this.tileArray = [];
 
-        this.dropGeometry = new CylinderBufferGeometry( 0.1, 0.1, 0.05, 0.6 );
-        // contains all insects
-
         this.dropArr = [];
         this.dropGroup = new Group();
         this.dropGroup.position.set(0, 0, -10);
+        // Position it relatively to the camera so it always stays at the same position
         this.camera.add(this.dropGroup);
         this.scene.add(this.camera);
 
-        // radiusTop, radiusBottom, height, radialSegments
-        this.hexGeometry = new CylinderBufferGeometry( 1, 1, 0.5, 6 );
-        this.wireframeGeometry = new EdgesGeometry( this.hexGeometry );
-        this.wireframeMaterial = new LineBasicMaterial( { color: CONSTANTS.BLACK, linewidth: 5 });
-        this.wireframe = new LineSegments( this.wireframeGeometry, this.wireframeMaterial );
-
-        this.highlightMaterial = new MeshStandardMaterial({color: CONSTANTS.FG,
-                                                                polygonOffset: true,
-                                                                polygonOffsetFactor: 0,
-                                                                polygonOffsetUnits: 0,
-                                                                transparent: true,
-                                                                opacity: 0.3,
-                                                               });
 
         this.highlightGroup= new Group();
         this.highlightArray = [];
@@ -101,87 +99,80 @@ class Painter {
 
 
     }
-    // TODO: Load the texture only on top and not on all sides
+
     addPlane() {
         // Add a flat hex plane
-        var points = [];
-        var corners = this.layout.polygonCorners(new HEX.Hex(0, 0));
+        let points = [];
+        let corners = this.layout.polygonCorners(new HEX.Hex(0, 0));
         corners.forEach(({x, y}) => points.push( new Vector3(x, y, 0)));
         points.push(corners[0]);
-
         const geometry = new BufferGeometry().setFromPoints( points );
         const material = new LineBasicMaterial( { color: CONSTANTS.FG } );
         const flatHexLine = new Line(geometry, material);
-
-        var group = new Group();
-
+        const group = new Group();
         const radius = 10;
-        for (var q = -radius; q <= radius; q++) {
-            var r1 = Math.max(-radius, -q - radius);
-            var r2 = Math.min( radius, -q + radius);
-            for (var r = r1; r <= r2; r++) {
+        // Hexagon of hexes with radius of 10
+        for (let q = -radius; q <= radius; q++) {
+            const r1 = Math.max(-radius, -q - radius);
+            const r2 = Math.min( radius, -q + radius);
+            for (let r = r1; r <= r2; r++) {
                 const {x, y} = this.layout.hexToPixel(new HEX.Hex(q, r));
-                var tile = flatHexLine.clone();
+                const tile = flatHexLine.clone();
                 tile.position.set(x, y, -0.25);
                 group.add(tile);
             }
         }
-        return group;
+        this.scene.add(group);
     }
-    resizeRendererTodisplaySize(canvas) {
-        const pixelRatio = window.devicePixelRatio;
-        const width = canvas.clientWidth * pixelRatio | 0;
-        const height = canvas.clientHeight * pixelRatio | 0;
-        const needResize = canvas.width !== width || canvas.height !== height;
-        if (needResize) {
-            this.renderer.setSize(width, height, false);
-        }
-        return needResize;
-    }
+
 
     render() {
         // Can you not bind canvas to this ?
-        // const canvas = document.querySelector('#c');
-        if (this.resizeRendererTodisplaySize(this.canvas)) {
-            // update camera settings if the screen is resized
-            this.camera.aspect = this.canvas.clientWidth / this.canvas.clientHeight;
-            this.camera.updateProjectionMatrix();
-        }
+        const canvas = document.querySelector('#container');
+        // TODO implement change on window resize
         this.renderer.render(this.scene, this.camera); // Actual rendering
     }
-
-    makeTileInstance(team, hex, name, height) {
-        // Create a 3D object at the position given by hex and height
-        // Can be precomputed
-        const color = (team === teams.WHITE ? CONSTANTS.YELLOW : CONSTANTS.CYAN);
-        // const materials = [
-        // new THREE.MeshLambertMaterial({color: color}),
-        // new THREE.MeshLambertdMaterial({color: color, map: textures[insectMap[name]]}),
-        // new THREE.MeshLambertMaterial({color: color}),
-        // ];
-        const material = new MeshLambertMaterial({color: color,
-                                                        map: textures[name]});
-        // Add a wireframe
-        const tile = new Mesh( this.hexGeometry, material );
-        tile.add( this.wireframe.clone() ); // Don't add to the scene directly, make it a child
-        const {x, y} = this.layout.hexToPixel(hex);
-        tile.position.set( x, y, height * 0.5 );
-        tile.rotateX(Math.PI / 2);
-        tile.rotateY(Math.PI / 6);
-        return tile;
+    color(team) {
+        return (team === teams.WHITE ? CONSTANTS.YELLOW : CONSTANTS.CYAN);
     }
 
-    makeHighlightInstances(hexes) {
+    makeGenericStone( hex, height, material) {
+        // Create a 3D object at the position given by hex and height
+        // Add a wireframe
+        const stone = new Mesh( hexGeometry, material );
+        stone.add( wireframe.clone() ); // Don't add to the scene directly, make it a child
+        this.positionStone(stone, hex, height)
+        return stone;
+    }
+    makeDroppedStone(team, hex, name, height) {
+        const color = this.color(team);
+        // const materials = [
+        //     new MeshLambertMaterial({color: color}),
+        //     new MeshLambertMaterial({color: color, map: textures[name]}),
+        //     new MeshLambertMaterial({color: color}),
+        // ];
+        const materials = [
+            MATERIALS[team]["PLAIN"],
+            MATERIALS[team][name],
+            MATERIALS[team]["PLAIN"],
+        ];
+        return this.makeGenericStone( hex, height, materials );
+    }
+
+    positionStone(stone, hex, height) {
+        const {x, y} = this.layout.hexToPixel(hex);
+        stone.position.set( x, y, height * 0.5 );
+        stone.rotateX(Math.PI / 2);
+        stone.rotateY(Math.PI / 6);
+    }
+
+    makeHighlightStones(hexes) {
         this.highlightGroup.clear();
         this.highlightArray.length = 0;
         hexes.forEach( ({q, r, h}) => {
-            const {x, y} = this.layout.hexToPixel(new HEX.Hex(q, r));
-            const tile = new Mesh(this.hexGeometry, this.highlightMaterial);
-            tile.position.set( x, y, h * 0.5 );
-            tile.rotateX(Math.PI / 2);
-            tile.rotateY(Math.PI / 6);
-            this.highlightGroup.add(tile);
-            this.highlightArray.push(tile);
+            const stone = this.makeGenericStone(new HEX.Hex(q, r), h, highlightMaterial)
+            this.highlightGroup.add(stone);
+            this.highlightArray.push(stone);
         });
         this.render();
     }
@@ -191,9 +182,9 @@ class Painter {
         arr.sort( (a, b) => (a.team == b.team) ? a.insect < b.insect : a.team < b.team);
         this.dropGroup.clear();
         this.dropArr.length = 0; 
-        var x = -10;
-        var prev = null;
-        var dy = 0;
+        let x = -10;
+        let prev = null;
+        let dy = 0;
         for (const stone of arr) {
             if (prev != null && stone.team == prev.team && stone.insect == prev.insect) {
                 dy += 1;
@@ -202,16 +193,14 @@ class Painter {
                 x += 2;
             }
             prev = stone;
-            var material = new MeshLambertMaterial({color: (stone.team === teams.WHITE ? CONSTANTS.YELLOW : CONSTANTS.CYAN),
-                                                        map: textures[stone.insect],
-                                                        });
+            const material = MATERIALS[stone.team][stone.insect];
             // Add a wireframe
-            const tile = new Mesh( this.hexGeometry, material );
+            const tile = new Mesh( hexGeometry, material );
             tile.rotateX(Math.PI / 2);
             tile.rotateY(Math.PI / 4);
             tile.position.set(x, 10 + dy, -10);
             tile.insect = stone.insect;
-            tile.add( this.wireframe.clone() ); // Don't add to the scene directly, make it a child
+            tile.add( wireframe.clone() ); // Don't add to the scene directly, make it a child
             this.dropGroup.add(tile);
             this.dropArr.push(tile);
         }
@@ -226,7 +215,7 @@ class Painter {
         // Maybe outsource this loops to hive
         for (const hex of state.hive.map.keys()) {
           state.hive.map.get(hex).forEach((stone, height) => {
-            const newInst = this.makeTileInstance(stone.team, new HEX.Hex(hex.q, hex.r), stone.insect, height);
+            const newInst = this.makeDroppedStone(stone.team, new HEX.Hex(hex.q, hex.r), stone.insect, height);
             this.tileArray.push(newInst);
             this.tile_group.add(newInst);
           });

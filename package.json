@@ -6,7 +6,6 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack serve --open",
-    "serve": "node src/server/server.js",
     "watch": "webpack --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

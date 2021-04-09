@@ -5,7 +5,7 @@ import {Game} from './game.js';
 function component() {
   const element = document.createElement('div');
   const btn = document.createElement('button');
-  const canvas = document.createElement('canvas');
+
   const game = new Game(canvas);
   game.init(canvas)
   element.innerHTML = _.join(['Hello', 'webpack'], ' ');
@@ -18,9 +18,11 @@ function component() {
   element.appendChild(btn);
 
   
-  element.appendChild(canvas);
+
 
   return element;
 }
-
+const canvas = document.createElement('canvas');
+canvas.id = "container";
+document.body.appendChild(canvas);
 document.body.appendChild(component());
