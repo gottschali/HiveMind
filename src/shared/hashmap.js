@@ -18,15 +18,15 @@ export class HashMap extends Map {
     }
 }
 export class HashSet extends Set {
-    add(key, value){
-        return super.add(JSON.stringify(key), value);
+    add(value){
+        return super.add(JSON.stringify(value));
     }
-    has(key){
-      return super.has(JSON.stringify(key));
+    has(value){
+      return super.has(JSON.stringify(value));
     }
     *values(){
-      for (const key of super.values()) {
-        yield JSON.parse(key)
+      for (const val of super.values()) {
+        yield JSON.parse(val)
       }
     }
 }
