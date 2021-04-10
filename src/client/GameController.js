@@ -82,8 +82,8 @@ class View {
             raycaster.setFromCamera(mouse3D, this.Paint.camera);
 
             const map = {
-                stones: this.Paint.tileArray,
                 destination: this.Paint.highlightArray,
+                stones: this.Paint.tileArray,
                 drops: this.Paint.dropArr
             };
             this.Paint.highlightGroup.clear();
@@ -98,7 +98,7 @@ class View {
                         // Is this attribute set ?!
                         second = c.object.insect;
                     }
-                    this.parent.handleClick([type, second]);
+                    return this.parent.handleClick([type, second]);
                 }
             }
         });
@@ -131,7 +131,6 @@ export class HumanController extends LocalController {
     }
     setDestination(hex) {
         const action = new this.actionType(this.firstArg, hex);
-        console.log("Action set", action)
         this.intendAction(action);
     }
     wantsHighlights() {
