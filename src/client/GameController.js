@@ -38,8 +38,10 @@ export class Controller {
     }
     reviewAction(action) {
         // TODO logic depending on controllers (maybe in their classes)
-        this.state.apply(action);
-        this.delegate();
+        if (this.state.isLegal(action)) {
+            this.state.apply(action);
+            this.delegate();
+        }
     }
     getHighlights(act, src) {
         let opts;

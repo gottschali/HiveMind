@@ -1,6 +1,7 @@
 import {insects} from "./insects.js"
 import {Stone} from "./stone.js"
 import {teams} from "./teams.js"
+import {HashSet} from "../hashmap.js"
 import * as HEX from "../hexlib.js"
 import {Move, Drop, Pass} from "./action.js"
 import {Hive} from "./hive.js"
@@ -56,20 +57,18 @@ export class State {
             .filter((s, i, r) => r.indexOf(s) === i)
             .map(i => JSON.parse(i))
             .map(({insect, team}) => new Stone(insect, team))
-        if (dropStones.length) {
+        if (this.turnNumber >= 6 && !this.moveAllowed) {
+            console.log("Forced bee drop")
+            this.hive.generateDrops(this.team).forEach(d => opts.push(new Drop(new Stone(insects.BEE, this.team), d)))
+        } else if (dropStones.length) {
             console.log("Drops allowed")
             this.generateDrops().forEach(d => dropStones.forEach(ds => opts.push(new Drop(ds, d))))
         }
-        else if (this.turnNumber >= 6 && !this.moveAllowed) {
-            console.log("Forced bee drop")
-            this.hive.generateDrops(this.team).forEach(d => opts.push(new Drop(new Stone(insects.BEE, this.team), d)))
-        } else {
-            if (this.moveAllowed) {
-                console.log("Moves allowed")
-                this.hive.generateMoves(this.team).forEach(([origin, dest]) => {
-                    opts.push(new Move(origin, dest))
-                })
-            }
+        if (this.moveAllowed) {
+            console.log("Moves allowed")
+            this.hive.generateMoves(this.team).forEach(([origin, dest]) => {
+                opts.push(new Move(origin, dest))
+            })
         }
         if (opts.length) return opts
         else return [Pass]
@@ -80,7 +79,9 @@ export class State {
     }
 
     isLegal(action) {
-        return action in self.actions
+        console.log(action, this.actions)
+        const acts = new HashSet(this.actions);
+        return acts.has(action)
     }
     apply(action) {
         // No check for legal action!
