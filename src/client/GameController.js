@@ -3,6 +3,7 @@ import {Raycaster, Vector3} from "three";
 import {Painter} from "./drawing.js";
 import {Move, Drop} from '../shared/model/action.js'
 import {Stone} from '../shared/model/stone.js'
+import {loadManager} from "./textures";
 
 export class Controller {
     constructor(playerController1, playerController2, canvas) {
@@ -12,11 +13,16 @@ export class Controller {
         this.state = new State();
         this.view = new View(this, canvas);
         this.delegate();
+
+        loadManager.onLoad = () => {
+            this.update();
+        }
+    }
+    update() {
+        return this.view.Paint.drawState(this.state);
     }
     delegate() {
-        console.log("Player switched");
-        console.log(this.state)
-        this.view.Paint.drawState(this.state);
+        this.update();
         if (this.state.turnNumber > 0) {
             if (this.state.team === "WHITE") {
                 this.white.installHooks();

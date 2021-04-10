@@ -19,7 +19,7 @@ import {BufferGeometry,
        } from 'three';
 
 import {teams} from '../shared/model/teams.js';
-import MATERIALS from './textures.js';
+import {MATERIALS} from './textures.js';
 
 // TODO use common Hexlib
 

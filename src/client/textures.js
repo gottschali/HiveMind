@@ -1,4 +1,4 @@
-import {MeshLambertMaterial, TextureLoader} from 'three';
+import {MeshLambertMaterial, TextureLoader, LoadingManager} from 'three';
 import {insects} from '../shared/model/insects.js';
 import {teams} from '../shared/model/teams.js';
 
@@ -10,7 +10,8 @@ import spider from '../assets/spider.jpeg';
 import * as CONSTANTS from "./constants";
 
 // Preload all images and store the textures in a hashmap for every insect
-const loader = new TextureLoader();
+export const loadManager = new LoadingManager();
+const loader = new TextureLoader(loadManager);
 let textures = {};
 // TODO Hard coded constants
 let map = {
@@ -33,5 +34,4 @@ for (const team in teams) {
 for (const team in teams) for (const insect in textures) {
     materials[team][insect] = new MeshLambertMaterial({color: colors[team], map: textures[insect]});
 }
-
-export default materials;
+export const MATERIALS = materials;
