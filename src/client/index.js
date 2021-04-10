@@ -1,28 +1,11 @@
-import _ from 'lodash'
-import {State} from '../shared/model/state.js';
-import {Game} from './game.js';
+import {Controller, HumanController, RandomComputerController} from "./GameController";
 
-function component() {
-  const element = document.createElement('div');
-  const btn = document.createElement('button');
-
-  const game = new Game(canvas);
-  game.init(canvas)
-  element.innerHTML = _.join(['Hello', 'webpack'], ' ');
-  const state = new State();
-  btn.innerHTML = 'Click me and check the console!';
-  btn.onclick = () => {
-    state.step();
-    game.Paint.drawState(state);
-  }
-  element.appendChild(btn);
-
-  
-
-
-  return element;
-}
 const canvas = document.createElement('canvas');
 canvas.id = "container";
+const element = document.createElement('div');
+
+new Controller(RandomComputerController, HumanController, canvas);
+
+document.body.appendChild(element);
 document.body.appendChild(canvas);
-document.body.appendChild(component());
+

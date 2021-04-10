@@ -3,7 +3,6 @@ import * as HEX from './hexlib.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 import {BufferGeometry,
-        MeshLambertMaterial,
         MeshStandardMaterial,
         CylinderBufferGeometry,
         LineBasicMaterial,
@@ -127,8 +126,6 @@ class Painter {
 
 
     render() {
-        // Can you not bind canvas to this ?
-        const canvas = document.querySelector('#container');
         // TODO implement change on window resize
         this.renderer.render(this.scene, this.camera); // Actual rendering
     }
@@ -145,12 +142,6 @@ class Painter {
         return stone;
     }
     makeDroppedStone(team, hex, name, height) {
-        const color = this.color(team);
-        // const materials = [
-        //     new MeshLambertMaterial({color: color}),
-        //     new MeshLambertMaterial({color: color, map: textures[name]}),
-        //     new MeshLambertMaterial({color: color}),
-        // ];
         const materials = [
             MATERIALS[team]["PLAIN"],
             MATERIALS[team][name],
@@ -169,8 +160,8 @@ class Painter {
     makeHighlightStones(hexes) {
         this.highlightGroup.clear();
         this.highlightArray.length = 0;
-        hexes.forEach( ({q, r, h}) => {
-            const stone = this.makeGenericStone(new HEX.Hex(q, r), h, highlightMaterial)
+        hexes.forEach( ([hex, height]) => {
+            const stone = this.makeGenericStone(hex, height, highlightMaterial)
             this.highlightGroup.add(stone);
             this.highlightArray.push(stone);
         });
@@ -179,14 +170,14 @@ class Painter {
 // TODO abstract team colors
 
     makeDropTileInstances(arr) {
-        arr.sort( (a, b) => (a.team == b.team) ? a.insect < b.insect : a.team < b.team);
+        arr.sort( (a, b) => (a.team === b.team) ? a.insect < b.insect : a.team < b.team);
         this.dropGroup.clear();
         this.dropArr.length = 0; 
         let x = -10;
         let prev = null;
         let dy = 0;
         for (const stone of arr) {
-            if (prev != null && stone.team == prev.team && stone.insect == prev.insect) {
+            if (prev != null && stone.team === prev.team && stone.insect === prev.insect) {
                 dy += 1;
             } else {
                 dy = 0;
@@ -213,13 +204,15 @@ class Painter {
         this.tileArray.length = 0;
         // TODO: optimize: drop: only add new insect, move: move the object to new destination
         // Maybe outsource this loops to hive
+        console.log("======", state.hive.map)
         for (const hex of state.hive.map.keys()) {
-          state.hive.map.get(hex).forEach((stone, height) => {
-            const newInst = this.makeDroppedStone(stone.team, new HEX.Hex(hex.q, hex.r), stone.insect, height);
-            this.tileArray.push(newInst);
-            this.tile_group.add(newInst);
-          });
+            state.hive.map.get(hex).forEach((stone, height) => {
+                const newInst = this.makeDroppedStone(stone.team, new HEX.Hex(hex.q, hex.r), stone.insect, height);
+                this.tileArray.push(newInst);
+                this.tile_group.add(newInst);
+            });
         }
+        console.log("========", state.hive.map)
         this.makeDropTileInstances(state.stones);
         this.render();
     }
