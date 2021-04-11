@@ -26,7 +26,7 @@ import {MATERIALS} from './textures.js';
 // radiusTop, radiusBottom, height, radialSegments
 const hexGeometry = new CylinderBufferGeometry( 1, 1, 0.5, 6 );
 const wireframeGeometry = new EdgesGeometry( hexGeometry );
-const wireframeMaterial = new LineBasicMaterial( { color: CONSTANTS.BLACK, linewidth: 5 });
+const wireframeMaterial = new LineBasicMaterial( { color: CONSTANTS.BLACK });
 const wireframe = new LineSegments( wireframeGeometry, wireframeMaterial );
 const highlightMaterial = new MeshStandardMaterial({color: CONSTANTS.FG,
     polygonOffset: true,
