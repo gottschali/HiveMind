@@ -9,7 +9,7 @@ import {
     Vector3,
     WebGLRenderer
 } from 'three';
-import * as HEX from '../hexlib.js';
+import * as HEX from '../../shared/hexlib.js';
 import * as CONSTANTS from "./constants";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {teams} from "../../shared/model/teams";
@@ -37,7 +37,7 @@ export class View {
         this.parent = parent;
         this.canvas = canvas;
 
-        this.setupHexlib();
+        this.layout = this.setupHexlib(HEX.layout_flat);
 
         this.setupScene(canvas);
 
@@ -70,11 +70,10 @@ export class View {
         this.render();
         this.controls.addEventListener("change", this.render.bind(this));
     }
-    setupHexlib() {
-        this.orientation = HEX.Layout.flat;
-        this.size = new HEX.Point(1, 1);
-        this.origin = new HEX.Point(0, 0);
-        this.layout = new HEX.Layout(this.orientation, this.size, this.origin);
+    setupHexlib(orientation) {
+        const size = new HEX.Point(1, 1);
+        const origin = new HEX.Point(0, 0);
+        return new HEX.Layout(orientation, size, origin);
     }
     setupScene(canvas) {
         this.renderer = new WebGLRenderer( {canvas, antialias: true} );
@@ -130,7 +129,7 @@ export class View {
                 const c = clicked[0]
                 let second;
                 if (type === "destination" || type === "stones") {
-                    second = this.layout.pixelToHex(c.point).round();
+                    second = HEX.hex_round(HEX.pixel_to_hex(this.layout, c.point));
                 } else if (type === "drops") {
                     // Is this attribute set ?!
                     second = c.object.insect;
@@ -143,7 +142,7 @@ export class View {
     addPlane() {
         // Add a flat hex plane
         let points = [];
-        let corners = this.layout.polygonCorners(new HEX.Hex(0, 0));
+        let corners = HEX.polygon_corners(this.layout, new HEX.Hex(0, 0));
         corners.forEach(({x, y}) => points.push( new Vector3(x, y, 0)));
         points.push(corners[0]);
         const geometry = new BufferGeometry().setFromPoints( points );
@@ -156,7 +155,7 @@ export class View {
             const r1 = Math.max(-radius, -q - radius);
             const r2 = Math.min( radius, -q + radius);
             for (let r = r1; r <= r2; r++) {
-                const {x, y} = this.layout.hexToPixel(new HEX.Hex(q, r));
+                const {x, y} = HEX.hex_to_pixel(this.layout, new HEX.Hex(q, r));
                 const tile = flatHexLine.clone();
                 tile.position.set(x, y, -0.25);
                 group.add(tile);
@@ -190,7 +189,7 @@ export class View {
     }
 
     positionStone(stone, hex, height) {
-        const {x, y} = this.layout.hexToPixel(hex);
+        const {x, y} = HEX.hex_to_pixel(this.layout, hex);
         stone.position.set( x, y, height * 0.5 );
         stone.rotateX(Math.PI / 2);
         stone.rotateY(Math.PI / 6);

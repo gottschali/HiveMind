@@ -69,7 +69,7 @@ function hex_distance(a, b) {
   return hex_length(hex_subtract(a, b));
 }
 
-function hex_round(h) {
+export function hex_round(h) {
   var qi = Math.round(h.q);
   var ri = Math.round(h.r);
   var si = Math.round(h.s);
@@ -188,20 +188,21 @@ function rdoubled_to_cube(h) {
 
 
 
-function Orientation(f0, f1, f2, f3, b0, b1, b2, b3, start_angle) {
+export function Orientation(f0, f1, f2, f3, b0, b1, b2, b3, start_angle) {
   return { f0: f0, f1: f1, f2: f2, f3: f3, b0: b0, b1: b1, b2: b2, b3: b3, start_angle: start_angle };
 }
 
 
 
 
-function Layout(orientation, size, origin) {
+export function Layout(orientation, size, origin) {
   return { orientation: orientation, size: size, origin: origin };
 }
 
-var layout_pointy = Orientation(Math.sqrt(3.0), Math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, Math.sqrt(3.0) / 3.0, -1.0 / 3.0, 0.0, 2.0 / 3.0, 0.5);
-var layout_flat = Orientation(3.0 / 2.0, 0.0, Math.sqrt(3.0) / 2.0, Math.sqrt(3.0), 2.0 / 3.0, 0.0, -1.0 / 3.0, Math.sqrt(3.0) / 3.0, 0.0);
-function hex_to_pixel(layout, h) {
+export const layout_pointy = Orientation(Math.sqrt(3.0), Math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, Math.sqrt(3.0) / 3.0, -1.0 / 3.0, 0.0, 2.0 / 3.0, 0.5);
+export const layout_flat = Orientation(3.0 / 2.0, 0.0, Math.sqrt(3.0) / 2.0, Math.sqrt(3.0), 2.0 / 3.0, 0.0, -1.0 / 3.0, Math.sqrt(3.0) / 3.0, 0.0);
+
+export function hex_to_pixel(layout, h) {
   var M = layout.orientation;
   var size = layout.size;
   var origin = layout.origin;
@@ -210,7 +211,7 @@ function hex_to_pixel(layout, h) {
   return Point(x + origin.x, y + origin.y);
 }
 
-function pixel_to_hex(layout, p) {
+export function pixel_to_hex(layout, p) {
   var M = layout.orientation;
   var size = layout.size;
   var origin = layout.origin;
@@ -220,14 +221,14 @@ function pixel_to_hex(layout, p) {
   return Hex(q, r, -q - r);
 }
 
-function hex_corner_offset(layout, corner) {
+export function hex_corner_offset(layout, corner) {
   var M = layout.orientation;
   var size = layout.size;
   var angle = 2.0 * Math.PI * (M.start_angle - corner) / 6.0;
   return Point(size.x * Math.cos(angle), size.y * Math.sin(angle));
 }
 
-function polygon_corners(layout, h) {
+export function polygon_corners(layout, h) {
   var corners = [];
   var center = hex_to_pixel(layout, h);
   for (var i = 0; i < 6; i++) {
