@@ -2,7 +2,6 @@ import {State} from '../../shared/model/state.js';
 import {Drop, Move} from '../../shared/model/action.js'
 import {loadManager} from "../view/textures";
 import {View} from "../view/view";
-import {HumanController} from "./HumanController";
 
 export class Controller {
     constructor(playerController1, playerController2, canvas) {
@@ -36,9 +35,9 @@ export class Controller {
     }
     handleClick(data) {
         if (this.state.team === "WHITE") {
-            if (this.white instanceof HumanController) this.white.handleClick(data);
-        } else {
-            if (this.black instanceof HumanController) this.black.handleClick(data);
+            this.white.handleClick(data);
+
+            this.black.handleClick(data);
         }
     }
     reviewAction(action) {

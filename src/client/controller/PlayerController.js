@@ -8,6 +8,8 @@ export class PlayerController {
 
     uninstallHooks() {
     }
+    handleClick(...args) {
+    }
 
     intendAction(action) {
         this.parent.reviewAction(action);
