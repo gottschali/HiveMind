@@ -1,12 +1,12 @@
 import {MeshLambertMaterial, TextureLoader, LoadingManager} from 'three';
-import {insects} from '../shared/model/insects.js';
-import {teams} from '../shared/model/teams.js';
+import {insects} from '../../shared/model/insects.js';
+import {teams} from '../../shared/model/teams.js';
 
-import ant from '../assets/ant.jpeg';
-import bee from '../assets/bee.jpeg';
-import beetle from '../assets/beetle.jpeg';
-import grasshopper from '../assets/grasshopper.jpeg';
-import spider from '../assets/spider.jpeg';
+import ant from '../../assets/ant.jpeg';
+import bee from '../../assets/bee.jpeg';
+import beetle from '../../assets/beetle.jpeg';
+import grasshopper from '../../assets/grasshopper.jpeg';
+import spider from '../../assets/spider.jpeg';
 import * as CONSTANTS from "./constants";
 
 // Preload all images and store the textures in a hashmap for every insect

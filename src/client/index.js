@@ -1,4 +1,6 @@
-import {Controller, HumanController, RandomComputerController} from "./GameController";
+import {Controller} from "./controller/GameController.js";
+import {HumanController} from "./controller/HumanController";
+import {RandomComputerController} from "./controller/RandomComputerController";
 
 const canvas = document.createElement('canvas');
 canvas.id = "container";

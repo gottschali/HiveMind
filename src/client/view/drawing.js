@@ -1,5 +1,5 @@
 import * as CONSTANTS from './constants.js';
-import * as HEX from './hexlib.js';
+import * as HEX from '../hexlib.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 import {BufferGeometry,
@@ -18,7 +18,7 @@ import {BufferGeometry,
         AmbientLight
        } from 'three';
 
-import {teams} from '../shared/model/teams.js';
+import {teams} from '../../shared/model/teams.js';
 import {MATERIALS} from './textures.js';
 
 // TODO use common Hexlib
