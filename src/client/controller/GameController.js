@@ -17,7 +17,7 @@ export class Controller {
         }
     }
     update() {
-        return this.view.Paint.drawState(this.state);
+        return this.view.drawState(this.state);
     }
     delegate() {
         this.update();
@@ -36,7 +36,7 @@ export class Controller {
     handleClick(data) {
         if (this.state.team === "WHITE") {
             this.white.handleClick(data);
-
+        } else {
             this.black.handleClick(data);
         }
     }
@@ -56,6 +56,6 @@ export class Controller {
             opts = this.state.generateDrops()
                 .map(h => [h, 0]);
         }
-        this.view.Paint.makeHighlightStones(opts);
+        this.view.makeHighlightStones(opts);
     }
 }
