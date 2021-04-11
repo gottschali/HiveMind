@@ -6,7 +6,7 @@ const canvas = document.createElement('canvas');
 canvas.id = "container";
 const element = document.createElement('div');
 
-new Controller(RandomComputerController, HumanController, canvas);
+new Controller(RandomComputerController, RandomComputerController, canvas);
 
 document.body.appendChild(element);
 document.body.appendChild(canvas);

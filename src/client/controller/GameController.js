@@ -3,6 +3,8 @@ import {Drop, Move} from '../../shared/model/action.js'
 import {loadManager} from "../view/textures";
 import {View} from "../view/view";
 
+const timer = ms => new Promise( res => setTimeout(res, ms));
+
 export class Controller {
     constructor(playerController1, playerController2, canvas) {
         // Maybe white black needs to be swapped
@@ -21,17 +23,19 @@ export class Controller {
     }
     delegate() {
         this.update();
-        if (this.state.turnNumber > 0) {
-            if (this.state.team === "WHITE") {
-                this.white.installHooks();
-                this.black.uninstallHooks();
+        timer(20).then( () => {
+            if (this.state.turnNumber > 0) {
+                if (this.state.team === "WHITE") {
+                    this.white.installHooks();
+                    this.black.uninstallHooks();
+                } else {
+                    this.white.uninstallHooks();
+                    this.black.installHooks();
+                }
             } else {
-                this.white.uninstallHooks();
-                this.black.installHooks();
+                this.white.installHooks();
             }
-        } else {
-            this.white.installHooks();
-        }
+        });
     }
     handleClick(data) {
         if (this.state.team === "WHITE") {
