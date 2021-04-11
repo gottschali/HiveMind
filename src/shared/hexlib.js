@@ -1,6 +1,5 @@
 // Generated code -- CC0 -- No Rights Reserved -- http://www.redblobgames.com/grids/hexagons/
 
-
 export function Point(x, y) {
   return { x: x, y: y };
 }
@@ -35,7 +34,15 @@ function hex_rotate_right(a) {
   return Hex(-a.r, -a.s, -a.q);
 }
 
-export const hex_directions = [Hex(1, 0, -1), Hex(1, -1, 0), Hex(0, -1, 1), Hex(-1, 0, 1), Hex(-1, 1, 0), Hex(0, 1, -1)];
+export const hex_directions = [
+    Hex(1, 0, -1),
+    Hex(1, -1, 0),
+    Hex(0, -1, 1),
+    Hex(-1, 0, 1),
+    Hex(-1, 1, 0),
+    Hex(0, 1, -1)
+];
+
 function hex_direction(direction) {
   return hex_directions[direction];
 }
@@ -56,7 +63,15 @@ export function hex_circle_iterator(hex) {
   return result;
 }
 
-const hex_diagonals = [Hex(2, -1, -1), Hex(1, -2, 1), Hex(-1, -1, 2), Hex(-2, 1, 1), Hex(-1, 2, -1), Hex(1, 1, -2)];
+const hex_diagonals = [
+    Hex(2, -1, -1),
+    Hex(1, -2, 1),
+    Hex(-1, -1, 2),
+    Hex(-2, 1, 1),
+    Hex(-1, 2, -1),
+    Hex(1, 1, -2)
+];
+
 function hex_diagonal_neighbor(hex, direction) {
   return hex_add(hex, hex_diagonals[direction]);
 }
@@ -70,12 +85,12 @@ function hex_distance(a, b) {
 }
 
 export function hex_round(h) {
-  var qi = Math.round(h.q);
-  var ri = Math.round(h.r);
-  var si = Math.round(h.s);
-  var q_diff = Math.abs(qi - h.q);
-  var r_diff = Math.abs(ri - h.r);
-  var s_diff = Math.abs(si - h.s);
+  let qi = Math.round(h.q);
+  let ri = Math.round(h.r);
+  let si = Math.round(h.s);
+  const q_diff = Math.abs(qi - h.q);
+  const r_diff = Math.abs(ri - h.r);
+  const s_diff = Math.abs(si - h.s);
   if (q_diff > r_diff && q_diff > s_diff) {
     qi = -ri - si;
   }
@@ -94,12 +109,12 @@ function hex_lerp(a, b, t) {
 }
 
 function hex_linedraw(a, b) {
-  var N = hex_distance(a, b);
-  var a_nudge = Hex(a.q + 1e-06, a.r + 1e-06, a.s - 2e-06);
-  var b_nudge = Hex(b.q + 1e-06, b.r + 1e-06, b.s - 2e-06);
-  var results = [];
-  var step = 1.0 / Math.max(N, 1);
-  for (var i = 0; i <= N; i++) {
+  const N = hex_distance(a, b);
+  const a_nudge = Hex(a.q + 1e-06, a.r + 1e-06, a.s - 2e-06);
+  const b_nudge = Hex(b.q + 1e-06, b.r + 1e-06, b.s - 2e-06);
+  let results = [];
+  const step = 1.0 / Math.max(N, 1);
+  for (let i = 0; i <= N; i++) {
     results.push(hex_round(hex_lerp(a_nudge, b_nudge, step * i)));
   }
   return results;
@@ -112,11 +127,12 @@ function OffsetCoord(col, row) {
   return { col: col, row: row };
 }
 
-var EVEN = 1;
-var ODD = -1;
+const EVEN = 1;
+const ODD = -1;
+
 function qoffset_from_cube(offset, h) {
-  var col = h.q;
-  var row = h.r + (h.q + offset * (h.q & 1)) / 2;
+  const col = h.q;
+  const row = h.r + (h.q + offset * (h.q & 1)) / 2;
   if (offset !== EVEN && offset !== ODD) {
     throw "offset must be EVEN (+1) or ODD (-1)";
   }
@@ -124,9 +140,9 @@ function qoffset_from_cube(offset, h) {
 }
 
 function qoffset_to_cube(offset, h) {
-  var q = h.col;
-  var r = h.row - (h.col + offset * (h.col & 1)) / 2;
-  var s = -q - r;
+  const q = h.col;
+  const r = h.row - (h.col + offset * (h.col & 1)) / 2;
+  const s = -q - r;
   if (offset !== EVEN && offset !== ODD) {
     throw "offset must be EVEN (+1) or ODD (-1)";
   }
@@ -134,8 +150,8 @@ function qoffset_to_cube(offset, h) {
 }
 
 function roffset_from_cube(offset, h) {
-  var col = h.q + (h.r + offset * (h.r & 1)) / 2;
-  var row = h.r;
+  const col = h.q + (h.r + offset * (h.r & 1)) / 2;
+  const row = h.r;
   if (offset !== EVEN && offset !== ODD) {
     throw "offset must be EVEN (+1) or ODD (-1)";
   }
@@ -143,9 +159,9 @@ function roffset_from_cube(offset, h) {
 }
 
 function roffset_to_cube(offset, h) {
-  var q = h.col - (h.row + offset * (h.row & 1)) / 2;
-  var r = h.row;
-  var s = -q - r;
+  const q = h.col - (h.row + offset * (h.row & 1)) / 2;
+  const r = h.row;
+  const s = -q - r;
   if (offset !== EVEN && offset !== ODD) {
     throw "offset must be EVEN (+1) or ODD (-1)";
   }
@@ -160,28 +176,28 @@ function DoubledCoord(col, row) {
 }
 
 function qdoubled_from_cube(h) {
-  var col = h.q;
-  var row = 2 * h.r + h.q;
+  const col = h.q;
+  const row = 2 * h.r + h.q;
   return DoubledCoord(col, row);
 }
 
 function qdoubled_to_cube(h) {
-  var q = h.col;
-  var r = (h.row - h.col) / 2;
-  var s = -q - r;
+  const q = h.col;
+  const r = (h.row - h.col) / 2;
+  const s = -q - r;
   return Hex(q, r, s);
 }
 
 function rdoubled_from_cube(h) {
-  var col = 2 * h.q + h.r;
-  var row = h.r;
+  const col = 2 * h.q + h.r;
+  const row = h.r;
   return DoubledCoord(col, row);
 }
 
 function rdoubled_to_cube(h) {
-  var q = (h.col - h.row) / 2;
-  var r = h.row;
-  var s = -q - r;
+  const q = (h.col - h.row) / 2;
+  const r = h.row;
+  const s = -q - r;
   return Hex(q, r, s);
 }
 
@@ -203,36 +219,36 @@ export const layout_pointy = Orientation(Math.sqrt(3.0), Math.sqrt(3.0) / 2.0, 0
 export const layout_flat = Orientation(3.0 / 2.0, 0.0, Math.sqrt(3.0) / 2.0, Math.sqrt(3.0), 2.0 / 3.0, 0.0, -1.0 / 3.0, Math.sqrt(3.0) / 3.0, 0.0);
 
 export function hex_to_pixel(layout, h) {
-  var M = layout.orientation;
-  var size = layout.size;
-  var origin = layout.origin;
-  var x = (M.f0 * h.q + M.f1 * h.r) * size.x;
-  var y = (M.f2 * h.q + M.f3 * h.r) * size.y;
+  const M = layout.orientation;
+  const size = layout.size;
+  const origin = layout.origin;
+  const x = (M.f0 * h.q + M.f1 * h.r) * size.x;
+  const y = (M.f2 * h.q + M.f3 * h.r) * size.y;
   return Point(x + origin.x, y + origin.y);
 }
 
 export function pixel_to_hex(layout, p) {
-  var M = layout.orientation;
-  var size = layout.size;
-  var origin = layout.origin;
-  var pt = Point((p.x - origin.x) / size.x, (p.y - origin.y) / size.y);
-  var q = M.b0 * pt.x + M.b1 * pt.y;
-  var r = M.b2 * pt.x + M.b3 * pt.y;
+  const M = layout.orientation;
+  const size = layout.size;
+  const origin = layout.origin;
+  const pt = Point((p.x - origin.x) / size.x, (p.y - origin.y) / size.y);
+  const q = M.b0 * pt.x + M.b1 * pt.y;
+  const r = M.b2 * pt.x + M.b3 * pt.y;
   return Hex(q, r, -q - r);
 }
 
 export function hex_corner_offset(layout, corner) {
-  var M = layout.orientation;
-  var size = layout.size;
-  var angle = 2.0 * Math.PI * (M.start_angle - corner) / 6.0;
+  const M = layout.orientation;
+  const size = layout.size;
+  const angle = 2.0 * Math.PI * (M.start_angle - corner) / 6.0;
   return Point(size.x * Math.cos(angle), size.y * Math.sin(angle));
 }
 
 export function polygon_corners(layout, h) {
-  var corners = [];
-  var center = hex_to_pixel(layout, h);
-  for (var i = 0; i < 6; i++) {
-    var offset = hex_corner_offset(layout, i);
+  let corners = [];
+  const center = hex_to_pixel(layout, h);
+  for (let i = 0; i < 6; i++) {
+    const offset = hex_corner_offset(layout, i);
     corners.push(Point(center.x + offset.x, center.y + offset.y));
   }
   return corners;
@@ -273,7 +289,7 @@ function equal_int(name, a, b) {
 
 function equal_hex_array(name, a, b) {
   equal_int(name, a.length, b.length);
-  for (var i = 0; i < a.length; i++) {
+  for (let i = 0; i < a.length; i++) {
     equal_hex(name, a[i], b[i]);
   }
 }
@@ -304,9 +320,9 @@ function test_hex_rotate_left() {
 }
 
 function test_hex_round() {
-  var a = Hex(0.0, 0.0, 0.0);
-  var b = Hex(1.0, -1.0, 0.0);
-  var c = Hex(0.0, -1.0, 1.0);
+  const a = Hex(0.0, 0.0, 0.0);
+  const b = Hex(1.0, -1.0, 0.0);
+  const c = Hex(0.0, -1.0, 1.0);
   equal_hex("hex_round 1", Hex(5, -10, 5), hex_round(hex_lerp(Hex(0.0, 0.0, 0.0), Hex(10.0, -20.0, 10.0), 0.5)));
   equal_hex("hex_round 2", hex_round(a), hex_round(hex_lerp(a, b, 0.499)));
   equal_hex("hex_round 3", hex_round(b), hex_round(hex_lerp(a, b, 0.501)));
@@ -319,16 +335,16 @@ function test_hex_linedraw() {
 }
 
 function test_layout() {
-  var h = Hex(3, 4, -7);
-  var flat = Layout(layout_flat, Point(10.0, 15.0), Point(35.0, 71.0));
+  const h = Hex(3, 4, -7);
+  const flat = Layout(layout_flat, Point(10.0, 15.0), Point(35.0, 71.0));
   equal_hex("layout", h, hex_round(pixel_to_hex(flat, hex_to_pixel(flat, h))));
-  var pointy = Layout(layout_pointy, Point(10.0, 15.0), Point(35.0, 71.0));
+  const pointy = Layout(layout_pointy, Point(10.0, 15.0), Point(35.0, 71.0));
   equal_hex("layout", h, hex_round(pixel_to_hex(pointy, hex_to_pixel(pointy, h))));
 }
 
 function test_offset_roundtrip() {
-  var a = Hex(3, 4, -7);
-  var b = OffsetCoord(1, -3);
+  const a = Hex(3, 4, -7);
+  const b = OffsetCoord(1, -3);
   equal_hex("conversion_roundtrip even-q", a, qoffset_to_cube(EVEN, qoffset_from_cube(EVEN, a)));
   equal_offsetcoord("conversion_roundtrip even-q", b, qoffset_from_cube(EVEN, qoffset_to_cube(EVEN, b)));
   equal_hex("conversion_roundtrip odd-q", a, qoffset_to_cube(ODD, qoffset_from_cube(ODD, a)));
@@ -350,8 +366,8 @@ function test_offset_to_cube() {
 }
 
 function test_doubled_roundtrip() {
-  var a = Hex(3, 4, -7);
-  var b = DoubledCoord(1, -3);
+  const a = Hex(3, 4, -7);
+  const b = DoubledCoord(1, -3);
   equal_hex("conversion_roundtrip doubled-q", a, qdoubled_to_cube(qdoubled_from_cube(a)));
   equal_doubledcoord("conversion_roundtrip doubled-q", b, qdoubled_from_cube(qdoubled_to_cube(b)));
   equal_hex("conversion_roundtrip doubled-r", a, rdoubled_to_cube(rdoubled_from_cube(a)));
