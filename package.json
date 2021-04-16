@@ -1,21 +1,34 @@
 {
-  "name": "IvoryFixedDeclaration",
+  "name": "hivemind",
   "version": "1.0.0",
   "description": "",
   "private": true,
   "scripts": {
     "build": "webpack",
-    "start": "webpack serve --open",
+    "webstart": "webpack serve --open",
     "watch": "webpack --watch",
+    "start": "node ./app/bin/www",
+    "devstart": "nodemon ./app/bin/www",
+    "serverstart": "DEBUG=express-locallibrary-tutorial:* npm run devstart",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bootstrap": "^4.6.0",
+    "cookie-parser": "^1.4.5",
+    "esm": "^3.2.25",
     "express": "^4.17.1",
+    "express-validator": "^6.10.0",
+    "jquery": "^3.6.0",
     "lodash": "^4.17.21",
-    "three": "^0.127.0"
+    "morgan": "^1.10.0",
+    "pug": "^3.0.2",
+    "socket.io": "^4.0.1",
+    "socket.io-client": "^4.0.1",
+    "three": "^0.127.0",
+    "uuid": "^3.4.0"
   },
   "devDependencies": {
     "css-loader": "^5.2.0",

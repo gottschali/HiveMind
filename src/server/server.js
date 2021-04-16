@@ -1,13 +1,15 @@
-const express = require('express')
-const app = express()
-const port = 8080
+const app = require("express")();
+const server = require('http').createServer(app);
+const io = require('./sockets.js')(server);
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+const indexRouter = require('./routes/index.js');
+const lobbyRouter = require('./routes/lobby.js');
 
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
-})
 
-app.use(express.static('dist'))
+app.use('/', indexRouter);
+app.use('/lobby', lobbyRouter);
+
+
+server.listen(3000)
+
+module.exports = server;
