@@ -9,7 +9,7 @@
     "watch": "webpack --watch",
     "start": "node ./app/bin/www",
     "devstart": "nodemon ./app/bin/www",
-    "serverstart": "DEBUG=express-locallibrary-tutorial:* npm run devstart",
+    "serverstart": "set  DEBUG=express-locallibrary-tutorial:* & npm run devstart",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -34,6 +34,7 @@
     "css-loader": "^5.2.0",
     "html-webpack-plugin": "^5.3.1",
     "http-server": "^0.12.3",
+    "nodemon": "^2.0.7",
     "style-loader": "^2.0.0",
     "webpack": "^5.31.0",
     "webpack-cli": "^4.6.0",

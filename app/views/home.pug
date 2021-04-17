@@ -33,11 +33,22 @@ block content
                                 label.btn.btn-default
                                     input(type="radio", name="player-color", value="RANDOM", checked="checked")
                                     | Random
+                    .form-group
+                        label Play local or multiplayer
+                        div
+                            .btn-group(data-toggle="buttons")
+                                label.btn.btn-default.active
+                                    input(type="radio", name="mode", value="LOCAL")
+                                    | Local
+                                label.btn.btn-default
+                                    input(type="radio", name="mode", value="REMOTE")
+                                    | Online
 
                     .form-group
                         label(for="playerName") Name
                         input#playerName.form-control(type="text", name="player-name", placeholder="Player 1")
                     button.btn.btn-primary(type="submit") Start Game
+
             .col-sm-6
                 h2 Join an Existing Game
                 form#joinForm(action="/join", method="POST", role="form")
@@ -47,6 +58,16 @@ block content
                     .form-group
                         label(for="playerName") Name
                         input#playerName.form-control(type="text", name="player-name", placeholder="Player 2")
+                    .form-group
+                        label Play local or multiplayer
+                        div
+                            .btn-group(data-toggle="buttons")
+                                label.btn.btn-default.active
+                                    input(type="radio", name="mode", value="LOCAL")
+                                    | vs the computer
+                                label.btn.btn-default
+                                    input(type="radio", name="mode", value="REMOTE")
+                                    | online multiplayer
                     button.btn.btn-primary(type="submit") Join Game
 
 
