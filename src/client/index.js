@@ -2,9 +2,11 @@ import {Controller} from "./controller/GameController.js";
 import {HumanController} from "./controller/HumanController";
 import {RandomComputerController} from "./controller/RandomComputerController";
 // import socket from  './socket.js';
+import $ from "jquery";
 
-const canvas = document.createElement('canvas');
-canvas.id = "container";
+const canvas = $("#view-container");
+// const canvas = document.createElement('canvas');
+// canvas.id = "container";
 // const element = document.createElement('div');
 
 new Controller(HumanController, RandomComputerController, canvas);
