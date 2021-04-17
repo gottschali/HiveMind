@@ -17,15 +17,25 @@ router.get('/game', function(req, res, next) {
 });
 router.post('/create', function(req, res, next) {
     console.log("CREATE", req);
-    const gid = Math.floor(Math.random() * 1000).toString()
-    // TODO create logic
-    res.redirect(`/game?gid=${gid}`)
+    // Do via supervisor
+    const mode = req.body.mode;
+    let gid = 0;
+    if (mode.startsWith("LOCAL")) {
+    } else {
+        // Do via supervisor
+        gid = Math.floor(Math.random() * 1000).toString()
+    }
+    res.redirect(`/game?gid=${gid}&mode=${mode}`)
 });
 router.post('/join', function(req, res, next) {
     console.log("JOIN", req);
-    // TODO join logic
-    const gid = req.body.gid;
-    res.redirect(`/game?gid=${gid}`)
+    const mode = req.body.mode;
+    let gid = 0
+    if (mode === "REMOTE") {
+        // Do via supervisor
+        gid = req.body.gid;
+    }
+    res.redirect(`/game?gid=${gid}&mode=${mode}`)
 });
 
 module.exports = router;
