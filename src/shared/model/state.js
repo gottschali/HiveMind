@@ -91,12 +91,12 @@ export class State {
         // State is mutable now, apply updates inplace instead of returning a new instance
         console.log(`Applying ${JSON.stringify(action)}`)
         let stone
-        if (action instanceof Move) {
+        if ("origin" in action && "destination" in action) {
             // Remove the stone from the old position and add it at the new one
             stone = this.hive.at(action.origin)
             this.hive.removeStone(action.origin)
             this.hive.addStone(action.destination, stone)
-        } else if (action instanceof Drop) {
+        } else if ("stone" in action && "destination" in action) {
             stone = action.stone
             if (stone.insect === insects.BEE) {
                 // Update that the bee is dropped
