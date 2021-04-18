@@ -17,11 +17,15 @@ export class GameController {
             this.update();
         }
     }
+    apply(action) {
+        this.state.apply(action)
+        this.view.apply(action)
+    }
     update() {
         return this.view.drawState(this.state);
     }
     delegate() {
-        this.update();
+        // this.update();
         timer(20).then( () => {
             if (this.state.turnNumber > 0) {
                 if (this.state.team === "WHITE") {
