@@ -1,0 +1,9 @@
+mixin insect(name, num)
+    li.list-group-item
+        span.badge.badge-primary.badge-pill= num
+        button.btn.btn-secondary= name
+
+mixin drops
+    ul.list-group.list-group-horizontal
+        each val, key in {"ant": 1, "beetle": 2, "grasshopper": 3, "spider": 3, "bee": 0}
+            +insect(key, val)
