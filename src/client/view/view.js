@@ -10,13 +10,14 @@ import {
     WebGLRenderer
 } from 'three';
 import * as HEX from '../../shared/hexlib.js';
-import {HashMap} from '../../shared/hashmap.js';
 import * as CONSTANTS from "./constants";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {teams} from "../../shared/model/teams";
 import {MATERIALS} from "./textures";
 
 
+import models from './models.js';
+// TODO use common Hexlib
 // TODO outsource
 // TODO Can you not store height in another hex attribute
 
@@ -31,6 +32,13 @@ const highlightMaterial = new MeshStandardMaterial({color: CONSTANTS.FG,
     polygonOffsetUnits: 0,
     transparent: true,
     opacity: 0.3,
+});
+const invisMaterial = new MeshStandardMaterial({
+    polygonOffset: true,
+    polygonOffsetFactor: 0,
+    polygonOffsetUnits: 0,
+    transparent: true,
+    opacity: 0,
 });
 
 export class View {
@@ -188,7 +196,7 @@ export class View {
         // that in future it can be found easily
         const materials = [
             MATERIALS[team]["PLAIN"],
-            MATERIALS[team][insect],
+            MATERIALS[team][name],
             MATERIALS[team]["PLAIN"],
         ];
         let newInst = this.makeGenericHex( hex, height, materials );
@@ -207,13 +215,15 @@ export class View {
     makeHighlightStones(hexes) {
         this.highlightGroup.clear();
         this.highlightArray.length = 0;
+        console.log("HIGH")
         hexes.forEach( ([hex, height]) => {
-            const stone = this.makeGenericHex(hex, height, highlightMaterial)
+            const stone = this.makeGenericStone(hex, height, highlightMaterial)
             this.highlightGroup.add(stone);
             this.highlightArray.push(stone);
         });
         this.render();
     }
+// TODO abstract team colors
 
     makeDropTileInstances(arr) {
         arr.sort( (a, b) => (a.team === b.team) ? a.insect < b.insect : a.team < b.team);
