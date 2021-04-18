@@ -16,7 +16,6 @@ import {teams} from "../../shared/model/teams";
 import {MATERIALS} from "./textures";
 
 
-// TODO use common Hexlib
 // TODO outsource
 // radiusTop, radiusBottom, height, radialSegments
 const hexGeometry = new CylinderBufferGeometry( 1, 1, 0.5, 6 );
@@ -198,7 +197,6 @@ export class View {
     makeHighlightStones(hexes) {
         this.highlightGroup.clear();
         this.highlightArray.length = 0;
-        console.log("HIGH")
         hexes.forEach( ([hex, height]) => {
             const stone = this.makeGenericStone(hex, height, highlightMaterial)
             this.highlightGroup.add(stone);
@@ -206,7 +204,6 @@ export class View {
         });
         this.render();
     }
-// TODO abstract team colors
 
     makeDropTileInstances(arr) {
         arr.sort( (a, b) => (a.team === b.team) ? a.insect < b.insect : a.team < b.team);
