@@ -1,38 +1,31 @@
-import {Controller} from "./controller/GameController.js";
-import {HumanController} from "./controller/HumanController";
-import {RandomComputerController} from "./controller/RandomComputerController";
-import {RemoteController} from "./controller/RemoteController";
+import {RemoteController} from "./controller/game/RemoteController.js";
+import {LocalController} from "./controller/game/LocalController.js";
 
-// import socket from  './socket.js';
+import {HumanPlayer} from "./controller/player/HumanPlayer";
+import {RandomComputerPlayer} from "./controller/player/RandomComputerPlayer";
+import {RemotePlayer} from "./controller/player/RemotePlayer";
 
+import $ from 'jquery';
 
-function init() {
-    const canvas = document.createElement('canvas');
-    canvas.id = "view-container";
-    document.body.appendChild(canvas);
-    const url = new URLSearchParams(window.location.href);
-    const mode = url.get("mode");
-    const gid = url.get("gid");
-    let c1, c2;
+const canvas = document.createElement('canvas');
+canvas.id = "view-container";
+document.body.appendChild(canvas);
+
+$('document').ready( () => {
+    const params = (new URL(document.location)).searchParams;
+    const mode = params.get("mode");
+    const gid = params.get("gid");
+    let c1, c2, controller;
     if (mode === "LOCAL") {
-        c1 = HumanController;
-        c2 = RandomComputerController;
+        controller = new LocalController(HumanPlayer, RandomComputerPlayer, canvas);
     } else if (mode === "LOCALLOCAL") {
-        c1 = HumanController;
-        c2 = HumanController;
+        controller = new LocalController(HumanPlayer, HumanPlayer, canvas);
+    } else if (mode === "REMOTEJOIN") {
+        controller = new RemoteController(gid, RemotePlayer, HumanPlayer, canvas);
+        controller.join();
     } else if (mode === "REMOTECREATE") {
-        c1 = RemoteController;
-        c2 = HumanController;
-    } else if (mode === "REMOTECREATE") {
-        c1 = HumanController;
-        c2 = RemoteController;
+        controller = new RemoteController(gid, HumanPlayer, RemotePlayer, canvas);
+        controller.create();
     }
-    const controller = new Controller(c1, c2, canvas);
-}
-
-init();
-
-// socket.send("Hello There");
-// socket.emit("joinGame");
-
+});
 

@@ -16,6 +16,7 @@ import {teams} from "../../shared/model/teams";
 import {MATERIALS} from "./textures";
 
 
+import models from './models.js';
 // TODO use common Hexlib
 // TODO outsource
 // radiusTop, radiusBottom, height, radialSegments
@@ -29,6 +30,13 @@ const highlightMaterial = new MeshStandardMaterial({color: CONSTANTS.FG,
     polygonOffsetUnits: 0,
     transparent: true,
     opacity: 0.3,
+});
+const invisMaterial = new MeshStandardMaterial({
+    polygonOffset: true,
+    polygonOffsetFactor: 0,
+    polygonOffsetUnits: 0,
+    transparent: true,
+    opacity: 0,
 });
 
 export class View {
@@ -185,7 +193,12 @@ export class View {
             MATERIALS[team][name],
             MATERIALS[team]["PLAIN"],
         ];
-        return this.makeGenericStone( hex, height, materials );
+        const stone = models[name].clone();
+        this.positionStone(stone, hex, height);
+        let hitbox = this.makeGenericStone( hex, height, invisMaterial );
+        this.tile_group.add(hitbox);
+        this.tile_group.add(stone);
+        this.tileArray.push(hitbox);
     }
 
     positionStone(stone, hex, height) {
@@ -246,8 +259,6 @@ export class View {
         for (const hex of state.hive.map.keys()) {
             state.hive.map.get(hex).forEach((stone, height) => {
                 const newInst = this.makeDroppedStone(stone.team, new HEX.Hex(hex.q, hex.r), stone.insect, height);
-                this.tileArray.push(newInst);
-                this.tile_group.add(newInst);
             });
         }
         this.makeDropTileInstances(state.stones);
