@@ -12,7 +12,11 @@ export class HashMap extends Map {
       return super.has(JSON.stringify(key));
     }
     hiveHeight(key) {
-        return this.get(key).length
+        if (this.has(key)) {
+            return this.get(key).length
+        } else {
+            return 0
+        }
     }
     hivePush(key, value){
         if (this.has(key)) {
@@ -23,7 +27,7 @@ export class HashMap extends Map {
     }
     hivePop(key){
         let arr = this.get(key)
-        const res = arr.get(key).pop()
+        const res = arr.pop()
         if (arr.length === 0) {
             this.delete(key)
         }
