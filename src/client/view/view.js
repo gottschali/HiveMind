@@ -13,10 +13,10 @@ import * as HEX from '../../shared/hexlib.js';
 import * as CONSTANTS from "./constants";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {teams} from "../../shared/model/teams";
+import {HashMap} from "../../shared/hashmap";
 import {MATERIALS} from "./textures";
 
 
-import models from './models.js';
 // TODO use common Hexlib
 // TODO outsource
 // TODO Can you not store height in another hex attribute
@@ -188,6 +188,8 @@ export class View {
         // Add a wireframe
         const stone = new Mesh( hexGeometry, material );
         stone.add( wireframe.clone() ); // Don't add to the scene directly, make it a child
+        stone.rotateX(Math.PI / 2);
+        stone.rotateY(Math.PI / 6);
         this.positionStone(stone, hex, height)
         return stone;
     }
@@ -196,7 +198,7 @@ export class View {
         // that in future it can be found easily
         const materials = [
             MATERIALS[team]["PLAIN"],
-            MATERIALS[team][name],
+            MATERIALS[team][insect],
             MATERIALS[team]["PLAIN"],
         ];
         let newInst = this.makeGenericHex( hex, height, materials );
@@ -208,8 +210,6 @@ export class View {
     positionStone(stone, hex, height) {
         const {x, y} = HEX.hex_to_pixel(this.layout, hex);
         stone.position.set( x, y, height * 0.5 );
-        stone.rotateX(Math.PI / 2);
-        stone.rotateY(Math.PI / 6);
     }
 
     makeHighlightStones(hexes) {
@@ -217,7 +217,7 @@ export class View {
         this.highlightArray.length = 0;
         console.log("HIGH")
         hexes.forEach( ([hex, height]) => {
-            const stone = this.makeGenericStone(hex, height, highlightMaterial)
+            const stone = this.makeGenericHex(hex, height, highlightMaterial)
             this.highlightGroup.add(stone);
             this.highlightArray.push(stone);
         });
@@ -256,6 +256,7 @@ export class View {
 
     drawState(state) {
         // clear the previous hexes
+        console.log("Redraw state")
         this.tile_group.clear();
         this.tileArray.length = 0;
         // TODO: optimize: drop: only add new insect, move: move the object to new destination
@@ -268,17 +269,20 @@ export class View {
         this.makeDropTileInstances(state.stones);
         this.render();
     }
-    addStone(stone, destination, height) {
+    addStone(stone, destination) {
         // Maybe need to reinstantiate destination as a hex
+        const height = 0
+        console.log("Add stone", stone, destination, height)
         const newInst = this.makeDroppedStone(stone.team, destination, stone.insect, height);
         this.hive.hivePush(destination, newInst)
     }
     moveStone(origin, destination) {
+        console.log("Move stone", origin, destination)
         const stone = this.hive.hivePop(origin)
         const height = this.hive.hiveHeight(destination) // Maybe + 1
         // could animate here
+        this.hive.hivePush(destination, stone)
         this.positionStone(stone, destination, height)
-
     }
     apply(action) {
         // It's a drop
@@ -288,5 +292,6 @@ export class View {
         } else if ("origin" in action) {
             this.moveStone(action.origin, action.destination)
         }
+        this.render();
     }
 }

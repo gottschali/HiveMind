@@ -16,6 +16,7 @@ export class GameController {
         loadManager.onLoad = () => {
             this.update();
         }
+        this.update()
     }
     apply(action) {
         this.state.apply(action)
