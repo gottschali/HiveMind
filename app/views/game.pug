@@ -1,47 +1,12 @@
 extends layout
+include drops
 
 block content
 
     div.container
 
-        #messages
-
-        #game
-
-            #title-bar
-                button#forfeit.btn.btn-sm.btn-default.pull-right Forfeit
-                span Game:&nbsp;
-                strong #{gameID}
-
-            #opponent.player-info
-                strong ...
-                span.status.pull-right
-                ul.captured-pieces.list-inline
-
-            #you.player-info
-                strong ...
-                span.status.pull-right
-                ul.captured-pieces.list-inline
-
-
-
-        #game-over.modal.fade(role="dialog")
-            .modal-dialog
-                .modal-content
-                    .modal-body.text-center
-                        h2.alert
-                    .modal-footer
-                        a.btn.btn-primary(href="/") Continue
-
-
-        #forfeit-game.modal.fade(role="dialog")
-            .modal-dialog
-                .modal-content
-                    .modal-body.text-center
-                        h2 Forfeit Game?
-                    .modal-footer
-                        button#cancel-forfeit.btn.btn-default Cancel
-                        button#confirm-forfeit.btn.btn-primary Forfeit
+        div#canvas-container
+        +drops
 
 
     script(src="bundle.js")

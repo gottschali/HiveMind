@@ -1,9 +1,12 @@
-mixin insect(name, num)
+mixin insect(name, num, team)
     li.list-group-item
-        span.badge.badge-primary.badge-pill= num
-        button.btn.btn-secondary= name
+        button.btn.btn-secondary(class=name class=team)
+            span.badge.badge-primary.badge-pill= num
+            = name
 
 mixin drops
-    ul.list-group.list-group-horizontal
-        each val, key in {"ant": 1, "beetle": 2, "grasshopper": 3, "spider": 3, "bee": 0}
-            +insect(key, val)
+    ul.list-group.list-group-horizontal#drops
+        each team in ["BLACK", "WHITE"]
+            each val, key in {"ant": 3, "beetle": 2, "grasshopper": 3, "spider": 2, "bee": 1}
+                +insect(key, val, team)
+

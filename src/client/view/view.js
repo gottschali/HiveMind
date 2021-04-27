@@ -44,13 +44,8 @@ export class View {
         this.scene.add(this.tile_group);
         this.tileArray = [];
 
-        this.dropArr = [];
-        this.dropGroup = new Group();
-        this.dropGroup.position.set(0, 0, -10);
-
         this.hive = new HashMap()
         // Position it relatively to the camera so it always stays at the same position
-        this.camera.add(this.dropGroup);
         this.scene.add(this.camera);
 
         this.highlightGroup= new Group();
@@ -117,7 +112,6 @@ export class View {
         const map = {
             destination: this.highlightArray,
             stones: this.tileArray,
-            drops: this.dropArr
         };
         this.highlightGroup.clear();
         for (const type in map) {
@@ -127,9 +121,6 @@ export class View {
                 let second;
                 if (type === "destination" || type === "stones") {
                     second = HEX.hex_round(HEX.pixel_to_hex(this.layout, c.point));
-                } else if (type === "drops") {
-                    // Is this attribute set ?!
-                    second = c.object.insect;
                 }
                 console.log([type, second])
                 return this.parent.handleClick([type, second]);
@@ -200,37 +191,6 @@ export class View {
         });
         this.render();
     }
-// TODO abstract team colors
-
-    makeDropTileInstances(arr) {
-        arr.sort( (a, b) => (a.team === b.team) ? a.insect < b.insect : a.team < b.team);
-        this.dropGroup.clear();
-        this.dropArr.length = 0;
-        let x = -10;
-        let prev = null;
-        let dy = 0;
-        for (const stone of arr) {
-            if (prev != null && stone.team === prev.team && stone.insect === prev.insect) {
-                dy += 1;
-            } else {
-                dy = 0;
-                x += 2;
-            }
-            prev = stone;
-            const material = MATERIALS[stone.team][stone.insect];
-            // Add a wireframe
-            const tile = new Mesh( hexGeometry, material );
-            tile.rotateX(Math.PI / 2);
-            tile.rotateY(Math.PI / 4);
-            tile.position.set(x, 10 + dy, -10);
-            tile.insect = stone.insect;
-            tile.add( wireframe.clone() ); // Don't add to the scene directly, make it a child
-            this.dropGroup.add(tile);
-            this.dropArr.push(tile);
-        }
-    }
-
-
     drawState(state) {
         // clear the previous hexes
         console.log("Redraw state")
@@ -243,7 +203,6 @@ export class View {
                 this.makeDroppedStone(stone.team, new HEX.Hex(hex.q, hex.r), stone.insect, height);
             });
         }
-        this.makeDropTileInstances(state.stones);
         this.render();
     }
     addStone(stone, destination) {

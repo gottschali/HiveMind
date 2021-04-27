@@ -12,6 +12,10 @@ router.get('/test', function(req, res, next) {
     res.render('test', { title: 'Hive Test' });
 });
 
+router.get('/debug', function(req, res, next) {
+    res.redirect(`/game?gid=0&mode=AUTO`)
+});
+
 router.get('/game', function(req, res, next) {
   res.render('game', { title: 'Play!' });
 });
