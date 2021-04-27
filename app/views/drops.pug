@@ -1,0 +1,12 @@
+mixin insect(name, num, team)
+    li.list-group-item
+        button.btn.btn-secondary.drop(data-insect=name class=team data-num=num)
+            span.badge.badge-primary.badge-pill= num
+            = name
+
+mixin drops
+    ul.list-group.list-group-horizontal
+        each team in ["BLACK", "WHITE"]
+            each val, key in {"ANT": 3, "BEETLE": 2, "GRASSHOPPER": 3, "SPIDER": 2, "BEE": 1}
+                +insect(key, val, team)
+

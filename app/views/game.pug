@@ -1,0 +1,14 @@
+extends layout
+include drops
+
+block content
+
+    div.container
+
+        div#canvas-container
+        +drops
+
+
+    script(src="bundle.js")
+    script(src="/js/jquery.min.js")
+    script(src="/js/bootstrap.min.js")

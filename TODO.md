@@ -1,0 +1,16 @@
+- Highlight only viable moves
+- Pass when no options
+- animate moves
+- Share UUID
+- Validators:
+ check game existing
+- Game over screen
+- Forfeit option
+- Chat room with messages
+- Hover tooltips with help
+- Allow team selection
+- AUTO mode kills browser
+- fix 3d models
+- infinite floor? fog?
+- threejs fundas
+- colors, lights?

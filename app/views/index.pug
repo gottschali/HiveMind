@@ -1,0 +1,76 @@
+extends layout
+
+block content
+    #banner.jumbotron
+        .container
+            h1 HiveMind
+            p.
+                A real-time multi-player Hive app using
+                <a href="http://nodejs.org">Node.js</a>,
+                <a href="http://expressjs.com">Express</a>, and
+                <a href="http://socket.io">Socket.IO</a>.
+
+            p.
+                <a class="btn btn-primary" href="https://github.com/gottschali/HiveMind">
+                View project on GitHub
+                </a>
+
+    .container
+        .row
+            .col-sm-6
+                h2 Start a New Game
+                form#startForm(action="/create", method="POST", role="form")
+                    .form-group
+                        label Play as
+                        div
+                            .btn-group(data-toggle="buttons")
+                                label.btn.btn-default.active
+                                    input(type="radio", name="player-color", value="WHITE")
+                                    | White
+                                label.btn.btn-default
+                                    input(type="radio", name="player-color", value="BLACK")
+                                    | Black
+                                label.btn.btn-default
+                                    input(type="radio", name="player-color", value="RANDOM", checked="checked")
+                                    | Random
+                    .form-group
+                        label Play local or multiplayer
+                        div
+                            .btn-group(data-toggle="buttons")
+                                label.btn.btn-default.active
+                                    input(type="radio", name="mode", value="LOCALLOCAL")
+                                    | Local
+                                label.btn.btn-default
+                                    input(type="radio", name="mode", value="REMOTECREATE", checked="checked")
+                                    | Online
+
+                    .form-group
+                        label(for="playerName") Name
+                        input#playerName.form-control(type="text", name="player-name", placeholder="Player 1")
+                    button.btn.btn-primary(type="submit") Create Game
+
+            .col-sm-6
+                h2 Join an Existing Game
+                form#joinForm(action="/join", method="POST", role="form")
+                    .form-group
+                        label(for="gameID") Game ID
+                        input#gameID.form-control(type="text", name="gid")
+                    .form-group
+                        label(for="playerName") Name
+                        input#playerName.form-control(type="text", name="player-name", placeholder="Player 2")
+                    .form-group
+                        label Play local or multiplayer
+                        div
+                            .btn-group(data-toggle="buttons")
+                                label.btn.btn-default.active
+                                    input(type="radio", name="mode", value="LOCAL")
+                                    | vs the computer
+                                label.btn.btn-default
+                                    input(type="radio", name="mode", value="REMOTEJOIN", checked="checked")
+                                    | online multiplayer
+                    button.btn.btn-primary(type="submit") Join Game
+
+
+    script(src="/js/jquery.min.js")
+    script(src="/js/bootstrap.min.js")
+

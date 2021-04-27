@@ -1,0 +1,28 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+body  { background-color: #f8f8f8; }
+table { border-collapse: collapse; }
+
+#banner { background-color: #222222; color: #ffffff; }
+
+#startForm, #joinForm { padding: 15px; }
+
+/*
+ * Popup Windows
+ */
+
+.modal-content { background-color: #f8f8f8; }
+.modal-footer  { margin-top: 0; }
+
+#canvas-container {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}
