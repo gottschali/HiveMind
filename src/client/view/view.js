@@ -15,6 +15,8 @@ import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {teams} from "../../shared/model/teams";
 import {HashMap} from "../../shared/hashmap";
 import {MATERIALS} from "./textures";
+import stones from './stones';
+import models from "./models";
 
 
 // TODO use common Hexlib
@@ -22,24 +24,7 @@ import {MATERIALS} from "./textures";
 // TODO Can you not store height in another hex attribute
 
 // radiusTop, radiusBottom, height, radialSegments
-const hexGeometry = new CylinderBufferGeometry( 1, 1, 0.5, 6 );
-const wireframeGeometry = new EdgesGeometry( hexGeometry );
-const wireframeMaterial = new LineBasicMaterial( { color: CONSTANTS.BLACK });
-const wireframe = new LineSegments( wireframeGeometry, wireframeMaterial );
-const highlightMaterial = new MeshStandardMaterial({color: CONSTANTS.FG,
-    polygonOffset: true,
-    polygonOffsetFactor: 0,
-    polygonOffsetUnits: 0,
-    transparent: true,
-    opacity: 0.3,
-});
-const invisMaterial = new MeshStandardMaterial({
-    polygonOffset: true,
-    polygonOffsetFactor: 0,
-    polygonOffsetUnits: 0,
-    transparent: true,
-    opacity: 0,
-});
+import {hexGeometry, wireframe, hitbox, highlightMaterial} from "./geometry";
 
 export class View {
     constructor(parent, canvas) {
@@ -169,7 +154,7 @@ export class View {
             for (let r = r1; r <= r2; r++) {
                 const {x, y} = HEX.hex_to_pixel(this.layout, new HEX.Hex(q, r));
                 const tile = flatHexLine.clone();
-                tile.position.set(x, y, -0.25);
+                tile.position.set(x, y, 0);
                 group.add(tile);
             }
         }
@@ -196,20 +181,22 @@ export class View {
     makeDroppedStone(team, hex, insect, height) {
         // Instead just add it to the scene and give it enough attributes
         // that in future it can be found easily
-        const materials = [
-            MATERIALS[team]["PLAIN"],
-            MATERIALS[team][insect],
-            MATERIALS[team]["PLAIN"],
-        ];
-        let newInst = this.makeGenericHex( hex, height, materials );
-        this.tileArray.push(newInst);
-        this.tile_group.add(newInst);
-        return newInst
+        const stone = stones[team][insect].clone();
+        const hb = hitbox.clone();
+        stone.add(hb);
+        this.positionStone(stone, hex, height)
+        const model = models[insect].clone();
+        stone.add(model);
+        // this.positionStone(model, hex, height)
+        // TODO fix hitbox for intersection
+        this.tileArray.push(hb);
+        this.tile_group.add(stone);
+        return stone;
     }
 
     positionStone(stone, hex, height) {
         const {x, y} = HEX.hex_to_pixel(this.layout, hex);
-        stone.position.set( x, y, height * 0.5 );
+        stone.position.set( x, y, height + 0.5);
     }
 
     makeHighlightStones(hexes) {
