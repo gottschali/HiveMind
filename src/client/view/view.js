@@ -24,7 +24,7 @@ import models from "./models";
 // TODO Can you not store height in another hex attribute
 
 // radiusTop, radiusBottom, height, radialSegments
-import {hexGeometry, wireframe, hitbox, highlightMaterial} from "./geometry";
+import {hexGeometry, wireframe, hitbox, highlightStone} from "./geometry";
 
 export class View {
     constructor(parent, canvas) {
@@ -73,8 +73,8 @@ export class View {
         return new HEX.Layout(orientation, size, origin);
     }
     setupScene(canvas) {
-        this.renderer = new WebGLRenderer( {canvas, antialias: true} );
-        this.renderer.setClearColor(CONSTANTS.BG);
+        this.renderer = new WebGLRenderer( {canvas, antialias: true, alpha: true } );
+        // this.renderer.setClearColor(CONSTANTS.BG);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
 
         const fov = 80; // field of view
@@ -143,7 +143,7 @@ export class View {
         corners.forEach(({x, y}) => points.push( new Vector3(x, y, 0)));
         points.push(corners[0]);
         const geometry = new BufferGeometry().setFromPoints( points );
-        const material = new LineBasicMaterial( { color: CONSTANTS.FG } );
+        const material = new LineBasicMaterial( { color: CONSTANTS.BLACK } );
         const flatHexLine = new Line(geometry, material);
         const group = new Group();
         const radius = 10;
@@ -166,17 +166,6 @@ export class View {
     }
     color(team) {
         return (team === teams.WHITE ? CONSTANTS.YELLOW : CONSTANTS.CYAN);
-    }
-
-    makeGenericHex(hex, height, material) {
-        // Create a 3D object at the position given by hex and height
-        // Add a wireframe
-        const stone = new Mesh( hexGeometry, material );
-        stone.add( wireframe.clone() ); // Don't add to the scene directly, make it a child
-        stone.rotateX(Math.PI / 2);
-        stone.rotateY(Math.PI / 6);
-        this.positionStone(stone, hex, height)
-        return stone;
     }
     makeDroppedStone(team, hex, insect, height) {
         // Instead just add it to the scene and give it enough attributes
@@ -204,7 +193,8 @@ export class View {
         this.highlightArray.length = 0;
         console.log("HIGH")
         hexes.forEach( ([hex, height]) => {
-            const stone = this.makeGenericHex(hex, height, highlightMaterial)
+            const stone = highlightStone.clone();
+            this.positionStone(stone, hex, height - 0.375);
             this.highlightGroup.add(stone);
             this.highlightArray.push(stone);
         });

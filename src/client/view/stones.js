@@ -32,8 +32,8 @@ for (const team of ["WHITE", "BLACK"]) {
         console.log(insect, models[insect]);
         const stone = new Group();
         const socket = new Mesh(socketGeometry, material);
+        socket.add(wireframe.clone()); // Don't add to the scene directly, make it a child
         socket.position.y -= 0.375;
-        stone.add(wireframe.clone()); // Don't add to the scene directly, make it a child
         stone.add(socket);
         // stone.add(models[insect].clone());
 
