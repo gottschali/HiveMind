@@ -1,8 +1,8 @@
 import {
     AmbientLight,
-    BufferGeometry, CylinderBufferGeometry, EdgesGeometry,
+    BufferGeometry,
     Group, Line,
-    LineBasicMaterial, LineSegments, Mesh, MeshStandardMaterial,
+    LineBasicMaterial, Mesh,
     PerspectiveCamera,
     Raycaster,
     Scene,
