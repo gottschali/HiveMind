@@ -8,6 +8,9 @@ router.get('/', function(req, res, next) {
 router.get('/index', function(req, res, next) {
   res.render('index', { title: 'HiveMind' });
 });
+router.get('/test', function(req, res, next) {
+    res.render('test', { title: 'Hive Test' });
+});
 
 
 router.get('/lobby', function(req, res, next) {

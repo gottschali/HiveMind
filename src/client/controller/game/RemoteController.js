@@ -15,7 +15,7 @@ export class RemoteController extends GameController {
     }
     start() {
         socket.on("updateAction", (action) => {
-            this.state.apply(action);
+            this.apply(action)
             console.log(action, this.state)
             this.delegate();
         })

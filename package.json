@@ -10,6 +10,7 @@
     "start": "node -r esm ./app/app.js",
     "devstart": "nodemon -r esm ./app/app.js",
     "serverstart": "set  DEBUG=express-locallibrary-tutorial:* & npm run devstart",
+    "devlinux": "DEBUG=express-locallibrary-tutorial:* npm run devstart",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

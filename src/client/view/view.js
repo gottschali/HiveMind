@@ -13,12 +13,14 @@ import * as HEX from '../../shared/hexlib.js';
 import * as CONSTANTS from "./constants";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {teams} from "../../shared/model/teams";
+import {HashMap} from "../../shared/hashmap";
 import {MATERIALS} from "./textures";
 
 
-import models from './models.js';
 // TODO use common Hexlib
 // TODO outsource
+// TODO Can you not store height in another hex attribute
+
 // radiusTop, radiusBottom, height, radialSegments
 const hexGeometry = new CylinderBufferGeometry( 1, 1, 0.5, 6 );
 const wireframeGeometry = new EdgesGeometry( hexGeometry );
@@ -60,6 +62,8 @@ export class View {
         this.dropArr = [];
         this.dropGroup = new Group();
         this.dropGroup.position.set(0, 0, -10);
+
+        this.hive = new HashMap()
         // Position it relatively to the camera so it always stays at the same position
         this.camera.add(this.dropGroup);
         this.scene.add(this.camera);
@@ -179,33 +183,33 @@ export class View {
         return (team === teams.WHITE ? CONSTANTS.YELLOW : CONSTANTS.CYAN);
     }
 
-    makeGenericStone( hex, height, material) {
+    makeGenericHex(hex, height, material) {
         // Create a 3D object at the position given by hex and height
         // Add a wireframe
         const stone = new Mesh( hexGeometry, material );
         stone.add( wireframe.clone() ); // Don't add to the scene directly, make it a child
+        stone.rotateX(Math.PI / 2);
+        stone.rotateY(Math.PI / 6);
         this.positionStone(stone, hex, height)
         return stone;
     }
-    makeDroppedStone(team, hex, name, height) {
+    makeDroppedStone(team, hex, insect, height) {
+        // Instead just add it to the scene and give it enough attributes
+        // that in future it can be found easily
         const materials = [
             MATERIALS[team]["PLAIN"],
-            MATERIALS[team][name],
+            MATERIALS[team][insect],
             MATERIALS[team]["PLAIN"],
         ];
-        const stone = models[name].clone();
-        this.positionStone(stone, hex, height);
-        let hitbox = this.makeGenericStone( hex, height, invisMaterial );
-        this.tile_group.add(hitbox);
-        this.tile_group.add(stone);
-        this.tileArray.push(hitbox);
+        let newInst = this.makeGenericHex( hex, height, materials );
+        this.tileArray.push(newInst);
+        this.tile_group.add(newInst);
+        return newInst
     }
 
     positionStone(stone, hex, height) {
         const {x, y} = HEX.hex_to_pixel(this.layout, hex);
         stone.position.set( x, y, height * 0.5 );
-        stone.rotateX(Math.PI / 2);
-        stone.rotateY(Math.PI / 6);
     }
 
     makeHighlightStones(hexes) {
@@ -213,7 +217,7 @@ export class View {
         this.highlightArray.length = 0;
         console.log("HIGH")
         hexes.forEach( ([hex, height]) => {
-            const stone = this.makeGenericStone(hex, height, highlightMaterial)
+            const stone = this.makeGenericHex(hex, height, highlightMaterial)
             this.highlightGroup.add(stone);
             this.highlightArray.push(stone);
         });
@@ -252,16 +256,42 @@ export class View {
 
     drawState(state) {
         // clear the previous hexes
+        console.log("Redraw state")
         this.tile_group.clear();
         this.tileArray.length = 0;
         // TODO: optimize: drop: only add new insect, move: move the object to new destination
         // Maybe outsource this loops to hive
         for (const hex of state.hive.map.keys()) {
             state.hive.map.get(hex).forEach((stone, height) => {
-                const newInst = this.makeDroppedStone(stone.team, new HEX.Hex(hex.q, hex.r), stone.insect, height);
+                this.makeDroppedStone(stone.team, new HEX.Hex(hex.q, hex.r), stone.insect, height);
             });
         }
         this.makeDropTileInstances(state.stones);
+        this.render();
+    }
+    addStone(stone, destination) {
+        // Maybe need to reinstantiate destination as a hex
+        const height = 0
+        console.log("Add stone", stone, destination, height)
+        const newInst = this.makeDroppedStone(stone.team, destination, stone.insect, height);
+        this.hive.hivePush(destination, newInst)
+    }
+    moveStone(origin, destination) {
+        console.log("Move stone", origin, destination)
+        const stone = this.hive.hivePop(origin)
+        const height = this.hive.hiveHeight(destination) // Maybe + 1
+        // could animate here
+        this.hive.hivePush(destination, stone)
+        this.positionStone(stone, destination, height)
+    }
+    apply(action) {
+        // It's a drop
+        if ("stone" in action) {
+            // Do not even remove it from droparr as this will be deprecated soon
+            this.addStone(action.stone, action.destination)
+        } else if ("origin" in action) {
+            this.moveStone(action.origin, action.destination)
+        }
         this.render();
     }
 }

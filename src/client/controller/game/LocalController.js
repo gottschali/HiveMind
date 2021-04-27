@@ -7,8 +7,8 @@ export class LocalController extends GameController{
     }
     reviewAction(action) {
         if (super.reviewAction(action)) {
-            this.state.apply(action)
-            this.delegate();
+            this.apply(action)
+            this.delegate(action);
         }
     }
 }
