@@ -12,10 +12,6 @@ router.get('/test', function(req, res, next) {
     res.render('test', { title: 'Hive Test' });
 });
 
-
-router.get('/lobby', function(req, res, next) {
-  res.render('form', { title: 'Lobby' });
-});
 router.get('/game', function(req, res, next) {
   res.render('game', { title: 'Play!' });
 });
