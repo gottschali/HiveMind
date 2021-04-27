@@ -211,6 +211,12 @@ export class View {
         console.log("Add stone", stone, destination, height)
         const newInst = this.makeDroppedStone(stone.team, destination, stone.insect, height);
         this.hive.hivePush(destination, newInst)
+
+        // TODO Change color, disable it
+        const label = $(`.drop.${stone.team}[data-insect="${stone.insect}"]`)
+        const num = label.data('num');
+        label.data('num', num - 1);
+        label.find('.badge').html(num - 1);
     }
     moveStone(origin, destination) {
         console.log("Move stone", origin, destination)

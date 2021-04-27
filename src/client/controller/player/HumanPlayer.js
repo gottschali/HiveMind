@@ -2,11 +2,23 @@ import {LocalPlayer} from "./LocalPlayer.js"
 
 import {Move, Drop} from '../../../shared/model/action.js';
 import {Stone} from '../../../shared/model/stone.js';
+import $ from 'jquery';
 
 export class HumanPlayer extends LocalPlayer {
     installHooks() {
         this.firstArg = null;
         this.actionType = null;
+        this.buttonControls()
+    }
+    buttonControls() {
+        const ref = this;
+        $('.drop.' + this.team).on('click', function() {
+            const insect = $(this).attr('data-insect');
+            console.log(`Clicked on ${insect}`);
+            ref.firstArg = new Stone(insect, ref.team);
+            ref.actionType = Drop;
+            ref.wantsHighlights()
+        });
     }
 
     setDestination(hex) {
@@ -26,10 +38,6 @@ export class HumanPlayer extends LocalPlayer {
             this.wantsHighlights()
         } else if (type === "destination") {
             this.setDestination(selection)
-        } else if (type === "drops") {
-            this.firstArg = new Stone(selection, this.parent.state.team);
-            this.actionType = Drop;
-            this.wantsHighlights()
         }
     }
 }

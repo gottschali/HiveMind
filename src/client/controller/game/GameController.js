@@ -8,8 +8,8 @@ const timer = ms => new Promise( res => setTimeout(res, ms));
 export class GameController {
     constructor(playerController1, playerController2, canvas) {
         // Maybe white black needs to be swapped
-        this.white = new playerController1(this);
-        this.black = new playerController2(this);
+        this.white = new playerController1(this, "WHITE");
+        this.black = new playerController2(this, "BLACK");
         this.state = new State();
         this.view = new View(this, canvas);
 
