@@ -121,25 +121,27 @@ export class State {
 
     allowedToMove(hex) {
         // This is used called from the UI so performance is not priority
-        this.actions.forEach( (act) => {
-            if ("origin" in action) {
-                if (HEX.hex_compare(action.origin, hex)) {
-                    return true;
+        if (this.moveAllowed) {
+            for (const action of this.actions) {
+                if ("origin" in action) {
+                    if (HEX.hex_compare(action.origin, hex)) {
+                        return true;
+                    }
                 }
             }
-        })
+        }
         return false;
     }
 
     allowedToDrop(insect) {
         // This is used called from the UI so performance is not priority
-        this.actions.forEach( (act) => {
-            if ("insect" in action) {
-                if (HEX.hex_compare(action.insect, insect)) {
+        for (const action of this.actions) {
+            if ("stone" in action) {
+                if (action.stone.insect === insect) {
                     return true;
                 }
             }
-        })
+        }
         return false;
     }
 }

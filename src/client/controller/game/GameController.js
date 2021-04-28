@@ -53,7 +53,7 @@ export class GameController {
     }
     getHighlights(act, src) {
         // This belongs to model
-        let opts;
+        let opts = [];
         if (act === Move) {
             opts = this.state.hive.generateMovesFrom(src)
                 .map(h => [h, this.state.hive.height(h)]);
