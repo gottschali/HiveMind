@@ -33,9 +33,11 @@ export class HumanPlayer extends LocalPlayer {
     handleClick(data) {
         const [type, selection] = data;
         if (type === "stones") {
-            this.firstArg = selection;
-            this.actionType = Move;
-            this.wantsHighlights()
+            if (this.parent.state.allowedToMove(selection)) {
+                this.firstArg = selection;
+                this.actionType = Move;
+                this.wantsHighlights()
+            }
         } else if (type === "destination") {
             this.setDestination(selection)
         }

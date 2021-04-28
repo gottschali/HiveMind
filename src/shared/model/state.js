@@ -118,6 +118,30 @@ export class State {
     step(policy=randomPolicy) {
         return this.apply(policy(this.actions))
     }
+
+    allowedToMove(hex) {
+        // This is used called from the UI so performance is not priority
+        this.actions.forEach( (act) => {
+            if ("origin" in action) {
+                if (HEX.hex_compare(action.origin, hex)) {
+                    return true;
+                }
+            }
+        })
+        return false;
+    }
+
+    allowedToDrop(insect) {
+        // This is used called from the UI so performance is not priority
+        this.actions.forEach( (act) => {
+            if ("insect" in action) {
+                if (HEX.hex_compare(action.insect, insect)) {
+                    return true;
+                }
+            }
+        })
+        return false;
+    }
 }
 
 function randomPolicy(actions) {
