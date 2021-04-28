@@ -1,6 +1,7 @@
 import logging
 
 from hivemind.state import State
+
 from mcts.node import MonteCarloTreeSearchNode
 from mcts.search import MonteCarloTreeSearch
 
