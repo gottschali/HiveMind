@@ -18,11 +18,6 @@ export class HumanPlayer extends LocalPlayer {
         });
     }
 
-    setDestination(hex) {
-        const action = new this.actionType(this.firstArg, hex);
-        this.intendAction(action);
-    }
-
     wantsHighlights() {
         this.parent.getHighlights(this.actionType, this.firstArg);
     }
@@ -43,7 +38,8 @@ export class HumanPlayer extends LocalPlayer {
                 this.clearHighlights()
             }
         } else if (type === "destination") {
-            this.setDestination(selection)
+            const action = new this.actionType(this.firstArg, selection);
+            this.intendAction(action);
         } else if (type === "drop") {
             if (this.parent.state.allowedToDrop(selection)) {
                 this.firstArg = new Stone(selection, this.team);

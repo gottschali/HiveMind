@@ -51,16 +51,7 @@ export class GameController {
     reviewAction(action) {
         return this.state.isLegal(action)
     }
-    getHighlights(act, src) {
-        // This belongs to model
-        let opts = [];
-        if (act === Move) {
-            opts = this.state.hive.generateMovesFrom(src)
-                .map(h => [h, this.state.hive.height(h)]);
-        } else if (act === Drop) {
-            opts = this.state.generateDrops()
-                .map(h => [h, 0]);
-        }
-        this.view.makeHighlightStones(opts);
+    getHighlights(action, src) {
+        return this.view.makeHighlightStones(this.state.getDestinations(action, src));
     }
 }

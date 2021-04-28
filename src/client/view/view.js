@@ -182,7 +182,6 @@ export class View {
     makeHighlightStones(hexes) {
         this.highlightGroup.clear();
         this.highlightArray.length = 0;
-        console.log("HIGH")
         hexes.forEach( ([hex, height]) => {
             const stone = highlightStone.clone();
             this.positionStone(stone, hex, height - 0.375);

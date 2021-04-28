@@ -144,6 +144,18 @@ export class State {
         }
         return false;
     }
+
+    getDestinations(action, src) {
+        let opts = [];
+        if (action === Move) {
+            opts = this.hive.generateMovesFrom(src)
+                .map(h => [h, this.hive.height(h)]);
+        } else if (action === Drop) {
+            opts = this.generateDrops()
+                .map(h => [h, 0]);
+        }
+        return opts;
+    }
 }
 
 function randomPolicy(actions) {
