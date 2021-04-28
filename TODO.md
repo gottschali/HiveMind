@@ -1,10 +1,11 @@
-- Highlight only viable moves
+- Game Over!
+- Improve drop ui (faded out, colors ...)
 - Pass when no options
 - animate moves
 - Share UUID
+- Modals (game over, forfeit, )
 - Validators:
  check game existing
-- Game over screen
 - Forfeit option
 - Chat room with messages
 - Hover tooltips with help
