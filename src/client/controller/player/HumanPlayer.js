@@ -6,6 +6,7 @@ import $ from 'jquery';
 
 export class HumanPlayer extends LocalPlayer {
     installHooks() {
+        super.installHooks();
         this.buttonControls();
         this.clearHighlights();
     }
