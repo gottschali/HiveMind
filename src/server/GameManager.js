@@ -16,7 +16,6 @@ class GameManager {
     }
     join(gid) {
         const game = this.get(gid);
-        game.init();
         // io.to(gid).emit('startGame');
     }
 }
