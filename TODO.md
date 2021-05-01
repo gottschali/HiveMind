@@ -15,6 +15,7 @@
 - infinite floor? fog?
 - threejs fundas
 - colors, lights?
+- Make color selection working
 - Code quality
     - Unified style -> linter
     - es6 vs node modules
