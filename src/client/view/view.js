@@ -74,7 +74,7 @@ export class View {
         const far = 100;
 
         this.camera = new PerspectiveCamera(fov, aspect, near, far);
-        this.camera.position.set( 0, -15, 20 );
+        this.camera.position.set( 0, -5, 10 );
         this.camera.lookAt(0, 0, 0);
 
         this.scene = new Scene();

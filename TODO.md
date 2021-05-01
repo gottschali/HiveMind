@@ -15,5 +15,9 @@
 - infinite floor? fog?
 - threejs fundas
 - colors, lights?
-- es6 vs node modules
-- Code quality (maybe run a linter)
+- Code quality
+    - Unified style -> linter
+    - es6 vs node modules
+    - JSON.stringify ...
+    - Typescript ?
+    - How to check for instances (at the moment "stones" in action )
