@@ -1,4 +1,5 @@
 import models from "./models";
+import {insects} from "../../shared/model/insects";
 import {
     CylinderBufferGeometry,
     EdgesGeometry,
@@ -11,16 +12,6 @@ import * as CONSTANTS from "./constants";
 
 import {wireframe, socketGeometry} from './geometry';
 
-// TODO Hardcoded constants here is very ugly
-
-const insects = [
-    "ANT",
-    "BEE",
-    "BEETLE",
-    "GRASSHOPPER",
-    "SPIDER"
-];
-
 let stones = {
     "WHITE": {},
     "BLACK": {}
@@ -28,6 +19,7 @@ let stones = {
 
 for (const team of ["WHITE", "BLACK"]) {
     const material = new MeshLambertMaterial({color: CONSTANTS.TEAMS[team]});
+    Object.values(insects).forEach((insect) => {
         console.log(insect, models[insect]);
         const stone = new Group();
         const socket = new Mesh(socketGeometry, material);
