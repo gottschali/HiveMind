@@ -12,10 +12,9 @@ import {
 import * as HEX from '../../shared/hexlib.js';
 import * as CONSTANTS from "./constants";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-import {teams} from "../../shared/model/teams";
 import {HashMap} from "../../shared/hashmap";
 import stones from './stones';
-import models from "./models";
+import {models} from "./models";
 import {hitbox, highlightStone} from "./geometry";
 
 // TODO Can you not store height in another hex attribute

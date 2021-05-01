@@ -1,7 +1,9 @@
+import {LoadingManager} from 'three';
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader";
+export const loadManager = new LoadingManager();
 
-let models = {};
-const gltfLoader = new GLTFLoader();
+export let models = {};
+const gltfLoader = new GLTFLoader(loadManager);
 
 gltfLoader.load('/static/objects/bee/bumblebee.gltf', (gltf) => {
      models["BEE"] = gltf.scene
@@ -20,5 +22,3 @@ gltfLoader.load('/static/objects/ant/ant.gltf', (gltf) => {
 gltfLoader.load('/static/objects/beetle/beetle.gltf', (gltf) => {
     models["BEETLE"] = gltf.scene
 });
-
-export default models;

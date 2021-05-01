@@ -1,5 +1,5 @@
-import {State} from '../../../shared/model/state.js';
-import {loadManager} from "../../view/textures";
+import {State} from '../../../shared/model/state';
+import {loadManager} from "../../view/models";
 import {View} from "../../view/view";
 import dropMenu from "../dropMenu";
 

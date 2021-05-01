@@ -1,4 +1,3 @@
-import models from "./models";
 import {insects} from "../../shared/model/insects";
 import {
     Mesh,
@@ -17,7 +16,6 @@ let stones = {
 for (const team of ["WHITE", "BLACK"]) {
     const material = new MeshLambertMaterial({color: CONSTANTS.TEAMS[team]});
     Object.values(insects).forEach((insect) => {
-        console.log(insect, models[insect]);
         const stone = new Group();
         const socket = new Mesh(socketGeometry, material);
         socket.add(wireframe.clone()); // Don't add to the scene directly, make it a child
