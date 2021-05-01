@@ -1,8 +1,7 @@
 import {State} from '../../../shared/model/state.js';
-import {insects} from "../../../shared/model/insects";
-import $ from 'jquery';
 import {loadManager} from "../../view/textures";
 import {View} from "../../view/view";
+import dropMenu from "../dropMenu";
 
 const timer = ms => new Promise( res => setTimeout(res, ms));
 
@@ -13,6 +12,7 @@ export class GameController {
         this.black = new playerController2(this, "BLACK");
         this.state = new State();
         this.view = new View(this, canvas);
+        this.dropMenu = new dropMenu(this);
 
         loadManager.onLoad = () => {
             this.update();
@@ -22,15 +22,7 @@ export class GameController {
     apply(action) {
         this.state.apply(action);
         this.view.apply(action);
-
-        // Move to view
-        if ("stone" in action) {
-            const stone = action.stone;
-            const button = $(`.drop.${stone.team}[data-insect="${stone.insect}"]`)
-            const num = button.data('num');
-            button.data('num', num - 1);
-            button.find('.badge').html(num - 1);
-        }
+        this.dropMenu.apply(action);
     }
     update() {
         return this.view.drawState(this.state);
@@ -50,7 +42,7 @@ export class GameController {
                 this.white.installHooks();
             }
         });
-        this.updateControls();
+        this.dropMenu.updateControls();
     }
     handleClick(data) {
         if (this.state.team === "WHITE") {
@@ -64,32 +56,5 @@ export class GameController {
     }
     getHighlights(action, src) {
         return this.view.makeHighlightStones(this.state.getDestinations(action, src));
-    }
-    updateControls() {
-        // TODO move to view
-        // TODO bad repetitions
-        if (this.state.team === 'BLACK') {
-            $('.drop.' + 'WHITE').prop("disabled", true);
-            Object.values(insects).forEach( (name) => {
-                if (this.state.allowedToDrop(name)) {
-                    console.log(name, "drop");
-                    $(`.drop.BLACK[data-insect=${name}]`).removeAttr("disabled");
-                } else {
-                    console.log(name, "NO drop");
-                    $(`.drop.BLACK[data-insect=${name}]`).prop("disabled", true);
-                }
-            });
-        } else {
-            $('.drop.' + 'BLACK').prop("disabled", true);
-            Object.values(insects).forEach( (name) => {
-                if (this.state.allowedToDrop(name)) {
-                    console.log(name, "drop");
-                    $(`.drop.WHITE[data-insect=${name}]`).removeAttr("disabled");
-                } else {
-                    console.log(name, "NO drop");
-                    $(`.drop.WHITE[data-insect=${name}]`).prop("disabled", true);
-                }
-            });
-        }
     }
 }
