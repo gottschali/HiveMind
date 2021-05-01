@@ -1,6 +1,8 @@
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
+const https = require('https')
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
@@ -79,12 +81,16 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-const server = http.createServer(app);
+const httpsServer = https.createServer(
+  {
+    key: fs.readFileSync(path.join(__dirname, 'server.key')),
+    cert: fs.readFileSync(path.join(__dirname, 'server.cert'))
+  },
+  app,
+);
 
-const io = require('../src/server/sockets.js')(server);
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
+const io = require('../src/server/sockets.js')(httpsServer);
+httpsServer.listen(port, onListening);
 
 /**
  * Event listener for HTTP server "error" event.
@@ -119,7 +125,7 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = server.address();
+  var addr = httpsServer.address();
   var bind = typeof addr === 'string'
       ? 'pipe ' + addr
       : 'port ' + addr.port;
