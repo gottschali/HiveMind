@@ -1,6 +1,9 @@
 extends layout
-include drops
+include modal
 
 block content
-    +drops
-    +drops
+    +modal-launch("#example")
+    +modal("example", "Modal Test")
+        | This is super nice content
+        i Hello
+

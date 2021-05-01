@@ -1,0 +1,14 @@
+mixin modal(id, title)
+    .modal.fade(id=id tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true")
+        .modal-dialog.modal-dialog-centered(role="document")
+            .modal-content
+                .modal-header
+                    h5.modal-title= title
+                    button.close(type="button" data-dismiss="modal" aria-label="Close")
+                    span(aria-hidden="true") &times
+                .modal-body
+                    block
+                .modal-footer
+
+mixin modal-launch(id)
+     button.btn.btn-primary(type="button" data-toggle="modal" data-target=id) Launch demo modal
