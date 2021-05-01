@@ -2,7 +2,7 @@ import {
     AmbientLight,
     BufferGeometry,
     Group, Line,
-    LineBasicMaterial, Mesh,
+    LineBasicMaterial,
     PerspectiveCamera,
     Raycaster,
     Scene,
@@ -14,17 +14,13 @@ import * as CONSTANTS from "./constants";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {teams} from "../../shared/model/teams";
 import {HashMap} from "../../shared/hashmap";
-import {MATERIALS} from "./textures";
 import stones from './stones';
 import models from "./models";
+import {hitbox, highlightStone} from "./geometry";
 
-
-// TODO use common Hexlib
-// TODO outsource
 // TODO Can you not store height in another hex attribute
 
 // radiusTop, radiusBottom, height, radialSegments
-import {hexGeometry, wireframe, hitbox, highlightStone} from "./geometry";
 
 export class View {
     constructor(parent, canvas) {
@@ -167,8 +163,6 @@ export class View {
         this.positionStone(stone, hex, height)
         const model = models[insect].clone();
         stone.add(model);
-        // this.positionStone(model, hex, height)
-        // TODO fix hitbox for intersection
         this.tileArray.push(hb);
         this.tile_group.add(stone);
         return stone;
@@ -192,7 +186,6 @@ export class View {
     }
     drawState(state) {
         // clear the previous hexes
-        console.log("Redraw state")
         this.tile_group.clear();
         this.tileArray.length = 0;
         // TODO: optimize: drop: only add new insect, move: move the object to new destination
