@@ -25,13 +25,13 @@ $( () => {
     } else if (mode === 'LOCALLOCAL') {
         controller = new LocalController(HumanPlayer, HumanPlayer, canvas);
     } else if (mode === 'REMOTEJOIN') {
-        controller.join();
         controller = new RemoteController(gid, RemotePlayer, HumanPlayer, canvas);
+        controller.join();
     } else if (mode === 'REMOTECREATE') {
         controller = new RemoteController(gid, HumanPlayer, RemotePlayer, canvas);
         controller.create();
         $('#share-game-modal').modal();
-        const shareURL = new URL(window.location.origin + window.location.pathname);
+        const shareURL = new URL(window.location.origin + '/invite');
         shareURL.searchParams.append("gid", gid);
         shareURL.searchParams.append("mode", "REMOTEJOIN");
         const shareData = {
