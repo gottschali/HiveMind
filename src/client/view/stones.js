@@ -1,11 +1,8 @@
 import models from "./models";
 import {insects} from "../../shared/model/insects";
 import {
-    CylinderBufferGeometry,
-    EdgesGeometry,
-    LineBasicMaterial, LineSegments, Mesh,
+    Mesh,
     MeshLambertMaterial,
-    MeshStandardMaterial,
     Group
 } from "three";
 import * as CONSTANTS from "./constants";
@@ -26,8 +23,6 @@ for (const team of ["WHITE", "BLACK"]) {
         socket.add(wireframe.clone()); // Don't add to the scene directly, make it a child
         socket.position.y -= 0.375;
         stone.add(socket);
-        // stone.add(models[insect].clone());
-
         stone.rotateX(Math.PI / 2);
         stone.rotateY(Math.PI / 6);
         stones[team][insect] = stone;
