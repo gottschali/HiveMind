@@ -1,5 +1,6 @@
 const createError = require('http-errors');
 const express = require('express');
+const favicon = require('serve-favicon');
 const path = require('path');
 const fs = require('fs');
 const https = require('https')
@@ -23,6 +24,8 @@ app.use('/static', express.static(path.join(__dirname, '../public')));
 app.use(express.static(path.join(__dirname, '../dist')));
 app.use('/static', express.static(path.join(__dirname, '../node_modules', 'jquery', 'dist')));
 app.use('/static', express.static(path.join(__dirname, '../node_modules', 'bootstrap', 'dist')));
+
+app.use(favicon(path.join(__dirname, '..', 'public', 'favicon', 'favicon.ico')))
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

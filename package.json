@@ -26,6 +26,7 @@
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "pug": "^3.0.2",
+    "serve-favicon": "^2.5.0",
     "socket.io": "^4.0.1",
     "socket.io-client": "^4.0.1",
     "three": "^0.127.0",
