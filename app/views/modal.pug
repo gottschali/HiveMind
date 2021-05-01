@@ -10,5 +10,5 @@ mixin modal(id, title)
                     block
                 .modal-footer
 
-mixin modal-launch(id)
-     button.btn.btn-primary(type="button" data-toggle="modal" data-target=id) Launch demo modal
+mixin modal-launch(id, title)
+     button.btn.btn-primary(type="button" data-toggle="modal" data-target=id)= title
