@@ -151,9 +151,6 @@ export class View {
         // TODO implement change on window resize
         this.renderer.render(this.scene, this.camera); // Actual rendering
     }
-    color(team) {
-        return (team === teams.WHITE ? CONSTANTS.YELLOW : CONSTANTS.CYAN);
-    }
     makeDroppedStone(team, hex, insect, height) {
         // Instead just add it to the scene and give it enough attributes
         // that in future it can be found easily
