@@ -1,7 +1,6 @@
 import {State} from '../../../shared/model/state';
 import {loadManager} from "../../view/models";
 import {View} from "../../view/view";
-import dropMenu from "../dropMenu";
 
 const timer = ms => new Promise( res => setTimeout(res, ms));
 
@@ -12,7 +11,6 @@ export class GameController {
         this.black = new playerController2(this, "BLACK");
         this.state = new State();
         this.view = new View(this, canvas);
-        this.dropMenu = new dropMenu(this);
 
         loadManager.onLoad = () => {
             this.update();
@@ -22,10 +20,19 @@ export class GameController {
     apply(action) {
         this.state.apply(action);
         this.view.apply(action);
-        this.dropMenu.apply(action);
+        if ("stone" in action) {
+            const stone = action.stone;
+            const button = $(`.drop.${stone.team}[data-insect="${stone.insect}"]`)
+            const num = button.data('num');
+            button.data('num', num - 1);
+            button.find('.badge').html(num - 1);
+        }
     }
     update() {
         return this.view.drawState(this.state);
+    }
+    updateControls() {
+
     }
     delegate() {
         // this.update();
@@ -42,7 +49,7 @@ export class GameController {
                 this.white.installHooks();
             }
         });
-        this.dropMenu.updateControls();
+        this.updateControls();
     }
     handleClick(data) {
         if (this.state.team === "WHITE") {

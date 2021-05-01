@@ -5,6 +5,7 @@ import {HumanPlayer} from './controller/player/HumanPlayer';
 import {RandomComputerPlayer} from './controller/player/RandomComputerPlayer';
 import {RemotePlayer} from './controller/player/RemotePlayer';
 
+import {teams} from "../shared/model/teams";
 
 // Headache: jQuery is included by layout.pug and is therefore already available
 // If you reimport it, things break
@@ -25,10 +26,10 @@ $( () => {
     } else if (mode === 'LOCALLOCAL') {
         controller = new LocalController(HumanPlayer, HumanPlayer, canvas);
     } else if (mode === 'REMOTEJOIN') {
-        controller = new RemoteController(gid, RemotePlayer, HumanPlayer, canvas);
+        controller = new RemoteController(gid, teams.BLACK, RemotePlayer, HumanPlayer, canvas);
         controller.join();
     } else if (mode === 'REMOTECREATE') {
-        controller = new RemoteController(gid, HumanPlayer, RemotePlayer, canvas);
+        controller = new RemoteController(gid, teams.WHITE, HumanPlayer, RemotePlayer, canvas);
         controller.create();
         $('#share-game-modal').modal();
         const shareURL = new URL(window.location.origin + '/invite');
