@@ -5,9 +5,6 @@ export class Game {
 
     constructor() {
         this.id = uuidv4();
-    }
-
-    init() {
         this.state = new State();
     }
     apply(action) {
