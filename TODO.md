@@ -13,6 +13,7 @@
     - Reconnect to sockets
     - AUTO mode kills browser
 - Appearance
+    - Resize the window
     - Hover tooltips with help
     - animate moves
     - fix 3d models
@@ -30,7 +31,9 @@
     - option private/public game
 - Deploy
     - how to handle debug and production
-
+- Mobile?
+    - ... design
+    - touch events?
 
 Future
 - player profiles, account...
