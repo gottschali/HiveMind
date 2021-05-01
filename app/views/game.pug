@@ -1,12 +1,16 @@
 extends layout
 include drops
+include share-game-modal
 
 block content
 
     div.container
 
         div#canvas-container
+        +modal-launch('#share-game-modal', 'Invite')
         +drops
 
+
+    +share-game-modal
 
     script(src="bundle.js")
