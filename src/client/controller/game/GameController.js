@@ -1,5 +1,6 @@
 import {State} from '../../../shared/model/state.js';
-import {Drop, Move} from '../../../shared/model/action.js'
+import {insects} from "../../../shared/model/insects";
+import $ from 'jquery';
 import {loadManager} from "../../view/textures";
 import {View} from "../../view/view";
 
@@ -19,8 +20,17 @@ export class GameController {
         this.update()
     }
     apply(action) {
-        this.state.apply(action)
-        this.view.apply(action)
+        this.state.apply(action);
+        this.view.apply(action);
+
+        // Move to view
+        if ("stone" in action) {
+            const stone = action.stone;
+            const button = $(`.drop.${stone.team}[data-insect="${stone.insect}"]`)
+            const num = button.data('num');
+            button.data('num', num - 1);
+            button.find('.badge').html(num - 1);
+        }
     }
     update() {
         return this.view.drawState(this.state);
@@ -40,6 +50,7 @@ export class GameController {
                 this.white.installHooks();
             }
         });
+        this.updateControls();
     }
     handleClick(data) {
         if (this.state.team === "WHITE") {
@@ -53,5 +64,32 @@ export class GameController {
     }
     getHighlights(action, src) {
         return this.view.makeHighlightStones(this.state.getDestinations(action, src));
+    }
+    updateControls() {
+        // TODO move to view
+        // TODO bad repetitions
+        if (this.state.team === 'BLACK') {
+            $('.drop.' + 'WHITE').prop("disabled", true);
+            Object.values(insects).forEach( (name) => {
+                if (this.state.allowedToDrop(name)) {
+                    console.log(name, "drop");
+                    $(`.drop.BLACK[data-insect=${name}]`).removeAttr("disabled");
+                } else {
+                    console.log(name, "NO drop");
+                    $(`.drop.BLACK[data-insect=${name}]`).prop("disabled", true);
+                }
+            });
+        } else {
+            $('.drop.' + 'BLACK').prop("disabled", true);
+            Object.values(insects).forEach( (name) => {
+                if (this.state.allowedToDrop(name)) {
+                    console.log(name, "drop");
+                    $(`.drop.WHITE[data-insect=${name}]`).removeAttr("disabled");
+                } else {
+                    console.log(name, "NO drop");
+                    $(`.drop.WHITE[data-insect=${name}]`).prop("disabled", true);
+                }
+            });
+        }
     }
 }

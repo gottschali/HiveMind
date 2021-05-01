@@ -25,7 +25,6 @@ import models from "./models";
 
 // radiusTop, radiusBottom, height, radialSegments
 import {hexGeometry, wireframe, hitbox, highlightStone} from "./geometry";
-import $ from "jquery";
 
 export class View {
     constructor(parent, canvas) {
@@ -220,19 +219,11 @@ export class View {
         this.hive.hivePush(destination, stone)
         this.positionStone(stone, destination, height)
     }
-    updateDrops(stone) {
-        // Change color of badge depending on num
-        const label = $(`.drop.${stone.team}[data-insect="${stone.insect}"]`)
-        const num = label.data('num');
-        label.data('num', num - 1);
-        label.find('.badge').html(num - 1);
-    }
     apply(action) {
         // It's a drop
         if ("stone" in action) {
             // Do not even remove it from droparr as this will be deprecated soon
             this.addStone(action.stone, action.destination)
-            this.updateDrops(action.stone)
         } else if ("origin" in action) {
             this.moveStone(action.origin, action.destination)
         }

@@ -1,7 +1,7 @@
 mixin insect(name, num, team, color)
     li.list-group-item
         button.btn.btn-secondary.drop(data-insect=name class=team class=color data-num=num)
-            span.badge.badge-primary.badge-pill= num
+            span.badge.badge-primary.badge.badge-secondary= num
             = name
 
 mixin drops
