@@ -15,3 +15,5 @@
 - infinite floor? fog?
 - threejs fundas
 - colors, lights?
+- es6 vs node modules
+- Code quality (maybe run a linter)
