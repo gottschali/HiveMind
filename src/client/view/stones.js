@@ -27,8 +27,7 @@ let stones = {
 };
 
 for (const team of ["WHITE", "BLACK"]) {
-    const material = new MeshLambertMaterial({color: (team === "WHITE" ? CONSTANTS.YELLOW : CONSTANTS.CYAN)});
-    insects.forEach((insect) => {
+    const material = new MeshLambertMaterial({color: CONSTANTS.TEAMS[team]});
         console.log(insect, models[insect]);
         const stone = new Group();
         const socket = new Mesh(socketGeometry, material);

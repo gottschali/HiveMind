@@ -11,3 +11,11 @@ export const VIOLET = '#6c71c4';
 export const BLUE = '#268bd2';
 export const CYAN = '#2aa198';
 export const GREEN = '#859900';
+
+export const DANGER = '#dc3545';
+export const SUCCESS = '#28a745';
+
+export const TEAMS = {
+    "WHITE": DANGER,
+    "BLACK": SUCCESS,
+}
