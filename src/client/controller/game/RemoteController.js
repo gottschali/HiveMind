@@ -5,7 +5,10 @@ export class RemoteController extends GameController {
     constructor(gid, ...args) {
         super(...args);
         this.gid = gid;
-        socket.on("startGame", () => this.start() );
+        socket.on("startGame", () => {
+            this.start();
+            $('#share-game-modal').modal('hide');
+        });
     }
     join() {
         socket.emit("joinGame", this.gid)

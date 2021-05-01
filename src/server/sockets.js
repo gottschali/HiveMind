@@ -8,7 +8,6 @@ module.exports = function init(server) {
         socket.onAny((event, ...args) => {
             console.log("DEBUG", event, args);
         });
-        // socket.on("joinGame", (gid) => {
         socket.on("joinGame", (gid) => {
             socket.join(gid);
             io.to(gid).emit('startGame');
