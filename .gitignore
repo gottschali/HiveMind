@@ -118,3 +118,5 @@ dist
 .pnp.*
 
 package-lock.json
+app/server.cert
+app/server.key
