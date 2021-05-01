@@ -12,7 +12,7 @@ console.log(container);
 const canvas = document.createElement('canvas');
 container.appendChild(canvas);
 
-$('document').ready( () => {
+$( () => {
     const params = (new URL(document.location)).searchParams;
     const mode = params.get('mode');
     const gid = params.get('gid');
