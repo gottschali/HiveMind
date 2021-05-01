@@ -15,7 +15,7 @@ import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {HashMap} from "../../shared/hashmap";
 import stones from './stones';
 import {models} from "./models";
-import {hitbox, highlightStone} from "./geometry";
+import {hitbox, highlightStones} from "./geometry";
 
 // TODO Can you not store height in another hex attribute
 
@@ -169,11 +169,11 @@ export class View {
         stone.position.set( x, y, height + 0.5);
     }
 
-    makeHighlightStones(hexes) {
+    makeHighlightStones(hexes, team) {
         this.highlightGroup.clear();
         this.highlightArray.length = 0;
         hexes.forEach( ([hex, height]) => {
-            const stone = highlightStone.clone();
+            const stone = highlightStones[team].clone();
             this.positionStone(stone, hex, height - 0.375);
             this.highlightGroup.add(stone);
             this.highlightArray.push(stone);

@@ -55,6 +55,6 @@ export class GameController {
         return this.state.isLegal(action)
     }
     getHighlights(action, src) {
-        return this.view.makeHighlightStones(this.state.getDestinations(action, src));
+        return this.view.makeHighlightStones(this.state.getDestinations(action, src), this.state.team);
     }
 }
