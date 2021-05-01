@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const URL = `wss://localhost:${window.location.port}`;
+const URL = `ws://localhost:${window.location.port}`;
 const socket = io(URL);
 
 // Useful for debugging

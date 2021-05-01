@@ -3,7 +3,7 @@ const router = express.Router();
 import manager from '../../src/server/GameManager.js';
 
 router.get('/', function(req, res, next) {
-    res.redirect('/index')
+  res.render('index', { title: 'HiveMind' });
 });
 router.get('/index', function(req, res, next) {
   res.render('index', { title: 'HiveMind' });

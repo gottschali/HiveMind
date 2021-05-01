@@ -3,7 +3,7 @@ const express = require('express');
 const favicon = require('serve-favicon');
 const path = require('path');
 const fs = require('fs');
-const https = require('https')
+// const https = require('https')
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
@@ -84,16 +84,10 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-const httpsServer = https.createServer(
-  {
-    key: fs.readFileSync(path.join(__dirname, 'server.key')),
-    cert: fs.readFileSync(path.join(__dirname, 'server.cert'))
-  },
-  app,
-);
+const server = http.createServer(app);
 
-const io = require('../src/server/sockets.js')(httpsServer);
-httpsServer.listen(port, onListening);
+const io = require('../src/server/sockets.js')(server);
+server.listen(port, onListening);
 
 /**
  * Event listener for HTTP server "error" event.
@@ -128,7 +122,7 @@ function onError(error) {
  */
 
 function onListening() {
-  var addr = httpsServer.address();
+  var addr = server.address();
   var bind = typeof addr === 'string'
       ? 'pipe ' + addr
       : 'port ' + addr.port;
