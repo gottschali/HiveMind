@@ -1,5 +1,4 @@
 - Game Over!
-- Improve drop ui (faded out, colors ...)
 - Pass when no options
 - animate moves
 - Share UUID
