@@ -146,8 +146,28 @@ export class View {
         }
         this.scene.add(group);
     }
+    resizeRendererToDisplaySize() {
+        const canvas = this.renderer.domElement;
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        const needResize = canvas.width !== width || canvas.height !== height;
+        if (needResize) {
+          this.renderer.setSize(width, height, false);
+        }
+        return needResize;
+     }
+    onWindowResize() {
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize( window.innerWidth, window.innerHeight );
+        this.render();
+    }
     render() {
-        // TODO implement change on window resize
+        if (this.resizeRendererToDisplaySize()) {
+            const canvas = this.renderer.domElement;
+            this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
+            this.camera.updateProjectionMatrix();
+         }
         this.renderer.render(this.scene, this.camera); // Actual rendering
     }
     makeDroppedStone(team, hex, insect, height) {
