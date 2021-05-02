@@ -38,6 +38,12 @@ export class State {
     get team() {
         return this.turnNumber % 2 === 0 ? teams.WHITE : teams.BLACK
     }
+    get gameOver() {
+        if (this.result.some( (x) => x)) {
+            return this.result;
+        }
+        return false;
+    }
     get result() {
         return this.hive.gameResult()
     }

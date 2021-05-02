@@ -38,9 +38,7 @@ export class Hive {
                 }
             }
         }
-        if (whiteLost && blackLost) return 0
-        else if (whiteLost) return 1
-        else if (blackLost) return -1
+        return [whiteLost, blackLost];
     }
 
     neighbors(hex) {
