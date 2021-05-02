@@ -50,7 +50,6 @@ export class State {
         return this.hive.generateDrops(this.team)
     }
     _getActions() {
-        console.log("Generating actions")
         let opts = []
         const dropStones = this.stones.filter(stone => stone.team === this.team)
             .map(i => JSON.stringify(i))
@@ -79,7 +78,6 @@ export class State {
     }
 
     isLegal(action) {
-        console.log(action, this.actions)
         const acts = new HashSet(this.actions);
         return acts.has(action)
     }
