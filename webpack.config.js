@@ -12,11 +12,6 @@ module.exports = {
     compress: true,
     port: 9000,
   },
-  plugins: [
-    new HtmlWebpackPlugin({
-      title: 'HiveMind Dev',
-    }),
-  ],
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
