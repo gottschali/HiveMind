@@ -52,7 +52,16 @@ export class View {
         // Currently not working
         window.addEventListener("resize", this.render.bind(this));
 
-        this.clickListener = canvas.addEventListener("click", this.getIntersections.bind(this));
+        this.clickListener = canvas.addEventListener("click", (e) => {
+            this.getIntersections(e, e.clientX, e.clientY);
+        });
+        canvas.addEventListener("touchend", (e) => {
+            this.getIntersections(e, this.clientX, this.clientY);
+        });
+        canvas.addEventListener("touchstart", (e) => {
+            this.clientX = e.touches[0].clientX;
+            this.clientY = e.touches[0].clientY;
+        });
 
         this.render();
         this.controls.addEventListener("change", this.render.bind(this));
@@ -93,14 +102,14 @@ export class View {
         this.controls.minDistance = 5;
         this.controls.update();
     }
-    getIntersections (event) {
+    getIntersections (event, x, y) {
         // This should emit what was done and return it to the controller
         // The player controllers are then in charge of the logic
         event.preventDefault();
          // Find out what was clicked
         const mouse3D = new Vector3(
-            ((event.clientX - this.canvas.offsetLeft) / this.canvas.width) * 2 - 1,
-            -((event.clientY - this.canvas.offsetTop) / this.canvas.height) * 2 + 1,
+            ((x - this.canvas.offsetLeft) / this.canvas.width) * 2 - 1,
+            -((y - this.canvas.offsetTop) / this.canvas.height) * 2 + 1,
             0.5);
         const raycaster = new Raycaster();
         raycaster.setFromCamera(mouse3D, this.camera);
