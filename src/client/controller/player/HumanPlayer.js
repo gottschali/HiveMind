@@ -10,6 +10,10 @@ export class HumanPlayer extends LocalPlayer {
         this.buttonControls();
         this.clearHighlights();
     }
+    uninstallHooks() {
+        super.uninstallHooks();
+        this.clearHighlights();
+    }
     buttonControls() {
         const ref = this;
         $('.drop.' + this.team).on('click', function() {

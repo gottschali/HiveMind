@@ -55,10 +55,10 @@ export class View {
         this.clickListener = canvas.addEventListener("click", (e) => {
             this.getIntersections(e, e.clientX, e.clientY);
         });
-        canvas.addEventListener("touchend", (e) => {
+        this.touchendListener = canvas.addEventListener("touchend", (e) => {
             this.getIntersections(e, this.clientX, this.clientY);
         });
-        canvas.addEventListener("touchstart", (e) => {
+        this.touchstartListener = canvas.addEventListener("touchstart", (e) => {
             this.clientX = e.touches[0].clientX;
             this.clientY = e.touches[0].clientY;
         });
@@ -70,6 +70,12 @@ export class View {
         const size = new HEX.Point(1, 1);
         const origin = new HEX.Point(0, 0);
         return new HEX.Layout(orientation, size, origin);
+    }
+    freeze() {
+        this.lock = true;
+        this.canvas.removeEventListener("click", this.clickListener);
+        this.canvas.removeEventListener("touchend", this.touchendListener);
+        this.canvas.removeEventListener("touchstart", this.touchstartListener);
     }
     setupScene(canvas) {
         this.renderer = new WebGLRenderer( {canvas, antialias: true, alpha: true } );
@@ -177,7 +183,9 @@ export class View {
             this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
             this.camera.updateProjectionMatrix();
          }
-        this.renderer.render(this.scene, this.camera); // Actual rendering
+         if (!this.lock) {
+            this.renderer.render(this.scene, this.camera); // Actual rendering
+         }
     }
     makeDroppedStone(team, hex, insect, height) {
         // Instead just add it to the scene and give it enough attributes
