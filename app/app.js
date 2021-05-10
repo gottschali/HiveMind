@@ -20,8 +20,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use('/static', express.static(path.join(__dirname, '../public')));
+app.use('/lab', express.static(path.join(__dirname, 'html')));
 app.use(express.static(path.join(__dirname, '../dist')));
 app.use('/static', express.static(path.join(__dirname, '../node_modules', 'jquery', 'dist')));
+app.use('/static', express.static(path.join(__dirname, '../node_modules', 'bootstrap', 'dist')));
 app.use('/static', express.static(path.join(__dirname, '../node_modules', 'bootstrap', 'dist')));
 
 app.use(favicon(path.join(__dirname, '..', 'public', 'favicon', 'favicon.ico')))
