@@ -17,6 +17,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@babel/preset-env": "^7.14.1",
+    "@babel/preset-react": "^7.13.13",
+    "@babel/runtime": "^7.14.0",
     "bootstrap": "^4.6.0",
     "cookie-parser": "^1.4.5",
     "esm": "^3.2.25",
@@ -26,6 +29,8 @@
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "pug": "^3.0.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "serve-favicon": "^2.5.0",
     "socket.io": "^4.0.1",
     "socket.io-client": "^4.0.1",
@@ -33,6 +38,11 @@
     "uuid": "^3.4.0"
   },
   "devDependencies": {
+    "@babel/node": "^7.13.13",
+    "@babel/plugin-transform-runtime": "^7.13.15",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.2.2",
+    "babel-preset-react": "^6.24.1",
     "css-loader": "^5.2.0",
     "html-webpack-plugin": "^5.3.1",
     "http-server": "^0.12.3",

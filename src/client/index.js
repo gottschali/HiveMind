@@ -10,6 +10,9 @@ import {teams} from "../shared/model/teams";
 // Headache: jQuery is included by layout.pug and is therefore already available
 // If you reimport it, things break
 // import $ from 'jquery';
+// const ReactDOM = require('react-dom');
+// const exampleElement = <h1> Hello there </h1>;
+// ReactDOM.render(exampleElement, document.getElementById('test-container'));
 
 $( () => {
 
