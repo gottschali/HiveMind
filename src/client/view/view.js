@@ -52,7 +52,16 @@ export class View {
         // Currently not working
         window.addEventListener("resize", this.render.bind(this));
 
-        this.clickListener = canvas.addEventListener("click", this.getIntersections.bind(this));
+        this.clickListener = canvas.addEventListener("click", (e) => {
+            this.getIntersections(e, e.clientX, e.clientY);
+        });
+        this.touchendListener = canvas.addEventListener("touchend", (e) => {
+            this.getIntersections(e, this.clientX, this.clientY);
+        });
+        this.touchstartListener = canvas.addEventListener("touchstart", (e) => {
+            this.clientX = e.touches[0].clientX;
+            this.clientY = e.touches[0].clientY;
+        });
 
         this.render();
         this.controls.addEventListener("change", this.render.bind(this));
@@ -61,6 +70,12 @@ export class View {
         const size = new HEX.Point(1, 1);
         const origin = new HEX.Point(0, 0);
         return new HEX.Layout(orientation, size, origin);
+    }
+    freeze() {
+        this.lock = true;
+        this.canvas.removeEventListener("click", this.clickListener);
+        this.canvas.removeEventListener("touchend", this.touchendListener);
+        this.canvas.removeEventListener("touchstart", this.touchstartListener);
     }
     setupScene(canvas) {
         this.renderer = new WebGLRenderer( {canvas, antialias: true, alpha: true } );
@@ -93,14 +108,14 @@ export class View {
         this.controls.minDistance = 5;
         this.controls.update();
     }
-    getIntersections (event) {
+    getIntersections (event, x, y) {
         // This should emit what was done and return it to the controller
         // The player controllers are then in charge of the logic
         event.preventDefault();
          // Find out what was clicked
         const mouse3D = new Vector3(
-            ((event.clientX - this.canvas.offsetLeft) / this.canvas.width) * 2 - 1,
-            -((event.clientY - this.canvas.offsetTop) / this.canvas.height) * 2 + 1,
+            ((x - this.canvas.offsetLeft) / this.canvas.width) * 2 - 1,
+            -((y - this.canvas.offsetTop) / this.canvas.height) * 2 + 1,
             0.5);
         const raycaster = new Raycaster();
         raycaster.setFromCamera(mouse3D, this.camera);
@@ -146,9 +161,31 @@ export class View {
         }
         this.scene.add(group);
     }
+    resizeRendererToDisplaySize() {
+        const canvas = this.renderer.domElement;
+        const width = canvas.clientWidth;
+        const height = canvas.clientHeight;
+        const needResize = canvas.width !== width || canvas.height !== height;
+        if (needResize) {
+          this.renderer.setSize(width, height, false);
+        }
+        return needResize;
+     }
+    onWindowResize() {
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize( window.innerWidth, window.innerHeight );
+        this.render();
+    }
     render() {
-        // TODO implement change on window resize
-        this.renderer.render(this.scene, this.camera); // Actual rendering
+        if (this.resizeRendererToDisplaySize()) {
+            const canvas = this.renderer.domElement;
+            this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
+            this.camera.updateProjectionMatrix();
+         }
+         if (!this.lock) {
+            this.renderer.render(this.scene, this.camera); // Actual rendering
+         }
     }
     makeDroppedStone(team, hex, insect, height) {
         // Instead just add it to the scene and give it enough attributes

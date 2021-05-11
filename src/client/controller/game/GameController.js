@@ -27,6 +27,23 @@ export class GameController {
             button.data('num', num - 1);
             button.find('.badge').html(num - 1);
         }
+        if (this.state.gameOver) {
+            this.gameOver();
+        }
+    }
+    gameOver() {
+        this.white.uninstallHooks();
+        this.black.uninstallHooks();
+        this.view.freeze();
+        $('#game-over-modal').modal({
+            keyboard: false,
+        });
+        $('#rematch-game-button').on('click', () => {
+            $(this).html("Not implemented yet");
+        });
+        $('#exit-game-button').on('click', () => {
+            window.location.href = '/';
+        });
     }
     update() {
         return this.view.drawState(this.state);

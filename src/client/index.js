@@ -65,6 +65,7 @@ $( () => {
     } else if (mode === 'AUTO') {
         controller = new LocalController(RandomComputerPlayer, RandomComputerPlayer, canvas);
     }
+    window.addEventListener('resize', controller.view.onWindowResize.bind(controller.view));
 });
 
 

@@ -14,7 +14,6 @@ export class Hive {
     }
 
     removeStone(hex) {
-        console.log("Removing stone")
         this.map.get(hex).pop()
         if (!this.map.get(hex).length) {
             this.map.delete(hex)
@@ -22,7 +21,6 @@ export class Hive {
     }
 
     addStone(hex, stone) {
-        console.log("Adding stone")
         this.root = hex
         if (!this.map.has(hex)) this.map.set(hex, [stone])
         else this.map.get(hex).push(stone)
@@ -40,9 +38,7 @@ export class Hive {
                 }
             }
         }
-        if (whiteLost && blackLost) return 0
-        else if (whiteLost) return 1
-        else if (blackLost) return -1
+        return [whiteLost, blackLost];
     }
 
     neighbors(hex) {
@@ -129,14 +125,12 @@ export class Hive {
         return this.neighbors(hex).every(n => this.at(n).team === team)
     }
     generateDrops(team) {
-        console.log("Generating drops")
         let candidates = new HashSet()
         for (const hex of this.map.keys()) {
             HEX.hex_neighbors(hex)
               .filter(e => !this.map.has(e))
               .forEach(e => candidates.add(e))
         }
-        // console.log(candidates)
         return [...candidates.values()].filter(e => this._checkNeighborTeam(e, team))
     }
 
@@ -177,22 +171,16 @@ export class Hive {
             GRASSHOPPER: this.generateJumps,
             BEETLE: this.generateClimbs
         }
-        console.log("Generating moves for")
-        console.log(this.at(hex).insect)
         return moveMap[this.at(hex).insect].call(this, hex)
     }
 
     generateMoves(team) {
         let result = []
-        console.log("Generating moves...")
         const articulation_points = this._oneHive()
-        console.log("Calculating articulation points")
-        // console.log(articulation_points)
         for (const hex of this.map.keys()) {
             if (this.at(hex).team === team) {
                 if (this.height(hex) > 1 || !articulation_points.has(hex)) {
                     this.generateMovesFrom(hex).forEach((dest) => {
-                        console.log([hex, dest])
                         result.push([hex, dest])
                     })
                 }

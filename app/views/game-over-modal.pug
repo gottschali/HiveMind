@@ -1,0 +1,7 @@
+include modal
+
+mixin game-over-modal
+    +modal("game-over-modal", "The game is over!")
+        .btn-group(role="group")
+            button.btn.btn-secondary#exit-game-button(type="button") Exit
+            button.btn.btn-primary#rematch-game-button(type="button") Rematch

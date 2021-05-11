@@ -8,11 +8,11 @@ export class LocalController extends GameController{
         this.delegate();
     }
     updateControls() {
-        const team = this.parent.state.team;
+        const team = this.state.team;
         const opponent = (team === teams.WHITE ? teams.BLACK : teams.WHITE);
         $(`.drop.${opponent}`).prop("disabled", true);
         Object.values(insects).forEach( (name) => {
-            if (this.parent.state.allowedToDrop(name)) {
+            if (this.state.allowedToDrop(name)) {
                 $(`.drop.${team}[data-insect=${name}]`).removeAttr("disabled");
             } else {
                 $(`.drop.${team}[data-insect=${name}]`).prop("disabled", true);
