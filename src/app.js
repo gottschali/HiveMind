@@ -25,6 +25,7 @@ app.use(express.static(path.join(__dirname, '../dist')));
 app.use('/static', express.static(path.join(__dirname, '../node_modules', 'jquery', 'dist')));
 app.use('/static', express.static(path.join(__dirname, '../node_modules', 'bootstrap', 'dist')));
 app.use('/static', express.static(path.join(__dirname, '../node_modules', 'bootstrap', 'dist')));
+app.use('/static', express.static(path.join(__dirname, '../node_modules', 'bootstrap-icons', 'font')));
 
 app.use(favicon(path.join(__dirname, 'client', 'public', 'favicon', 'favicon.ico')))
 
