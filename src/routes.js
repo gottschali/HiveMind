@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-import manager from '../../src/server/GameManager.js';
+import manager from './server/GameManager.js';
 
 router.get('/', function(req, res, next) {
   res.redirect('/index');
