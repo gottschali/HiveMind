@@ -11,22 +11,22 @@ const indexRouter = require('./routes/index');
 
 const app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
+// Move away from pug!
+app.set('views', path.join(__dirname, 'client', 'views'));
 app.set('view engine', 'pug');
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use('/static', express.static(path.join(__dirname, '../public')));
-app.use('/lab', express.static(path.join(__dirname, 'html')));
+app.use('/static', express.static(path.join(__dirname, 'client', 'public')));
+app.use('/lab', express.static(path.join(__dirname, 'client', 'html')));
 app.use(express.static(path.join(__dirname, '../dist')));
 app.use('/static', express.static(path.join(__dirname, '../node_modules', 'jquery', 'dist')));
 app.use('/static', express.static(path.join(__dirname, '../node_modules', 'bootstrap', 'dist')));
 app.use('/static', express.static(path.join(__dirname, '../node_modules', 'bootstrap', 'dist')));
 
-app.use(favicon(path.join(__dirname, '..', 'public', 'favicon', 'favicon.ico')))
+app.use(favicon(path.join(__dirname, 'client', 'public', 'favicon', 'favicon.ico')))
 
 app.use('/', indexRouter);
 
@@ -86,7 +86,7 @@ app.set('port', port);
 
 const server = http.createServer(app);
 
-const io = require('../src/server/sockets.js')(server);
+const io = require('./server/sockets.js')(server);
 server.listen(port, onListening);
 
 /**

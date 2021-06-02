@@ -5,10 +5,9 @@
   "private": true,
   "scripts": {
     "build": "webpack",
-    "webstart": "webpack serve --open",
     "watch": "webpack --watch",
-    "start": "node -r esm ./app/app.js",
-    "devstart": "nodemon -r esm ./app/app.js",
+    "start": "node -r esm ./src/app.js",
+    "devstart": "nodemon -r esm ./src/app.js",
     "serverstart": "set  DEBUG=express-locallibrary-tutorial:* & npm run devstart",
     "devlinux": "DEBUG=express-locallibrary-tutorial:* npm run devstart",
     "test": "echo \"Error: no test specified\" && exit 1"
