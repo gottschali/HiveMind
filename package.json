@@ -5,12 +5,13 @@
   "private": true,
   "scripts": {
     "build": "webpack",
-    "watch": "webpack --watch",
     "start": "node -r esm ./src/app.js",
-    "devstart": "nodemon -r esm ./src/app.js",
-    "serverstart": "set  DEBUG=express-locallibrary-tutorial:* & npm run devstart",
-    "devlinux": "DEBUG=express-locallibrary-tutorial:* npm run devstart",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "devstart": "npm-run-all --parallel watch:server watch:build",
+    "devlin": "DEBUG=express:* npm run devstart",
+    "devwin": "set DEBUG=express:* & npm run devstart",
+    "start"        : "npm-run-all --parallel watch:server watch:build",
+    "watch:build"  : "webpack --watch",
+    "watch:server" : "nodemon -r esm ./src/app.js"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +28,7 @@
     "jquery": "^3.6.0",
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
+    "npm-run-all": "^4.1.5",
     "pug": "^3.0.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
