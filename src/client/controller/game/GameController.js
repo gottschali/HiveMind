@@ -5,11 +5,12 @@ import {View} from "../../view/view";
 const timer = ms => new Promise( res => setTimeout(res, ms));
 
 export class GameController {
-    constructor(playerController1, playerController2, canvas) {
+    constructor(playerController1, playerController2) {
         // Maybe white black needs to be swapped
         this.white = new playerController1(this, "WHITE");
         this.black = new playerController2(this, "BLACK");
         this.state = new State();
+        const canvas = document.getElementById("game-canvas")
         this.view = new View(this, canvas);
 
         loadManager.onLoad = () => {
