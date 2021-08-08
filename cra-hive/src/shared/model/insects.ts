@@ -1,4 +1,4 @@
-enum insects {
+enum Insect {
     BEE,
     SPIDER,
     ANT,
@@ -6,4 +6,4 @@ enum insects {
     BEETLE,
 }
 
-export default insects;
+export default Insect;
