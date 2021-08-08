@@ -1,10 +1,12 @@
-import insects from "./insects";
-import teams from "./teams";
+import Insect from "./insects";
+import Team from "./teams";
 import * as HEX from "../hexlib";
 import {HashMap, HashSet} from "../hashmap";
 
 
 export class Hive {
+    map;
+    root: HEX.Hex;
     constructor() {
         this.map = new HashMap()
     }
@@ -31,9 +33,9 @@ export class Hive {
         let blackLost = false
         for (const hex of this.map.keys()) {
             const stone = this.map.get(hex)[0]
-            if (stone.insect === insects.BEE) {
+            if (stone.insect === Insect.BEE) {
                 if (this.neighbors(hex).length === 6) {
-                    if (stone.team === teams.WHITE) whiteLost = true
+                    if (stone.team === Team.WHITE) whiteLost = true
                     else blackLost = true
                 }
             }
@@ -56,7 +58,7 @@ export class Hive {
                 if (this.map.has(a) ^ this.map.has(c)) result.push(b)
             } else {
                 // ignore was probably not working because object comparison
-                if ((this.map.has(a) && !HEX.hex_compare(a, ignore)) ^ (this.map.has(c) && !HEX.hex_compare(c, ignore))) {      result.push(b)
+                if ((this.map.has(a) && !HEX.hex_compare(a, ignore)) != (this.map.has(c) && !HEX.hex_compare(c, ignore))) {      result.push(b)
                 }
             }
         }
@@ -131,7 +133,7 @@ export class Hive {
               .filter(e => !this.map.has(e))
               .forEach(e => candidates.add(e))
         }
-        return [...candidates.values()].filter(e => this._checkNeighborTeam(e, team))
+        return Array.from(candidates.values()).filter(e => this._checkNeighborTeam(e, team))
     }
 
     _oneHive() {
@@ -166,11 +168,11 @@ export class Hive {
         // insects.BEE ... instead of 0 ... causes error. Why?
         //
         const moveMap = new Map([
-            [insects.BEE, this.generateSingleWalks],
-            [insects.SPIDER, this.generateSpiderWalks],
-            [insects.ANT, this.generateWalks],
-            [insects.GRASSHOPPER, this.generateJumps],
-            [insects.BEETLE, this.generateClimbs]
+            [Insect.BEE, this.generateSingleWalks],
+            [Insect.SPIDER, this.generateSpiderWalks],
+            [Insect.ANT, this.generateWalks],
+            [Insect.GRASSHOPPER, this.generateJumps],
+            [Insect.BEETLE, this.generateClimbs]
         ]);
         console.log(this.at(hex));
         return moveMap.get(this.at(hex).insect).call(this, hex)

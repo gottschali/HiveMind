@@ -1,10 +1,15 @@
 // Generated code -- CC0 -- No Rights Reserved -- http://www.redblobgames.com/grids/hexagons/
 
+export interface Hex {
+  q: number;
+  r: number;
+  s: number;
+}
 export function Point(x, y) {
   return { x: x, y: y };
 }
 
-export function Hex(q, r, s) {
+export function Hex(q:number , r: number, s?: number) {
   s = - (q + r)
   if (Math.round(q + r + s) !== 0) throw "q + r + s must be 0";
   return { q: q, r: r, s: s };

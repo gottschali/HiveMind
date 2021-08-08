@@ -1,42 +1,47 @@
-import insects from "./insects";
+import Insect from "./insects";
 import Stone from "./stone";
-import teams from "./teams";
+import Team from "./teams";
 import {HashSet} from "../hashmap";
 import * as HEX from "../hexlib";
-import {Move, Drop, Pass} from "./action";
+import {Move, Drop, Pass, Action} from "./action";
 import {Hive} from "./hive";
 
 const startingInsects = [
-    insects.BEE,
-    insects.SPIDER,
-    insects.SPIDER,
-    insects.ANT,
-    insects.ANT,
-    insects.ANT,
-    insects.GRASSHOPPER,
-    insects.GRASSHOPPER,
-    insects.GRASSHOPPER,
-    insects.BEETLE,
-    insects.BEETLE
+    Insect.BEE,
+    Insect.SPIDER,
+    Insect.SPIDER,
+    Insect.ANT,
+    Insect.ANT,
+    Insect.ANT,
+    Insect.GRASSHOPPER,
+    Insect.GRASSHOPPER,
+    Insect.GRASSHOPPER,
+    Insect.BEETLE,
+    Insect.BEETLE
 ]
 
 export class State {
-    // was constructed with hive as argument once
+    hive: Hive;
+    turnNumber: number;
+    stones: Array<Stone>;
+    _beeMove: Map<Team, boolean>;
+    _actions: Array<Action>;
+
     constructor(turnNumber = 0) {
         this.hive = new Hive();
         this.turnNumber = turnNumber
         this.stones = [];
         this._beeMove = new Map([
-            [teams.WHITE, false],
-            [teams.BLACK, false]
+            [Team.WHITE, false],
+            [Team.BLACK, false]
         ])
-        for (const team of [teams.WHITE, teams.BLACK]) for (const insect of startingInsects) {
+        for (const team of [Team.WHITE, Team.BLACK]) for (const insect of startingInsects) {
             this.stones.push(new Stone(insect, team))
         }
     }
 
     get team() {
-        return this.turnNumber % 2 === 0 ? teams.WHITE : teams.BLACK
+        return this.turnNumber % 2 === 0 ? Team.WHITE : Team.BLACK
     }
     get gameOver() {
         if (this.result.some( (x) => x)) {
@@ -64,7 +69,7 @@ export class State {
                                 .map(insect => new Stone(insect, this.team));
         if (this.turnNumber >= 6 && !this.moveAllowed) {
             console.log("Forced bee drop")
-            this.hive.generateDrops(this.team).forEach(d => opts.push(new Drop(new Stone(insects.BEE, this.team), d)))
+            this.hive.generateDrops(this.team).forEach(d => opts.push(new Drop(new Stone(Insect.BEE, this.team), d)))
         } else if (dropStones.length) {
             console.log("Drops allowed")
             this.generateDrops().forEach(d => dropStones.forEach(ds => opts.push(new Drop(ds, d))))
@@ -102,7 +107,7 @@ export class State {
             this.hive.addStone(action.destination, stone)
         } else if ("stone" in action && "destination" in action) {
             stone = action.stone
-            if (stone.insect === insects.BEE) {
+            if (stone.insect === Insect.BEE) {
                 // Update that the bee is dropped
                 this._beeMove.set(this.team, true)
             }
