@@ -1,34 +1,35 @@
-import Insect from "./insects";
-import Team from "./teams";
-import * as HEX from "../hexlib";
-import {HashMap, HashSet} from "../hashmap";
+import Insect from './insects';
+import Team from './teams';
+import Stone from './stone';
+import * as HEX from '../hexlib';
+import {HashMap, HashSet} from '../hashmap';
 
 
 export class Hive {
-    map;
+    map: HashMap;
     root: HEX.Hex;
     constructor() {
-        this.map = new HashMap()
+        this.map = new HashMap();
     }
-    at(hex) {
+    at(hex: HEX.Hex) {
         const ar = this.map.get(hex)
         return ar[ar.length - 1]
     }
 
-    removeStone(hex) {
+    removeStone(hex: HEX.Hex) {
         this.map.get(hex).pop()
         if (!this.map.get(hex).length) {
             this.map.delete(hex)
         }
     }
 
-    addStone(hex, stone) {
+    addStone(hex: HEX.Hex, stone: Stone) {
         this.root = hex
         if (!this.map.has(hex)) this.map.set(hex, [stone])
         else this.map.get(hex).push(stone)
     }
 
-    gameResult() {
+    gameResult(): Array<boolean> {
         let whiteLost = false
         let blackLost = false
         for (const hex of this.map.keys()) {
@@ -43,28 +44,28 @@ export class Hive {
         return [whiteLost, blackLost];
     }
 
-    neighbors(hex) {
+    neighbors(hex: HEX.Hex): Array<HEX.Hex> {
         return HEX.hex_neighbors(hex).filter(n => this.map.has(n))
     }
-    height(hex) {
+    height(hex: HEX.Hex): number {
         if (this.map.has(hex)) return this.map.get(hex).length
         return 0
     }
-    generateSingleWalks(hex, ignore=null) {
+    generateSingleWalks(hex: HEX.Hex, ignore=null): Array<HEX.Hex> {
         let result = []
         for (const [a, b, c] of HEX.hex_circle_iterator(hex)) {
             if (this.map.has(b)) continue
             if (ignore === null) {
-                if (this.map.has(a) ^ this.map.has(c)) result.push(b)
+                if (this.map.has(a) !== this.map.has(c)) result.push(b)
             } else {
                 // ignore was probably not working because object comparison
-                if ((this.map.has(a) && !HEX.hex_compare(a, ignore)) != (this.map.has(c) && !HEX.hex_compare(c, ignore))) {      result.push(b)
+                if ((this.map.has(a) && !HEX.hex_compare(a, ignore)) !== (this.map.has(c) && !HEX.hex_compare(c, ignore))) {      result.push(b)
                 }
             }
         }
         return result
     }
-    generateWalks(start, target=-1) {
+    generateWalks(start: HEX.Hex, target=-1) {
         let visited = new HashSet()
         let distance = new HashMap()
         let queue = []
@@ -79,7 +80,7 @@ export class Hive {
                 distance.set(n, distance.get(vertex) + 1)
                 queue.push(n)
             }
-            if (target == -1 && !HEX.hex_compare(vertex, start)) { 
+            if (target === -1 && !HEX.hex_compare(vertex, start)) {
               result.push(vertex)
             } else {
                 let d = distance.get(vertex)
@@ -90,10 +91,10 @@ export class Hive {
         }
         return result
     }
-    generateSpiderWalks(hex) {
+    generateSpiderWalks(hex: HEX.Hex) {
         return this.generateWalks(hex, 3)
     }
-    generateJumps(hex) {
+    generateJumps(hex: HEX.Hex) {
         let result = []
         for (const offset of HEX.hex_directions) {
             if (this.map.has(HEX.hex_add(hex, offset))) {
@@ -104,7 +105,7 @@ export class Hive {
         }
         return result
     }
-    generateClimbs(hex) {
+    generateClimbs(hex: HEX.Hex) {
         let result = []
         let hh = this.height(hex)
         if (hh > 1) {
@@ -123,10 +124,10 @@ export class Hive {
         return result
     }
 
-    _checkNeighborTeam(hex, team) {
+    _checkNeighborTeam(hex: HEX.Hex, team: Team): boolean {
         return this.neighbors(hex).every(n => this.at(n).team === team)
     }
-    generateDrops(team) {
+    generateDrops(team: Team) {
         let candidates = new HashSet()
         for (const hex of this.map.keys()) {
             HEX.hex_neighbors(hex)

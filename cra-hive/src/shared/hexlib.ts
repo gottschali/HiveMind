@@ -11,7 +11,7 @@ export function Point(x, y) {
 
 export function Hex(q:number , r: number, s?: number) {
   s = - (q + r)
-  if (Math.round(q + r + s) !== 0) throw "q + r + s must be 0";
+  if (Math.round(q + r + s) !== 0) throw Error("q + r + s must be 0");
   return { q: q, r: r, s: s };
 }
 
@@ -139,7 +139,7 @@ function qoffset_from_cube(offset, h) {
   const col = h.q;
   const row = h.r + (h.q + offset * (h.q & 1)) / 2;
   if (offset !== EVEN && offset !== ODD) {
-    throw "offset must be EVEN (+1) or ODD (-1)";
+    throw Error("offset must be EVEN (+1) or ODD (-1)");
   }
   return OffsetCoord(col, row);
 }
@@ -149,7 +149,7 @@ function qoffset_to_cube(offset, h) {
   const r = h.row - (h.col + offset * (h.col & 1)) / 2;
   const s = -q - r;
   if (offset !== EVEN && offset !== ODD) {
-    throw "offset must be EVEN (+1) or ODD (-1)";
+    throw Error("offset must be EVEN (+1) or ODD (-1)");
   }
   return Hex(q, r, s);
 }
@@ -158,7 +158,7 @@ function roffset_from_cube(offset, h) {
   const col = h.q + (h.r + offset * (h.r & 1)) / 2;
   const row = h.r;
   if (offset !== EVEN && offset !== ODD) {
-    throw "offset must be EVEN (+1) or ODD (-1)";
+    throw Error("offset must be EVEN (+1) or ODD (-1)");
   }
   return OffsetCoord(col, row);
 }
@@ -168,7 +168,7 @@ function roffset_to_cube(offset, h) {
   const r = h.row;
   const s = -q - r;
   if (offset !== EVEN && offset !== ODD) {
-    throw "offset must be EVEN (+1) or ODD (-1)";
+    throw Error("offset must be EVEN (+1) or ODD (-1)");
   }
   return Hex(q, r, s);
 }

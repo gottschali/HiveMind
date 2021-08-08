@@ -33,10 +33,8 @@ export class HashMap extends Map {
         }
         return res
     }
-    *keys(){
-      for (const key of super.keys()) {
-        yield JSON.parse(key)
-      }
+    keys(){
+        return Array.from(super.keys()).map(k => JSON.parse(k))
     }
 }
 export class HashSet extends Set {
