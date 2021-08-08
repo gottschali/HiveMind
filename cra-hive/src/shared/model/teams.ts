@@ -1,6 +1,6 @@
 enum Team {
-    WHITE,
-    BLACK,
+    WHITE = 'white',
+    BLACK = 'black',
 }
 
 export default Team;

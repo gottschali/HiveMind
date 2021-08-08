@@ -1,9 +1,9 @@
 enum Insect {
-    BEE,
-    SPIDER,
-    ANT,
-    GRASSHOPPER,
-    BEETLE,
+    BEE = 'bee',
+    SPIDER = 'spider',
+    ANT = 'ant',
+    GRASSHOPPER = 'grasshopper',
+    BEETLE = 'beetle',
 }
 
 export default Insect;
