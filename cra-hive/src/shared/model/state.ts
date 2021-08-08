@@ -41,27 +41,27 @@ export class State {
         }
     }
 
-    get team() {
+    get team(): Team {
         return this.turnNumber % 2 === 0 ? Team.WHITE : Team.BLACK
     }
-    get gameOver() {
+    get gameOver(): boolean {
         if (this.result.some( (x) => x)) {
-            return this.result;
+            return true;
         }
         return false;
     }
-    get result() {
+    get result(): Array<boolean> {
         return this.hive.gameResult()
     }
-    get moveAllowed() {
+    get moveAllowed(): boolean {
         return this._beeMove.get(this.team)
     }
-    generateDrops() {
+    generateDrops(): Array<HEX.Hex> {
         if (this.turnNumber === 0) return [HEX.Hex(0, 0)];
         else if (this.turnNumber === 1) return [HEX.Hex(0, -1)];
         return this.hive.generateDrops(this.team)
     }
-    _getActions() {
+    _getActions(): Array<Action> {
         let opts = []
         const dropStonesForTeam = this.stones.filter(stone => stone.team === this.team)
                                 .map(s => s.insect)
@@ -84,16 +84,16 @@ export class State {
         if (opts.length) return opts
         else return [Pass]
     }
-    get actions() {
+    get actions(): Array<Action> {
         if (!this._actions) this._actions = this._getActions()
         return this._actions
     }
 
-    isLegal(action) {
+    isLegal(action: Action): boolean {
         const acts = new HashSet(this.actions);
         return acts.has(action)
     }
-    apply(action) {
+    apply(action: Action): State {
         // No check for legal action!
         // TODO apparently copying/cloning objects is not trivial in JS
         // So maybe just create new instance with the data as arguments
@@ -126,12 +126,12 @@ export class State {
         return this;
     }
 
-    step(policy=randomPolicy) {
+    step(policy=randomPolicy): State {
         return this.apply(policy(this.actions))
     }
 
-    allowedToMove(hex) {
-        // This is used called from the UI so performance is not priority
+    allowedToMove(hex: HEX.Hex): boolean {
+        // Only needed for Frontend
         if (this.moveAllowed) {
             for (const action of this.actions) {
                 if ("origin" in action) {
@@ -144,8 +144,8 @@ export class State {
         return false;
     }
 
-    allowedToDrop(insect) {
-        // This is used called from the UI so performance is not priority
+    allowedToDrop(insect: Insect): boolean {
+        // Only needed for Fronted
         for (const action of this.actions) {
             if ("stone" in action) {
                 if (action.stone.insect === insect) {
@@ -156,12 +156,12 @@ export class State {
         return false;
     }
 
-    getDestinations(action, src) {
+    getDestinations(action: (Move | Drop), src: HEX.Hex): Array<Array<any>> {
         let opts = [];
-        if (action === Move) {
+        if (action instanceof Move) {
             opts = this.hive.generateMovesFrom(src)
                 .map(h => [h, this.hive.height(h)]);
-        } else if (action === Drop) {
+        } else if (action instanceof Drop) {
             opts = this.generateDrops()
                 .map(h => [h, 0]);
         }
@@ -169,6 +169,6 @@ export class State {
     }
 }
 
-function randomPolicy(actions) {
+function randomPolicy(actions: Array<Action>): Action {
     return actions[Math.floor(Math.random() * actions.length)]
 }
