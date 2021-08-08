@@ -1,4 +1,4 @@
-import {insects} from "./insects.js"
+import insects from "./insects";
 import {teams} from "./teams.js"
 import * as HEX from "../hexlib.js"
 import {HashMap, HashSet} from "../hashmap.js"
