@@ -28,9 +28,9 @@ export class State {
         Insect.BEETLE
     ]
 
-    constructor(turnNumber = 0) {
+    constructor() {
         this.hive = new Hive();
-        this.turnNumber = turnNumber
+        this.turnNumber = 0;
         this.stones = [];
         this._beeMove = new Map([
             [Team.WHITE, false],
