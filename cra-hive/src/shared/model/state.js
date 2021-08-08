@@ -57,11 +57,12 @@ export class State {
     }
     _getActions() {
         let opts = []
-        const dropStones = this.stones.filter(stone => stone.team === this.team)
-            .map(i => JSON.stringify(i))
-            .filter((s, i, r) => r.indexOf(s) === i)
-            .map(i => JSON.parse(i))
-            .map(({insect, team}) => new Stone(insect, team))
+        const dropStonesForTeam = this.stones.filter(stone => stone.team === this.team)
+                                .map(s => s.insect)
+        console.log(dropStonesForTeam)
+        const uniqueInsects = new Set(dropStonesForTeam);
+        const dropStones = Array.from(uniqueInsects)
+                                .map(insect => new Stone(insect, this.team));
         if (this.turnNumber >= 6 && !this.moveAllowed) {
             console.log("Forced bee drop")
             this.hive.generateDrops(this.team).forEach(d => opts.push(new Drop(new Stone(insects.BEE, this.team), d)))
