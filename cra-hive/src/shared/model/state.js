@@ -1,10 +1,10 @@
-import insects from "./insects"
-import {Stone} from "./stone.js"
-import {teams} from "./teams.js"
-import {HashSet} from "../hashmap.js"
-import * as HEX from "../hexlib.js"
-import {Move, Drop, Pass} from "./action.js"
-import {Hive} from "./hive.js"
+import insects from "./insects";
+import {Stone} from "./stone";
+import teams from "./teams";
+import {HashSet} from "../hashmap";
+import * as HEX from "../hexlib";
+import {Move, Drop, Pass} from "./action";
+import {Hive} from "./hive";
 
 const startingInsects = [
     insects.BEE,
@@ -27,10 +27,10 @@ export class State {
         this.turnNumber = turnNumber
         this.stones = [];
         this._beeMove = new Map([
-            ["WHITE", false],
-            ["BLACK", false]
-    ])
-        for (const team in teams) for (const insect of startingInsects) {
+            [teams.WHITE, false],
+            [teams.BLACK, false]
+        ])
+        for (const team of [teams.WHITE, teams.BLACK]) for (const insect of startingInsects) {
             this.stones.push(new Stone(insect, team))
         }
     }

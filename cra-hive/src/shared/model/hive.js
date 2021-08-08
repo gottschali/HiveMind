@@ -1,7 +1,7 @@
 import insects from "./insects";
-import {teams} from "./teams.js"
-import * as HEX from "../hexlib.js"
-import {HashMap, HashSet} from "../hashmap.js"
+import teams from "./teams";
+import * as HEX from "../hexlib";
+import {HashMap, HashSet} from "../hashmap";
 
 
 export class Hive {
@@ -164,14 +164,16 @@ export class Hive {
 
     generateMovesFrom(hex) {
         // insects.BEE ... instead of 0 ... causes error. Why?
-        const moveMap = {
-            BEE: this.generateSingleWalks,
-            SPIDER: this.generateSpiderWalks,
-            ANT: this.generateWalks,
-            GRASSHOPPER: this.generateJumps,
-            BEETLE: this.generateClimbs
-        }
-        return moveMap[this.at(hex).insect].call(this, hex)
+        //
+        const moveMap = new Map([
+            [insects.BEE, this.generateSingleWalks],
+            [insects.SPIDER, this.generateSpiderWalks],
+            [insects.ANT, this.generateWalks],
+            [insects.GRASSHOPPER, this.generateJumps],
+            [insects.BEETLE, this.generateClimbs]
+        ]);
+        console.log(this.at(hex));
+        return moveMap.get(this.at(hex).insect).call(this, hex)
     }
 
     generateMoves(team) {
