@@ -6,19 +6,6 @@ import * as HEX from "../hexlib";
 import {Move, Drop, Pass, Action} from "./action";
 import {Hive} from "./hive";
 
-const startingInsects = [
-    Insect.BEE,
-    Insect.SPIDER,
-    Insect.SPIDER,
-    Insect.ANT,
-    Insect.ANT,
-    Insect.ANT,
-    Insect.GRASSHOPPER,
-    Insect.GRASSHOPPER,
-    Insect.GRASSHOPPER,
-    Insect.BEETLE,
-    Insect.BEETLE
-]
 
 export class State {
     hive: Hive;
@@ -26,6 +13,20 @@ export class State {
     stones: Array<Stone>;
     _beeMove: Map<Team, boolean>;
     _actions: Array<Action>;
+
+    startingInsects: Array<Insect> = [
+        Insect.BEE,
+        Insect.SPIDER,
+        Insect.SPIDER,
+        Insect.ANT,
+        Insect.ANT,
+        Insect.ANT,
+        Insect.GRASSHOPPER,
+        Insect.GRASSHOPPER,
+        Insect.GRASSHOPPER,
+        Insect.BEETLE,
+        Insect.BEETLE
+    ]
 
     constructor(turnNumber = 0) {
         this.hive = new Hive();
@@ -35,7 +36,7 @@ export class State {
             [Team.WHITE, false],
             [Team.BLACK, false]
         ])
-        for (const team of [Team.WHITE, Team.BLACK]) for (const insect of startingInsects) {
+        for (const team of [Team.WHITE, Team.BLACK]) for (const insect of this.startingInsects) {
             this.stones.push(new Stone(insect, team))
         }
     }
