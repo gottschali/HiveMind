@@ -1,9 +1,8 @@
 import Insect from "./insects";
 import Stone from "./stone";
 import Team from "./teams";
-import {HashSet} from "../hashmap";
 import * as HEX from "../hexlib";
-import {Move, Drop, Pass, Action} from "./action";
+import {Move, Drop, Pass, Action, compareAction} from "./action";
 import {Hive} from "./hive";
 
 
@@ -70,10 +69,13 @@ export class State {
                                 .map(insect => new Stone(insect, this.team));
         if (this.turnNumber >= 6 && !this.moveAllowed) {
             console.log("Forced bee drop")
-            this.hive.generateDrops(this.team).forEach(d => opts.push(new Drop(new Stone(Insect.BEE, this.team), d)))
+            this.hive.generateDrops(this.team)
+                .forEach(d => opts.push(new Drop(new Stone(Insect.BEE, this.team), d)))
         } else if (dropStones.length) {
             console.log("Drops allowed")
-            this.generateDrops().forEach(d => dropStones.forEach(ds => opts.push(new Drop(ds, d))))
+            this.generateDrops()
+                .forEach(dropHex => dropStones
+                    .forEach(dropInsect => opts.push(new Drop(dropInsect, dropHex))))
         }
         if (this.moveAllowed) {
             console.log("Moves allowed")
@@ -90,8 +92,9 @@ export class State {
     }
 
     isLegal(action: Action): boolean {
-        const acts = new HashSet(this.actions);
-        return acts.has(action)
+        const res = this.actions.some(otherAction => compareAction(action, otherAction))
+        console.log(`isLegal: ${res}`);
+        return res;
     }
     apply(action: Action): State {
         // No check for legal action!
