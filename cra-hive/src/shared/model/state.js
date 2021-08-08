@@ -91,35 +91,33 @@ export class State {
         // No check for legal action!
         // TODO apparently copying/cloning objects is not trivial in JS
         // So maybe just create new instance with the data as arguments
-        let newState = Object.assign(Object.create(Object.getPrototypeOf(this)), this)
+        // let newState = Object.assign(Object.create(Object.getPrototypeOf(this)), this)
         // State is mutable now, apply updates inplace instead of returning a new instance
-        console.log("YYEET")
-        console.log(`Applying ${JSON.stringify(action)}`);
-        console.log(newState);
+        console.log(`Applying ${JSON.stringify(action)}`)
         let stone
         if ("origin" in action && "destination" in action) {
             // Remove the stone from the old position and add it at the new one
-            stone = newState.hive.at(action.origin)
-            newState.hive.removeStone(action.origin)
-            newState.hive.addStone(action.destination, stone)
+            stone = this.hive.at(action.origin)
+            this.hive.removeStone(action.origin)
+            this.hive.addStone(action.destination, stone)
         } else if ("stone" in action && "destination" in action) {
             stone = action.stone
             if (stone.insect === insects.BEE) {
                 // Update that the bee is dropped
-                newState._beeMove.set(newState.team, true)
+                this._beeMove.set(this.team, true)
             }
             // Remove the dropped stone from the availables and add it to the hive
             // TODO the stone is not removed because objects do not compare equal for values
             let index = -1;
-            newState.stones.forEach((s, i) => {
+            this.stones.forEach((s, i) => {
               if (JSON.stringify(s) === JSON.stringify(stone)) index = i
             })
-            newState.stones.splice(index, 1)
-            newState.hive.addStone(action.destination, stone)
+            this.stones.splice(index, 1)
+            this.hive.addStone(action.destination, stone)
         }
-        delete newState._actions;
-        newState.turnNumber++;
-        return newState;
+        delete this._actions
+        this.turnNumber++
+        return this;
     }
 
     step(policy=randomPolicy) {
