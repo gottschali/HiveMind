@@ -1,6 +1,6 @@
-enum teams {
+enum Team {
     WHITE,
     BLACK,
 }
 
-export default teams;
+export default Team;

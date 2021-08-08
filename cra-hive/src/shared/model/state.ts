@@ -1,5 +1,5 @@
 import insects from "./insects";
-import {Stone} from "./stone";
+import Stone from "./stone";
 import teams from "./teams";
 import {HashSet} from "../hashmap";
 import * as HEX from "../hexlib";
@@ -59,7 +59,6 @@ export class State {
         let opts = []
         const dropStonesForTeam = this.stones.filter(stone => stone.team === this.team)
                                 .map(s => s.insect)
-        console.log(dropStonesForTeam)
         const uniqueInsects = new Set(dropStonesForTeam);
         const dropStones = Array.from(uniqueInsects)
                                 .map(insect => new Stone(insect, this.team));
