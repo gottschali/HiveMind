@@ -8,7 +8,7 @@ export interface Hex {
 export function Point(x, y) {
   return { x: x, y: y };
 }
-
+// eslint-disable-next-line
 export function Hex(q:number , r: number, s?: number) {
   s = - (q + r)
   if (Math.round(q + r + s) !== 0) throw Error("q + r + s must be 0");

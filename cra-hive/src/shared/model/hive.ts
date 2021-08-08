@@ -2,7 +2,7 @@ import Insect from './insects';
 import Team from './teams';
 import Stone from './stone';
 import * as HEX from '../hexlib';
-import {HashMap, HashSet} from '../hashmap';
+import { HashMap, HashSet } from '../hashmap';
 
 
 export class Hive {
@@ -65,7 +65,7 @@ export class Hive {
         }
         return result
     }
-    generateWalks(start: HEX.Hex, target=-1) {
+    generateWalks(start: HEX.Hex, target=-1): Array<HEX.Hex> {
         let visited = new HashSet()
         let distance = new HashMap()
         let queue = []
@@ -91,10 +91,10 @@ export class Hive {
         }
         return result
     }
-    generateSpiderWalks(hex: HEX.Hex) {
+    generateSpiderWalks(hex: HEX.Hex): Array<HEX.Hex> {
         return this.generateWalks(hex, 3)
     }
-    generateJumps(hex: HEX.Hex) {
+    generateJumps(hex: HEX.Hex): Array<HEX.Hex> {
         let result = []
         for (const offset of HEX.hex_directions) {
             if (this.map.has(HEX.hex_add(hex, offset))) {
@@ -105,7 +105,7 @@ export class Hive {
         }
         return result
     }
-    generateClimbs(hex: HEX.Hex) {
+    generateClimbs(hex: HEX.Hex): Array<HEX.Hex> {
         let result = []
         let hh = this.height(hex)
         if (hh > 1) {
@@ -127,7 +127,7 @@ export class Hive {
     _checkNeighborTeam(hex: HEX.Hex, team: Team): boolean {
         return this.neighbors(hex).every(n => this.at(n).team === team)
     }
-    generateDrops(team: Team) {
+    generateDrops(team: Team): Array<HEX.Hex> {
         let candidates = new HashSet()
         for (const hex of this.map.keys()) {
             HEX.hex_neighbors(hex)
@@ -137,12 +137,12 @@ export class Hive {
         return Array.from(candidates.values()).filter(e => this._checkNeighborTeam(e, team))
     }
 
-    _oneHive() {
+    _oneHive(): HashSet {
         let lowLink = new HashMap()
         let visited = new HashSet()
         let index = new HashMap()
         let articulation_points = new HashSet()
-        let dfs = (node, parent, counter) => {
+        const dfs = (node: HEX.Hex, parent: HEX.Hex, counter: number) => {
             visited.add(node)
             counter++
             index.set(node, counter)
@@ -165,7 +165,7 @@ export class Hive {
         return articulation_points
     }
 
-    generateMovesFrom(hex) {
+    generateMovesFrom(hex: HEX.Hex): Array<HEX.Hex> {
         // insects.BEE ... instead of 0 ... causes error. Why?
         //
         const moveMap = new Map([
@@ -179,7 +179,7 @@ export class Hive {
         return moveMap.get(this.at(hex).insect).call(this, hex)
     }
 
-    generateMoves(team) {
+    generateMoves(team: Team): Array<Array<HEX.Hex>> {
         let result = []
         const articulation_points = this._oneHive()
         for (const hex of this.map.keys()) {
