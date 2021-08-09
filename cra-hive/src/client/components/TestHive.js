@@ -1,8 +1,8 @@
 import { State } from '../../shared/model/state'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
-import ThreeHive from './ThreeHive'
+import Hive from '../canvas/Hive'
 
 const Wrapped = () => {
   const [state, setState] = useState(new State());
@@ -27,7 +27,7 @@ const Wrapped = () => {
         Hive: {JSON.stringify(Array.from(state.hive.map.entries()))}
       </div>
       <div style={{ width: '1000px', height: '600px', overflow: 'hidden', margin: '0px', padding: '0px' }}>
-        <ThreeHive hive={state.hive} />
+        <Hive hive={state.hive} />
       </div>
     </div>
   )

@@ -1,0 +1,36 @@
+import { useState } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { TrackballControls } from '@react-three/drei'
+
+import * as HEX from '../../shared/hexlib'
+
+import Stone from './Stone'
+
+const layoutFlat = HEX.Layout(HEX.layout_flat, HEX.Point(1, 1), HEX.Point(0, 0))
+const layoutPointy = HEX.Layout(HEX.layout_pointy, HEX.Point(1, 1), HEX.Point(0, 0))
+
+
+export default ({ hive }) => {
+    const [layout, setLayout] = useState(layoutFlat)
+    let stones = [];
+    for (const hex of hive.map.keys()) {
+        hive.map.get(hex).forEach((stone, height) => {
+            stones.push(
+                <Stone hex={hex} stone={stone} height={height} layout={layout}/>
+            )
+        });
+    }
+
+
+    return (
+        <div>
+            <button onClick={() => setLayout(layout === layoutFlat ? layoutPointy : layoutFlat)}> Toggle Layout </button>
+            <Canvas camera={{ near: 0.1, far: 100 }} >
+                <TrackballControls />
+                <ambientLight />
+                <pointLight position={[10, 10, 10]} />
+                {stones}
+            </Canvas>
+        </div>
+    )
+}
