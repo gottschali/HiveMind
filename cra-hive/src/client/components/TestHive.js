@@ -18,29 +18,29 @@ const Wrapped = () => {
   }
   return (
     <div>
-      <div> Step: {state.turnNumber}</div>
-      <button onClick={step}> Make a Step </button>
-      <button onClick={reset}> Reset </button>
-      <label>
-        How many automove steps:
-        <input value={iterationSteps} onChange={e => setIterationSteps(e.target.value)}/>
-      </label>
-      <button onClick={() => {
-        for (let i=0;i<iterationSteps;i++) {
-          state.step()
-        }
-        setCounter(counter + iterationSteps);
+      <div>
+        <div> Step: {state.turnNumber}</div>
+        <button onClick={step}> Make a Step </button>
+        <button onClick={reset}> Reset </button>
+        <label>
+          How many automove steps:
+          <input value={iterationSteps} onChange={e => setIterationSteps(e.target.value)}/>
+        </label>
+        <button onClick={() => {
+          for (let i=0;i<iterationSteps;i++) {
+            state.step()
+          }
+          setCounter(counter + iterationSteps);
 
-      }}> AutoPlay </button>
-      <div>
-        Stones: {JSON.stringify(state.stones)}
+        }}> AutoPlay </button>
+        <div>
+          Stones: {JSON.stringify(state.stones)}
+        </div>
+        <div>
+          Hive: {JSON.stringify(Array.from(state.hive.map.entries()))}
+        </div>
       </div>
-      <div>
-        Hive: {JSON.stringify(Array.from(state.hive.map.entries()))}
-      </div>
-      <div style={{ width: '1000px', height: '600px', overflow: 'hidden', margin: '0px', padding: '0px' }}>
-        <Hive hive={state.hive} />
-      </div>
+      <Hive hive={state.hive} />
     </div>
   )
 }

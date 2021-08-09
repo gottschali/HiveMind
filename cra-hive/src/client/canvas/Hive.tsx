@@ -23,7 +23,7 @@ export default ({ hive }) => {
 
 
     return (
-        <div>
+        <div style={{ position: "relative", width: "600px", height: "600px"}}>
             <button onClick={() => setLayout(layout === layoutFlat ? layoutPointy : layoutFlat)}> Toggle Layout </button>
             <Canvas camera={{ near: 0.1, far: 100 }} >
                 <TrackballControls />
