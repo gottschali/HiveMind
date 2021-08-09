@@ -9,7 +9,7 @@ import {Hive} from "./hive";
 export class State {
     hive: Hive;
     turnNumber: number;
-    stones: Array<Stone>;
+    _stones: Map<Team, Array<Stone>>;
     _beeMove: Map<Team, boolean>;
     _actions: Array<Action>;
 
@@ -30,14 +30,17 @@ export class State {
     constructor() {
         this.hive = new Hive();
         this.turnNumber = 0;
-        this.stones = [];
         this._beeMove = new Map([
             [Team.WHITE, false],
             [Team.BLACK, false]
         ])
-        for (const team of [Team.WHITE, Team.BLACK]) for (const insect of this.startingInsects) {
-            this.stones.push(new Stone(insect, team))
+        this._stones = new Map();
+        for (const team of [Team.WHITE, Team.BLACK]) {
+            this._stones.set(team, this.startingInsects.map(insect => new Stone(insect, team)))
         }
+    }
+    get stones(): Array<Stone> {
+        return this._stones.get(this.team);
     }
 
     get team(): Team {
@@ -62,8 +65,7 @@ export class State {
     }
     _getActions(): Array<Action> {
         let opts = []
-        const dropStonesForTeam = this.stones.filter(stone => stone.team === this.team)
-                                .map(s => s.insect)
+        const dropStonesForTeam = this.stones.map( stone => stone.insect );
         const uniqueInsects = new Set(dropStonesForTeam);
         const dropStones = Array.from(uniqueInsects)
                                 .map(insect => new Stone(insect, this.team));
@@ -119,7 +121,7 @@ export class State {
             // TODO the stone is not removed because objects do not compare equal for values
             let index = -1;
             this.stones.forEach((s, i) => {
-              if (JSON.stringify(s) === JSON.stringify(stone)) index = i
+              if (stone.insect === s.insect) index = i
             })
             this.stones.splice(index, 1)
             this.hive.addStone(action.destination, stone)
