@@ -6,7 +6,6 @@ import Insect from '../../shared/model/insects'
 
 import { animated } from '@react-spring/three'
 
-
 export function GLTFModel({insect, ...props}) {
     const gltf = useLoader(GLTFLoader,`/objects/${insect}/${insect === Insect.BEE ? 'bumblebee' : insect}.gltf` );
     const scene = gltf.scene.clone();

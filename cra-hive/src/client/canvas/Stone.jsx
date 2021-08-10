@@ -1,4 +1,3 @@
-import { Vector3 } from 'three'
 import { useRef, useState, Suspense } from 'react'
 import { useSpring, animated } from '@react-spring/three'
 
