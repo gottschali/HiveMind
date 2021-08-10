@@ -7,7 +7,7 @@ import { GLTFModel } from '../canvas/GLTFModel'
 
 import { useSpring, animated } from '@react-spring/three'
 
-export function DropInsect( {insect} ) {
+export function DropInsect( {insect, handleClick} ) {
     const [hovered, setHover] = useState(false);
     const mesh = useRef<THREE.Mesh>(null!)
     const { rotation, scale } = useSpring({
@@ -15,10 +15,11 @@ export function DropInsect( {insect} ) {
         scale: hovered ? 4 : 2
     });
     return (
-        <div>
         <div style={{ position: "relative", width: "50px", height: "50px" }}
             onPointerEnter={() => setHover(true)}
-            onPointerOut={() => setHover(false)}>
+            onPointerOut={() => setHover(false)}
+            onClick={() => handleClick(insect)}
+            >
            <Suspense fallback={<p> {insect} </p>}>
                <Canvas>
                    <ambientLight />
@@ -38,11 +39,10 @@ export function DropInsect( {insect} ) {
                </Canvas>
            </Suspense>
     </div>
-    </div>
    )
 }
 
-export function DropInsectMenuTeam( {stones, active} ) {
+export function DropInsectMenuTeam( {stones, active, handleClick} ) {
     // Get the numbers out
     const counts = {};
     for (const {insect} of stones) {
@@ -53,8 +53,7 @@ export function DropInsectMenuTeam( {stones, active} ) {
         <div>
             <ul style={{display: "flex", flexDirection: "row"}}>
                 {Array.from(Object.values(Insect)).map( (insect, i) => {
-                    console.log(insect)
-                    return <li> {counts[insect] | 0} <DropInsect insect={insect} /> </li>
+                    return <li> {counts[insect] | 0} <DropInsect insect={insect} handleClick={handleClick} /> </li>
                 })
             }
             </ul>
@@ -62,15 +61,19 @@ export function DropInsectMenuTeam( {stones, active} ) {
     )
 }
 
-export function DropInsectMenu( {stones, team} ) {
+export function DropInsectMenu( {stones, team, handleClick} ) {
     return (
         <div>
             <DropInsectMenuTeam
                 active={team === Team.WHITE}
-                stones={stones.get(Team.WHITE)}/>
+                stones={stones.get(Team.WHITE)}
+                handleClick={team === Team.WHITE ? handleClick : () => {}}
+                />
             <DropInsectMenuTeam
                 active={team === Team.BLACK}
-                stones={stones.get(Team.BLACK)}/>
+                stones={stones.get(Team.BLACK)}
+                handleClick={team === Team.BLACK ? handleClick : () => {}}
+                />
         </div>
     )
 

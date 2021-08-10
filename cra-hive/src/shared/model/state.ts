@@ -106,12 +106,12 @@ export class State {
         // State is mutable now, apply updates inplace instead of returning a new instance
         console.log(`Applying ${JSON.stringify(action)}`)
         let stone
-        if ("origin" in action && "destination" in action) {
+        if (action instanceof Move) {
             // Remove the stone from the old position and add it at the new one
             stone = this.hive.at(action.origin)
             this.hive.removeStone(action.origin)
             this.hive.addStone(action.destination, stone)
-        } else if ("stone" in action && "destination" in action) {
+        } else if (action instanceof Drop) {
             stone = action.stone
             if (stone.insect === Insect.BEE) {
                 // Update that the bee is dropped
@@ -139,7 +139,7 @@ export class State {
         // Only needed for Frontend
         if (this.moveAllowed) {
             for (const action of this.actions) {
-                if ("origin" in action) {
+                if (action instanceof Move) {
                     if (HEX.hex_compare(action.origin, hex)) {
                         return true;
                     }
@@ -161,7 +161,7 @@ export class State {
         return false;
     }
 
-    getDestinations(action: (Move | Drop), src: HEX.Hex): Array<Array<any>> {
+    getDestinations(action: (Move | Drop), src): Array<[HEX.Hex, number]> {
         let opts = [];
         if (action instanceof Move) {
             opts = this.hive.generateMovesFrom(src)

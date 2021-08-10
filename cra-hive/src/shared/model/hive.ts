@@ -175,7 +175,6 @@ export class Hive {
             [Insect.GRASSHOPPER, this.generateJumps],
             [Insect.BEETLE, this.generateClimbs]
         ]);
-        console.log(this.at(hex));
         return moveMap.get(this.at(hex).insect).call(this, hex)
     }
 
