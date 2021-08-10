@@ -1,8 +1,9 @@
 import { State } from '../../shared/model/state'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 
 import Hive from '../canvas/Hive'
+import { DropInsectMenu } from './DropInsectMenu'
 
 const Wrapped = () => {
   const [state, setState] = useState(new State());
@@ -39,6 +40,7 @@ const Wrapped = () => {
         <div>
           Hive: {JSON.stringify(Array.from(state.hive.map.entries()))}
         </div>
+        <DropInsectMenu stones={state._stones} team={state.team}/>
       </div>
       <Hive hive={state.hive} />
     </div>

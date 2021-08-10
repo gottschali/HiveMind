@@ -4,13 +4,15 @@ import { useLoader } from '@react-three/fiber'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import Insect from '../../shared/model/insects'
 
+import { animated } from '@react-spring/three'
+
 let models = {};
 
-function GLTFModel({insect}) {
+export function GLTFModel({insect, ...props}) {
     const gltf = useLoader(GLTFLoader,`/objects/${insect}/${insect === Insect.BEE ? 'bumblebee' : insect}.gltf` );
     models[insect] = gltf;
     const scene = gltf.scene.clone();
-    return <primitive object={scene} />
+    return <animated.primitive object={scene} {...props}/>
 }
 
 
