@@ -6,6 +6,7 @@ export default function App() {
     <div>
       <h1>Welcome to HiveMind</h1>
       <TestGame />
+      <TestHive />
     </div>
   )
 }

@@ -42,7 +42,7 @@ const Wrapped = () => {
         </div>
         <DropInsectMenu stones={state._stones} team={state.team}/>
       </div>
-      <Hive hive={state.hive} />
+      <Hive hive={state.hive} highlighted={[]}/>
     </div>
   )
 }
