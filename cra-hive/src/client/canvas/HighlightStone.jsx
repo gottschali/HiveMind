@@ -1,18 +1,19 @@
-import { useRef, useState, Suspense } from 'react'
+import { useRef, useState } from 'react'
+import { useSpring, animated } from '@react-spring/three'
 
 import Team from '../../shared/model/teams'
 import * as HEX from '../../shared/hexlib'
 
-export default function HighlightStone({ layout, hex, team, height, handleClick }) {
-    const mesh = useRef<THREE.Mesh>(null!)
+export default function HighlightStone({ layout, hex, team, height, handleClick=()=>console.log("no Click handler given") }) {
+    const mesh = useRef(null)
     const [hovered, setHover] = useState(false)
-
+    const { opacity } = useSpring({opacity: hovered ? 0.9 : 0.3})
     const { x, y } = HEX.hex_to_pixel(layout, hex);
     const orientation = layout.orientation;
-    const color = team === Team.WHITE ? 'orange' : 'blue';
+    const color = team === Team.WHITE ? 'red' : 'blue';
     return (
                 <mesh
-                    position={[x, y, height]}
+                    position={[x, y, height - .5]}
                     rotation={[Math.PI / 2, orientation === HEX.layout_flat ? Math.PI / 6 : 0, 0]}
                     onClick={() => {handleClick(hex)}}
                     ref={mesh}
@@ -20,7 +21,7 @@ export default function HighlightStone({ layout, hex, team, height, handleClick 
                     onPointerOut={(event) => setHover(false)}
                 >
                     <cylinderBufferGeometry args={[1, 1, 0.25, 6]} />
-                        <meshStandardMaterial color={color} transparent opacity={hovered ? 0.5 : 0.3}/>
+                        <animated.meshStandardMaterial color={color} transparent opacity={opacity}/>
                 </mesh>
     )
 }
