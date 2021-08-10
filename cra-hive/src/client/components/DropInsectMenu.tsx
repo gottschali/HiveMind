@@ -1,4 +1,3 @@
-import { Vector3 } from 'three'
 import { useRef, Suspense, useState } from 'react'
 import Team from '../../shared/model/teams'
 import Insect from '../../shared/model/insects'
@@ -7,7 +6,7 @@ import { GLTFModel } from '../canvas/GLTFModel'
 
 import { useSpring, animated } from '@react-spring/three'
 
-export function DropInsect( {insect, handleClick} ) {
+export function DropInsect( {insect, handleClick, active, team} ) {
     const [hovered, setHover] = useState(false);
     const mesh = useRef<THREE.Mesh>(null!)
     const { rotation, scale } = useSpring({
@@ -15,7 +14,8 @@ export function DropInsect( {insect, handleClick} ) {
         scale: hovered ? 4 : 2
     });
     return (
-        <div style={{ position: "relative", width: "50px", height: "50px" }}
+        <button style={{ position: "relative", width: "50px", height: "50px", borderColor: team === Team.WHITE ? 'red' : 'blue', borderStyle: active ? 'double': 'dashed'}}
+            disabled={! active}
             onPointerEnter={() => setHover(true)}
             onPointerOut={() => setHover(false)}
             onClick={() => handleClick(insect)}
@@ -38,14 +38,16 @@ export function DropInsect( {insect, handleClick} ) {
                    </group>
                </Canvas>
            </Suspense>
-    </div>
+    </button>
    )
 }
 
-export function DropInsectMenuTeam( {stones, active, handleClick} ) {
+export function DropInsectMenuTeam( { stones, active, handleClick, allowedToDrop=(i)=>true} ) {
     // Get the numbers out
     const counts = {};
-    for (const {insect} of stones) {
+    let teamThis;
+    for (const {insect, team} of stones) {
+        teamThis = team;
         if (counts.hasOwnProperty(insect)) counts[insect]++;
         else counts[insect] = 1;
     }
@@ -53,7 +55,11 @@ export function DropInsectMenuTeam( {stones, active, handleClick} ) {
         <div>
             <ul style={{display: "flex", flexDirection: "row"}}>
                 {Array.from(Object.values(Insect)).map( (insect, i) => {
-                    return <li> {counts[insect] | 0} <DropInsect insect={insect} handleClick={handleClick} /> </li>
+                    const count = counts[insect];
+                    return <li key={insect}> {count || 0} <DropInsect insect={insect}
+                    handleClick={handleClick} 
+                    active={active && allowedToDrop(insect)}
+                    team={teamThis}/> </li>
                 })
             }
             </ul>
@@ -61,18 +67,20 @@ export function DropInsectMenuTeam( {stones, active, handleClick} ) {
     )
 }
 
-export function DropInsectMenu( {stones, team, handleClick} ) {
+export function DropInsectMenu( {stones, team, handleClick, allowedToDrop} ) {
     return (
         <div>
-            <DropInsectMenuTeam
-                active={team === Team.WHITE}
-                stones={stones.get(Team.WHITE)}
-                handleClick={team === Team.WHITE ? handleClick : () => {}}
-                />
             <DropInsectMenuTeam
                 active={team === Team.BLACK}
                 stones={stones.get(Team.BLACK)}
                 handleClick={team === Team.BLACK ? handleClick : () => {}}
+                allowedToDrop={allowedToDrop}
+                />
+            <DropInsectMenuTeam
+                active={team === Team.WHITE}
+                stones={stones.get(Team.WHITE)}
+                handleClick={team === Team.WHITE ? handleClick : () => {}}
+                allowedToDrop={allowedToDrop}
                 />
         </div>
     )

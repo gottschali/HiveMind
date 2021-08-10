@@ -9,7 +9,7 @@ export default function InterActiveGameFrame({ state, handleBoardClick, handleDr
                     handleClick={handleBoardClick}
                     highlighted={highlighted}
                     team={state.team} />
-                <DropInsectMenu stones={state._stones} team={state.team} handleClick={handleDropClick} />
+                <DropInsectMenu stones={state._stones} team={state.team} handleClick={handleDropClick} allowedToDrop={state.allowedToDrop.bind(state)}/>
             </div>
     )
 }
