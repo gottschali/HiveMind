@@ -15,15 +15,16 @@ export function DropInsect( {insect} ) {
         scale: hovered ? 4 : 2
     });
     return (
-       <div style={{ position: "relative", width: "10", height: "10" }} >
+        <div>
+        <div style={{ position: "relative", width: "50px", height: "50px" }}
+            onPointerEnter={() => setHover(true)}
+            onPointerOut={() => setHover(false)}>
            <Suspense fallback={<p> {insect} </p>}>
                <Canvas>
                    <ambientLight />
                    <pointLight position={[10, 10, 10]} />
 
-                   <group
-                        onPointerOver={(event) => setHover(true)}
-                        onPointerOut={(event) => setHover(false)}>
+                   <group>
     <mesh ref={mesh} >
         <boxGeometry args={[4, 4, 1]} />
       <meshStandardMaterial transparent opacity={0} />
@@ -31,13 +32,13 @@ export function DropInsect( {insect} ) {
                        <GLTFModel
                            scale={scale}
                            insect={insect}
-                        onClick={(event) => console.log("Clicked model")}
                             rotation={rotation}
                        />
                    </group>
                </Canvas>
            </Suspense>
-       </div>
+    </div>
+    </div>
    )
 }
 
@@ -50,10 +51,10 @@ export function DropInsectMenuTeam( {stones, active} ) {
     }
     return (
         <div>
-            <ul style={{float: "left", display: "block"}}>
+            <ul style={{display: "flex", flexDirection: "row"}}>
                 {Array.from(Object.values(Insect)).map( (insect, i) => {
                     console.log(insect)
-                    return <li> <h3>{counts[insect] || 0}</h3> : <DropInsect insect={insect} /> </li>
+                    return <li> {counts[insect] | 0} <DropInsect insect={insect} /> </li>
                 })
             }
             </ul>
