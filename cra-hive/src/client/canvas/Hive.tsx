@@ -11,7 +11,7 @@ const layoutFlat = HEX.Layout(HEX.layout_flat, HEX.Point(1, 1), HEX.Point(0, 0))
 const layoutPointy = HEX.Layout(HEX.layout_pointy, HEX.Point(1, 1), HEX.Point(0, 0))
 
 
-export default ({ hive, handleClick=()=>{console.log("No click handler defined")}, highlighted=[], team }) => {
+export default ({ hive, handleClick, highlighted=[], team }) => {
     const [layout, setLayout] = useState(layoutFlat)
     let stones = [];
     for (const hex of hive.map.keys()) {
