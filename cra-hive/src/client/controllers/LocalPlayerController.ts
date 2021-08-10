@@ -16,6 +16,7 @@ export function usePlayerController(submitAction, state, apply): any {
                 setActionType(null);
                 apply(newAction);
             } else {
+                setSelected(null);
                 console.log("submitAction failed")
             }
         } else {
@@ -33,6 +34,7 @@ export function usePlayerController(submitAction, state, apply): any {
             setActionType(new Drop());
             setSelected(new Stone(insect, state.team));
         } else {
+            setSelected(null);
             console.log("Insect may not drop")
         }
     }
