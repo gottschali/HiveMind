@@ -1,19 +1,11 @@
 import { useState } from 'react'
-import InterActiveGameFrame from "./InteractiveGameFrame";
+import InteractiveGame from "../game/InteractiveGame";
 import { State } from '../../shared/model/state'
 
-import { usePlayerController } from '../controllers/LocalPlayerController';
 import { Action } from '../../shared/model/action';
+import { useInteractiveController } from '../controllers/useInteractiveController';
 
 
-class DummPlayerController {
-    handleBoardClick(...args) {
-        console.log("Clicked on the board", ...args)
-    }
-    handleDropClick(insect) {
-        console.log("Clicked on a drop insec", insect)
-    }
-}
 
 function useHiveState(): [State, (a: Action) => void] {
     const [state, setState] = useState(new State());
@@ -33,16 +25,53 @@ function useHiveState(): [State, (a: Action) => void] {
     return [state, apply];
 }
 
-export default function Game() {
-    const [state, apply] = useHiveState();
-    const player1 = usePlayerController(state.isLegal.bind(state), state, apply);
-    const player2 = usePlayerController(state.isLegal.bind(state), state, apply);
-    return <GameFrame state={state} player1={player1} player2={player2} />
+
+function useRandomController(submitAction, state) {
+    const action = state.actions[Math.floor(Math.random() * state.actions.length)];
+    submitAction(action);
 }
 
-function GameFrame({state, player1, player2}) {
-    const player = (state.turnNumber % 2 == 0) ? player1 : player2
-    return (
-        <InterActiveGameFrame state={state} {...player} />
-    )
+function InteractiveRandom() {
+    const p1 = useInteractiveController;
+    const p2 = useInteractiveController;
+    return <LocalGame p1={p1} p2={p2} />
 }
+
+function RemoteGame({ p1, p2 }) {
+    const [state, apply] = useHiveState();
+
+    const submitAction = (action) => {
+            console.log(`Remote Submitting ${action}`)
+            if (state.isLegal(action)) {
+                apply(action);
+                return true;
+            }
+            return false;
+    };
+
+    const player = ((state.turnNumber % 2 == 0) ? p1 : p2)(submitAction, state)
+    return <InteractiveGame 
+        state={state}
+        controller={player} />
+}
+
+function LocalGame({ p1, p2 }) {
+    const [state, apply] = useHiveState();
+
+    const submitAction = (action) => {
+            console.log(`Submitting ${action}`)
+            if (state.isLegal(action)) {
+                apply(action);
+                return true;
+            }
+            return false;
+    };
+
+    const player = ((state.turnNumber % 2 == 0) ? p1 : p2)(submitAction, state)
+    return <InteractiveGame 
+        state={state}
+        controller={player} />
+}
+
+
+export default InteractiveRandom;

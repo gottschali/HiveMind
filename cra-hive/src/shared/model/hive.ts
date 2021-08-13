@@ -168,14 +168,19 @@ export class Hive {
     generateMovesFrom(hex: HEX.Hex): Array<HEX.Hex> {
         // insects.BEE ... instead of 0 ... causes error. Why?
         //
-        const moveMap = new Map([
-            [Insect.BEE, this.generateSingleWalks],
-            [Insect.SPIDER, this.generateSpiderWalks],
-            [Insect.ANT, this.generateWalks],
-            [Insect.GRASSHOPPER, this.generateJumps],
-            [Insect.BEETLE, this.generateClimbs]
-        ]);
-        return moveMap.get(this.at(hex).insect).call(this, hex)
+        if (this.map.has(hex)) {
+            const moveMap = new Map([
+                [Insect.BEE, this.generateSingleWalks],
+                [Insect.SPIDER, this.generateSpiderWalks],
+                [Insect.ANT, this.generateWalks],
+                [Insect.GRASSHOPPER, this.generateJumps],
+                [Insect.BEETLE, this.generateClimbs]
+            ]);
+            return moveMap.get(this.at(hex).insect).call(this, hex)
+        } else {
+            console.log(`Cannot generate moves: no stones at ${hex}`)
+            return [];
+        }
     }
 
     generateMoves(team: Team): Array<Array<HEX.Hex>> {

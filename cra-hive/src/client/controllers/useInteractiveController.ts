@@ -3,7 +3,7 @@ import { Move, Drop } from '../../shared/model/action';
 import Stone from '../../shared/model/stone';
 
 
-export function usePlayerController(submitAction, state, apply): any {
+export function useInteractiveController(submitAction, state): any {
     const [actionType, setActionType] = useState(null);
     const [selected, setSelected] = useState(null);
 
@@ -14,7 +14,6 @@ export function usePlayerController(submitAction, state, apply): any {
             if (submitAction(newAction)) {
                 setSelected(null);
                 setActionType(null);
-                apply(newAction);
             } else {
                 setSelected(null);
                 console.log("submitAction failed")

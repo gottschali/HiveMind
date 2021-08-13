@@ -67,7 +67,7 @@ export function DropInsectMenuTeam( { stones, active, handleClick, allowedToDrop
     )
 }
 
-export function DropInsectMenu( {stones, team, handleClick, allowedToDrop} ) {
+export function DropInsectMenu( {stones, team, handleClick=()=>console.log("No click handler given"), allowedToDrop} ) {
     return (
         <div>
             <DropInsectMenuTeam
