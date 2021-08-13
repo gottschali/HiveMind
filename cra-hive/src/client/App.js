@@ -1,12 +1,26 @@
 import TestHive from './components/TestHive';
 import TestGame from './components/TestGame';
+import OnlineGame from './components/OnlineGame';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 
 export default function App() {
   return (
-    <div>
+    <Router>
       <h1>Welcome to HiveMind</h1>
-      <TestGame />
-      <TestHive />
-    </div>
+      <Switch>
+        <Route exact path="/play/:gid">
+          <OnlineGame />          
+        </Route>
+        <Route path="/">
+          <TestGame />
+          <TestHive />
+        </Route>
+    </Switch>
+    </Router>
   )
 }
