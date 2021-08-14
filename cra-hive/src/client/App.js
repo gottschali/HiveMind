@@ -13,10 +13,10 @@ export default function App() {
     <Router>
       <h1>Welcome to HiveMind</h1>
       <Switch>
-        <Route exact path="/play/:gid">
+        <Route path="/play/:gid">
           <OnlineGame />          
         </Route>
-        <Route path="/">
+        <Route exact path="/">
           <TestGame />
           <TestHive />
         </Route>

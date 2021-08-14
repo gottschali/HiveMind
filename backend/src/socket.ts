@@ -12,21 +12,22 @@ export default function init(server) {
         socket.on("joinGame", (gid) => {
             socket.join(gid);
             io.to(gid).emit('startGame');
+
+            const game = manager.get(gid)
+
+            socket.on("intendAction", ({ action }) => {
+                if (game.validateAction(action)) {
+                    // Send to the room
+                    game.apply(action);
+                    io.to(gid).emit("updateAction", action);
+                } else {
+                    // Respond only to sender
+                    return false;
+                }
+            })
         });
         socket.on("createGame", (gid) => {
             socket.join(gid);
-        });
-        socket.on("intendAction", (args) => {
-            console.log(args)
-            const game = manager.get(args.gid)
-            if (game.validateAction(args.action)) {
-                // Send to the room
-                game.apply(args.action);
-                io.to(args.gid).emit("updateAction", args.action);
-            } else {
-                // Respond only to sender
-                return false;
-            }
         });
     });
     return io;

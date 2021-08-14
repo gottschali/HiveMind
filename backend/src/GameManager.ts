@@ -3,7 +3,7 @@ import Game from './game'
 class GameManager {
     games = new Map();
     constructor() {
-        this.games.set(0, new Game());
+        this.games.set("test", new Game());
     }
     get(gid) {
         return this.games.get(gid);

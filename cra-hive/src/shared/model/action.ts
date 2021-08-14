@@ -22,9 +22,9 @@ export class Drop {
 }
 
 export function compareAction(a: Action, b: Action): boolean {
-    if (a instanceof Move && b instanceof Move) {
+    if ('origin' in a && 'origin' in b) {
         return hex_compare(a.origin, b.origin) && hex_compare(a.destination, b.destination)
-    } else if (a instanceof Drop && b instanceof Drop) {
+    } else if ('stone' in a && 'stone' in b) {
         return a.stone.team === b.stone.team && a.stone.insect === b.stone.insect && hex_compare(a.destination, b.destination)
     } else if (b === Pass) return true;
     else return false;
