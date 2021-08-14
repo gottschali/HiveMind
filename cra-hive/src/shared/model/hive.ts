@@ -134,7 +134,8 @@ export class Hive {
               .filter(e => !this.map.has(e))
               .forEach(e => candidates.add(e))
         }
-        return Array.from(candidates.values()).filter(e => this._checkNeighborTeam(e, team))
+        const dropos: HEX.Hex[] = candidates.values()
+        return dropos.filter(e => this._checkNeighborTeam(e, team))
     }
 
     _oneHive(): HashSet {

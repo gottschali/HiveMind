@@ -36,9 +36,6 @@ const Wrapped = () => {
         <div>
           Stones: {JSON.stringify(state.stones)}
         </div>
-        <div>
-          Hive: {JSON.stringify(Array.from(state.hive.map.entries()))}
-        </div>
       </div>
       <Hive hive={state.hive} highlighted={[]}/>
     </div>
