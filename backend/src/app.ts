@@ -6,12 +6,13 @@ import * as expressWinston from 'express-winston';
 import cors from 'cors';
 import debug from 'debug';
 
+import gameRouter from './routes/routes.game';
+import initSocketIO from './socket'
+
 const app: express.Application = express();
 const server: http.Server = http.createServer(app);
 const port = process.env.PORT || 4000;
 const debugLog: debug.IDebugger = debug('app');
-
-const gameRouter = require('./routes/routes.game');
 
 app.use('/game', gameRouter);
 
@@ -20,6 +21,8 @@ app.use(express.json());
 
 // here we are adding middleware to allow cross-origin requests
 app.use(cors());
+
+const io = initSocketIO(server);
 
 // here we are preparing the expressWinston logging middleware configuration,
 // which will automatically log all HTTP requests handled by Express.js
