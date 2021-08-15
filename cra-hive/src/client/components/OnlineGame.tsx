@@ -12,7 +12,7 @@ import useForceUpdate from '../utils/useForceUpdate';
 import useQuery from '../utils/useQuery';
 
 
-export function OnlineGameManager() {
+export default function OnlineGameManager() {
     const socket = socketIOClient();
     const { gid } = useParams();
     const query = useQuery();
