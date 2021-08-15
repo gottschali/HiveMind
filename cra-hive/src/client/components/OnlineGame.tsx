@@ -1,33 +1,19 @@
 import { useParams, useLocation } from 'react-router-dom'
 import { useInteractiveController } from '../controllers/useInteractiveController';
 import RemoteGame from '../game/RemoteGame';
+import remoteDummy from '../controllers/remotDummy';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import socketIOClient from "socket.io-client";
 
 import useHiveGame from '../game/useHiveGame';
+import useForceUpdate from '../utils/useForceUpdate';
+import useQuery from '../utils/useQuery';
 
-function useForceUpdate(){
-    const [value, setValue] = useState(0); // integer state
-    return () => setValue(value => value + 1); // update the state to force render
-}
 
-const remoteDummy = (submitAction, state) => {
-        return ({
-            highlighted: [],
-            handleBoardClick: () => console.log("Remote player's turn"),
-            handleDropClick: () => console.log("Remote player's turn")
-        });
-}
-
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
-}
-
-export default function OnlineGameManager() {
+export function OnlineGameManager() {
     const socket = socketIOClient();
     const { gid } = useParams();
-
     const query = useQuery();
 
     if (query.get("create")) {
@@ -65,7 +51,6 @@ function OnlineGame( {socket, gid, p1, p2} ) {
     }, [])
     return (
         <div>
-            <h1> Game ID: {gid} </h1>
             {socket ? <RemoteGame p1={p1} p2={p2} state={state} apply={apply} socket={socket} /> : 'Connecting...'}
         </div>
     )}

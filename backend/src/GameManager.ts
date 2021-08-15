@@ -1,7 +1,7 @@
 import Game from './game'
 
 class GameManager {
-    games = new Map();
+    games: Map<string, Game> = new Map();
     constructor() {
         this.games.set("test", new Game("test"));
     }
