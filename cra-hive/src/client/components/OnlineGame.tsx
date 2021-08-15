@@ -1,7 +1,8 @@
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useInteractiveController } from '../controllers/useInteractiveController';
 import RemoteGame from '../game/RemoteGame';
 import remoteDummy from '../controllers/remotDummy';
+import GameChat from './GameChat'
 
 import { useEffect } from 'react';
 import socketIOClient from "socket.io-client";
@@ -30,7 +31,12 @@ export function OnlineGameManager() {
     const p1 = controllerMap[p1code];
     const p2 = controllerMap[p2code];
 
-    return <OnlineGame socket={socket} gid={gid} p1={p1} p2={p2} />
+    return (
+        <div>
+            <OnlineGame socket={socket} gid={gid} p1={p1} p2={p2} />
+            <GameChat socket={socket} />
+        </div>
+    )
 }
 
 function OnlineGame( {socket, gid, p1, p2} ) {

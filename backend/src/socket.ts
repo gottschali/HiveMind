@@ -32,6 +32,10 @@ export default function init(server) {
                     return false;
                 }
             })
+
+            socket.on("chatMessage", (message) => {
+                io.to(gid).emit("chatMessage", message);
+            })
         });
         socket.on("createGame", (gid) => {
             manager.create(gid);
