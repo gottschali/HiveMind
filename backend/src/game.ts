@@ -4,11 +4,13 @@ import { State } from '../../cra-hive/src/shared/model/state'
 class Game {
     id;
     state;
+    history = [];
     constructor() {
         this.id = uuidv4();
         this.state = new State();
     }
     apply(action) {
+        this.history.push(action);
         return this.state.apply(action)
     }
 

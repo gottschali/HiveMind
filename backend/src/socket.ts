@@ -9,17 +9,20 @@ export default function init(server) {
         socket.onAny((event, ...args) => {
             console.log("DEBUG", event, args);
         });
+
         socket.on("joinGame", (gid) => {
             socket.join(gid);
             io.to(gid).emit('startGame');
-
             const game = manager.get(gid)
-
+            for (let action of game.history) {
+                socket.emit("updateAction", action);
+            }
             socket.on("intendAction", ({ action }) => {
                 if (game.validateAction(action)) {
                     // Send to the room
                     game.apply(action);
                     io.to(gid).emit("updateAction", action);
+                    // io.to(gid).emit("updateState", game.state);
                 } else {
                     // Respond only to sender
                     return false;

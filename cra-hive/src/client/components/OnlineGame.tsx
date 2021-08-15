@@ -5,7 +5,7 @@ import RemoteGame from '../game/RemoteGame';
 import { useEffect, useState } from 'react';
 import socketIOClient from "socket.io-client";
 
-import useHiveState from "../game/useHiveState";
+import useHiveGame from '../game/useHiveGame';
 
 function useForceUpdate(){
     const [value, setValue] = useState(0); // integer state
@@ -25,8 +25,7 @@ export default function OnlineGame() {
         // });
     // };
     const forceUpdate = useForceUpdate();
-
-    const [state, apply] = useHiveState();
+    const {apply, state} = useHiveGame();
 
     useEffect( () => {
         const socket = socketIOClient();
@@ -45,6 +44,6 @@ export default function OnlineGame() {
     return (
         <div>
             <h1> Game ID: {gid} </h1>
-            {socket ? <RemoteGame p1={p1} p2={p2} state={state} apply={apply} socket={socket} /> : 'Connectin...'}
+            {socket ? <RemoteGame p1={p1} p2={p2} state={state} apply={apply} socket={socket} /> : 'Connecting...'}
         </div>
     )}
