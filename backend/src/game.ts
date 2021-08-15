@@ -1,12 +1,12 @@
-import {v4 as uuidv4} from 'uuid';
 import { State } from '../../cra-hive/src/shared/model/state'
 
 class Game {
     id;
     state;
     history = [];
-    constructor() {
-        this.id = uuidv4();
+    constructor(gid) {
+        this.id = gid;
+        this.history = [];
         this.state = new State();
     }
     apply(action) {

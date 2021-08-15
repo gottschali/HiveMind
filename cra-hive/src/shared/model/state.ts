@@ -131,6 +131,27 @@ export class State {
         return this;
     }
 
+    undo(action: Action): State {
+        console.log(`Undoing ${JSON.stringify(action)}`)
+        let stone
+        if ('origin' in action) {
+            // Remove the stone from the new position and add it at the old one
+            stone = this.hive.at(action.destination)
+            this.hive.removeStone(action.destination)
+            this.hive.addStone(action.origin, stone)
+        } else if ('stone' in action) {
+            stone = action.stone
+            if (stone.insect === Insect.BEE) {
+                this._beeMove.set(this.team, false)
+            }
+            this.stones.push(stone);
+            this.hive.removeStone(action.destination);
+        }
+        delete this._actions
+        this.turnNumber--
+        return this;
+    }
+
     step(policy=randomPolicy): State {
         return this.apply(policy(this.actions))
     }

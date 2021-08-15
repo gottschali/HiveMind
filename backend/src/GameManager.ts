@@ -3,20 +3,14 @@ import Game from './game'
 class GameManager {
     games = new Map();
     constructor() {
-        this.games.set("test", new Game());
+        this.games.set("test", new Game("test"));
     }
     get(gid) {
         return this.games.get(gid);
     }
-    create() {
-        const game = new Game();
-        const gid = game.id;
+    create(gid) {
+        const game = new Game(gid);
         this.games.set(gid, game);
-        return gid;
-    }
-    join(gid) {
-        const game = this.get(gid);
-        // io.to(gid).emit('startGame');
     }
 }
 const manager = new GameManager();

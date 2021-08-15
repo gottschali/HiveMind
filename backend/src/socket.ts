@@ -12,9 +12,13 @@ export default function init(server) {
 
         socket.on("joinGame", (gid) => {
             socket.join(gid);
-            io.to(gid).emit('startGame');
+            // TODO Logic for when game start
+            // io.to(gid).emit('startGame');
+            // TODO check that game exists
             const game = manager.get(gid)
+            if (!game) return false;
             for (let action of game.history) {
+                // TODO transfer entire state instead of entire history
                 socket.emit("updateAction", action);
             }
             socket.on("intendAction", ({ action }) => {
@@ -30,7 +34,7 @@ export default function init(server) {
             })
         });
         socket.on("createGame", (gid) => {
-            socket.join(gid);
+            manager.create(gid);
         });
     });
     return io;
