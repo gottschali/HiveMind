@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
-import TestHive from './components/TestHive';
-import TestGame from './components/TestGame';
+import TestHive from './lab/TestHive';
+import TestGame from './lab/TestGame';
 import {
   BrowserRouter as Router,
   Switch,
