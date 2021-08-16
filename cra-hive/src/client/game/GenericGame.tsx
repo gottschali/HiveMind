@@ -1,10 +1,12 @@
 import Hive from '../canvas/Hive'
 import { DropInsectMenu } from '../components/DropInsectMenu'
+import GameOverModal from '../components/GameOverModal';
 
 export default function GenericGame({ state, controller }) {
     const {highlighted, handleBoardClick, handleDropClick} = controller;
     return (
             <div>
+                <GameOverModal open={state.gameOver} result={state.result} />
                 <DropInsectMenu
                     stones={state._stones}
                     team={state.team}
