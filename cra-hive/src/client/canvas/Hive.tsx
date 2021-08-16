@@ -7,6 +7,8 @@ import * as HEX from '../../shared/hexlib'
 import Stone from './Stone'
 import HighlightStone from './HighlightStone'
 
+import { Button } from 'semantic-ui-react'
+
 const layoutFlat = HEX.Layout(HEX.layout_flat, HEX.Point(1, 1), HEX.Point(0, 0))
 const layoutPointy = HEX.Layout(HEX.layout_pointy, HEX.Point(1, 1), HEX.Point(0, 0))
 
@@ -38,7 +40,6 @@ export default ({ hive, handleClick=()=>console.log("No click handler given"), h
 
     return (
         <div style={{ position: "relative", height: '50vw' }}>
-            <button onClick={() => setLayout(layout === layoutFlat ? layoutPointy : layoutFlat)}> Toggle Layout </button>
             <Canvas camera={{ near: 0.1, far: 100 }} >
                 <TrackballControls />
                 <ambientLight />
@@ -46,6 +47,7 @@ export default ({ hive, handleClick=()=>console.log("No click handler given"), h
                 {stones}
                 {highlights}
             </Canvas>
+            <Button onClick={() => setLayout(layout === layoutFlat ? layoutPointy : layoutFlat)}> Toggle Layout </Button>
         </div>
     )
 }
