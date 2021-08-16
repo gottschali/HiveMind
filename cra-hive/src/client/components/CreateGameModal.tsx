@@ -14,6 +14,9 @@ export default function CreateGameModal({ open, setOpen }) {
             path = '/play/ai'
         } else {
             const gid = uuid();
+            fetch(`/game/${gid}`, {
+                method: 'POST'
+            }).catch( err => console.log("Failed to create game", err))
             path = `/play/${gid}`
         }
         return {
