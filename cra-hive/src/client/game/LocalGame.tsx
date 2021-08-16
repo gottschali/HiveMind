@@ -1,8 +1,8 @@
 import InteractiveGame from "../game/InteractiveGame";
-import useHiveState from "./useHiveState";
+import useHiveGame from "./useHiveGame";
 
 export default function LocalGame({ p1, p2 }) {
-    const [state, apply] = useHiveState();
+    const {state, apply} = useHiveGame();
 
     const submitAction = (action) => {
             console.log(`Submitting ${action}`)
