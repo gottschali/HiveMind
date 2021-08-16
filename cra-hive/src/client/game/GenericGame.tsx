@@ -1,7 +1,7 @@
 import Hive from '../canvas/Hive'
 import { DropInsectMenu } from '../components/DropInsectMenu'
 
-export default function InterActiveGame({ state, controller }) {
+export default function GenericGame({ state, controller }) {
     const {highlighted, handleBoardClick, handleDropClick} = controller;
     return (
             <div>

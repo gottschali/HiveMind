@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 import useQuery from '../utils/useQuery';
-import OnlineGameManager from './OnlineGame';
+import OnlineGame from './OnlineGame';
 import LocalSelfGame from './LocalSelfGame'
 import LocalRandomGame from './LocalRandomGame'
 
@@ -12,7 +12,7 @@ export default function GameManager() {
     const mode = query.get('mode') || 'local';
 
     if (mode === 'online') {
-        return <OnlineGameManager gid={gid} team={team} />
+        return <OnlineGame gid={gid} team={team} />
     } else if (mode === 'local') {
         return  <LocalSelfGame />
     } else if (mode === 'ai' ) {

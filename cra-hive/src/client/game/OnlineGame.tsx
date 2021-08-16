@@ -1,18 +1,15 @@
 import { useInteractiveController } from '../controllers/interactiveController';
-import RemoteGame from '../game/RemoteGame';
 import remoteDummy from '../controllers/remoteDummyController';
-import GameChat from './GameChat'
+import GameChat from '../components/GameChat'
 
 import { useState, useEffect } from 'react';
 import socketIOClient from "socket.io-client";
 
-import useHiveGame from '../game/useHiveGame';
-import useForceUpdate from '../utils/useForceUpdate';
-
-import { Grid, Segment } from 'semantic-ui-react'
+import { Grid } from 'semantic-ui-react'
+import SocketGame from './SocketGame';
 
 
-export default function OnlineGameManager({ gid, team }) {
+export default function OnlineGame({ gid, team }) {
     const [socket, setSocket] = useState(null);
     useEffect( () => {
         const newSocket = socketIOClient()
@@ -40,7 +37,7 @@ export default function OnlineGameManager({ gid, team }) {
             <Grid columns={2} divided>
                 <Grid.Row stretched>
                     <Grid.Column>
-                        <OnlineGame socket={socket} gid={gid} p1={p1} p2={p2} />
+                        <SocketGame socket={socket} gid={gid} p1={p1} p2={p2} />
                     </Grid.Column>
                     <Grid.Column>
                         <GameChat socket={socket} />
@@ -51,23 +48,3 @@ export default function OnlineGameManager({ gid, team }) {
         </div>
     )
 }
-
-function OnlineGame( {socket, gid, p1, p2} ) {
-    const forceUpdate = useForceUpdate();
-    const {apply, state} = useHiveGame();
-
-    useEffect( () => {
-        socket.emit('joinGame', gid)
-        const actionListener = (action) => {
-            apply(action);
-            forceUpdate();
-            console.log("updating ", action)
-        }
-        socket.on('updateAction', actionListener)
-        return () => {
-            socket.off('updateAction', actionListener)
-        }
-    }, [socket])
-    return (
-        <RemoteGame p1={p1} p2={p2} state={state} apply={apply} socket={socket} />
-    )}

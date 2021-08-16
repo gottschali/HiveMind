@@ -1,4 +1,4 @@
-import InteractiveGame from "../game/InteractiveGame";
+import GenericGame from "./GenericGame";
 import useHiveGame from "./useHiveGame";
 
 export default function LocalGame({ p1, p2 }) {
@@ -14,7 +14,7 @@ export default function LocalGame({ p1, p2 }) {
     };
 
     const player = ((state.turnNumber % 2 == 0) ? p1 : p2)(submitAction, state)
-    return <InteractiveGame 
+    return <GenericGame 
         state={state}
         controller={player} />
 }

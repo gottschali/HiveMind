@@ -1,5 +1,5 @@
 import { useInteractiveController } from '../controllers/interactiveController';
-import LocalGame from '../game/LocalGame';
+import LocalGame from './LocalGame';
 
 export default function InteractiveRandom() {
     const p1 = useInteractiveController;

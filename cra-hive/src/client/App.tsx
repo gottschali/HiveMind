@@ -11,7 +11,7 @@ import 'semantic-ui-css/semantic.min.css'
 
 import Layout from './pages/Layout'
 
-const GameManager = lazy(() => import('./components/GameManager'))
+const GameManager = lazy(() => import('./game/GameManager'))
 
 export default function App() {
   return (

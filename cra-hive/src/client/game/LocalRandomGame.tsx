@@ -1,6 +1,6 @@
 import { useInteractiveController } from '../controllers/interactiveController';
 import randomController from '../controllers/randomController';
-import LocalGame from '../game/LocalGame';
+import LocalGame from './LocalGame';
 
 export default function LocalRandomGame({ team }) {
     let p1, p2;
