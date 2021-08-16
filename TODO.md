@@ -1,3 +1,7 @@
+- React
+  Create small components, move up
+  In the end all the logic there
+  
 - Model
     - Game Over!
     - Pass when no options
@@ -26,7 +30,10 @@
     - JSON.stringify ...
     - Typescript ?
     - How to check for instances (at the moment "stones" in action )
-- Chat room with messages(informational and social)
+    - Tests 
+        mocha?
+        Move from hexlib
+- chat room with messages(informational and social)
 - Lobby
     - option private/public game
 - Deploy
