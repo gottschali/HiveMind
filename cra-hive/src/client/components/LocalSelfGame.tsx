@@ -1,4 +1,4 @@
-import { useInteractiveController } from '../controllers/useInteractiveController';
+import { useInteractiveController } from '../controllers/interactiveController';
 import LocalGame from '../game/LocalGame';
 
 export default function InteractiveRandom() {

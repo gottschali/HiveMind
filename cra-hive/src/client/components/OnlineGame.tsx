@@ -1,6 +1,6 @@
-import { useInteractiveController } from '../controllers/useInteractiveController';
+import { useInteractiveController } from '../controllers/interactiveController';
 import RemoteGame from '../game/RemoteGame';
-import remoteDummy from '../controllers/remotDummy';
+import remoteDummy from '../controllers/remoteDummyController';
 import GameChat from './GameChat'
 
 import { useState, useEffect } from 'react';

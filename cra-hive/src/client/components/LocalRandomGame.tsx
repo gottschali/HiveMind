@@ -1,4 +1,4 @@
-import { useInteractiveController } from '../controllers/useInteractiveController';
+import { useInteractiveController } from '../controllers/interactiveController';
 import randomController from '../controllers/randomController';
 import LocalGame from '../game/LocalGame';
 
