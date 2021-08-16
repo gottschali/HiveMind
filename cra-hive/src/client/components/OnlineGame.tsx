@@ -1,4 +1,3 @@
-import { useParams } from 'react-router-dom'
 import { useInteractiveController } from '../controllers/useInteractiveController';
 import RemoteGame from '../game/RemoteGame';
 import remoteDummy from '../controllers/remotDummy';
@@ -9,27 +8,19 @@ import socketIOClient from "socket.io-client";
 
 import useHiveGame from '../game/useHiveGame';
 import useForceUpdate from '../utils/useForceUpdate';
-import useQuery from '../utils/useQuery';
 
 
-export default function OnlineGameManager() {
+export default function OnlineGameManager({ gid, team }) {
     const socket = socketIOClient();
-    const { gid } = useParams();
-    const query = useQuery();
 
-    if (query.get("create")) {
-        console.log("Creating game")
-        socket.emit('createGame', gid)
+    let p1, p2;
+    if (team === 'white') {
+        p1 = useInteractiveController;
+        p2 = remoteDummy;
+    } else {
+        p1 = remoteDummy;
+        p2 = useInteractiveController;
     }
-    const p1code = query.get("p1") || 'local';
-    const p2code = query.get("p2") || 'remote';
-
-    const controllerMap = {
-        'local': useInteractiveController,
-        'remote': remoteDummy,
-    }
-    const p1 = controllerMap[p1code];
-    const p2 = controllerMap[p2code];
 
     return (
         <div>

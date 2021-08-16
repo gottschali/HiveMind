@@ -11,7 +11,7 @@ import 'semantic-ui-css/semantic.min.css'
 
 import Layout from './pages/Layout'
 
-const OnlineGameManager = lazy(() => import('./components/OnlineGame'))
+const GameManager = lazy(() => import('./components/GameManager'))
 
 export default function App() {
   return (
@@ -19,7 +19,7 @@ export default function App() {
         <Layout>
           <Suspense fallback={<div>Loading...</div>} >
             <Switch>
-              <Route path="/play/:gid" component={OnlineGameManager} />
+              <Route path="/play/:gid" component={GameManager} />
               <Route exact path="/debug">
                 <TestGame />
                 <TestHive />

@@ -7,21 +7,18 @@ export default function CreateGameModal({ open, setOpen }) {
     const [gameMode, setGameMode] = useState('local');
     const [team, setTeam] = useState('red');
     const createGame = (location) => {
-        let path;
-        if (gameMode === 'local') {
-            path = '/play/local'
-        } else if (gameMode === 'ai') {
-            path = '/play/ai'
-        } else {
-            const gid = uuid();
+        const gid = uuid();
+        if (team === 'random') {
+            setTeam(Math.random() > 0.5 ? 'white' : 'black');
+        }
+        if (gameMode === 'online') {
             fetch(`/game/${gid}`, {
                 method: 'POST'
             }).catch( err => console.log("Failed to create game", err))
-            path = `/play/${gid}`
         }
         return {
-            pathname: path,
-            search: `?team=${team}`
+            pathname: `/play/${gid}`,
+            search: `?team=${team}&mode=${gameMode}`
         }
     }
     return (
