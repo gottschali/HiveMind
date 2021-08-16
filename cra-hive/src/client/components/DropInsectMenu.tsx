@@ -48,7 +48,7 @@ export function DropInsectMenuTeam({ stones, active, handleClick, allowedToDrop 
     }
     const iconMap = {
         beetle: 'bug',
-        queen: 'chess queen',
+        bee: 'chess queen',
         spider: 'chess pawn',
         grasshopper: 'chess knight',
         ant: 'chess bishop'
