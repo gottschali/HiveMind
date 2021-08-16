@@ -3,7 +3,7 @@ import RemoteGame from '../game/RemoteGame';
 import remoteDummy from '../controllers/remotDummy';
 import GameChat from './GameChat'
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import socketIOClient from "socket.io-client";
 
 import useHiveGame from '../game/useHiveGame';
@@ -11,7 +11,17 @@ import useForceUpdate from '../utils/useForceUpdate';
 
 
 export default function OnlineGameManager({ gid, team }) {
-    const socket = socketIOClient();
+    const [socket, setSocket] = useState(null);
+    useEffect( () => {
+        const newSocket = socketIOClient()
+        setSocket(newSocket);
+        newSocket.onAny((...args) => {
+            console.log(args)
+        })
+        return () => {
+            newSocket.close()
+        }
+    }, [setSocket])
 
     let p1, p2;
     if (team === 'white') {
@@ -24,8 +34,12 @@ export default function OnlineGameManager({ gid, team }) {
 
     return (
         <div>
-            <OnlineGame socket={socket} gid={gid} p1={p1} p2={p2} />
-            <GameChat socket={socket} />
+            {socket ?  
+            <>
+                <OnlineGame socket={socket} gid={gid} p1={p1} p2={p2} />
+                <GameChat socket={socket} />
+            </>
+            : 'Not Connected' }
         </div>
     )
 }
@@ -36,18 +50,16 @@ function OnlineGame( {socket, gid, p1, p2} ) {
 
     useEffect( () => {
         socket.emit('joinGame', gid)
-        socket.on('updateAction', (action) => {
+        const actionListener = (action) => {
             apply(action);
             forceUpdate();
             console.log("updating ", action)
-        })
-        socket.onAny( (...args)=> {
-            console.log(...args)
-        })
-
-    }, [])
+        }
+        socket.on('updateAction', actionListener)
+        return () => {
+            socket.off('updateAction', actionListener)
+        }
+    }, [socket])
     return (
-        <div>
-            {socket ? <RemoteGame p1={p1} p2={p2} state={state} apply={apply} socket={socket} /> : 'Connecting...'}
-        </div>
+        <RemoteGame p1={p1} p2={p2} state={state} apply={apply} socket={socket} />
     )}

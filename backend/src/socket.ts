@@ -7,10 +7,10 @@ export default function init(server) {
     io.sockets.on('connection', function (socket) {
         socket.emit('message', {message: 'Welcome to HiveMind'});
         socket.onAny((event, ...args) => {
-            console.log("DEBUG", event, args);
+            console.log('DEBUG', event, args);
         });
 
-        socket.on("joinGame", (gid) => {
+        socket.on('joinGame', (gid) => {
             socket.join(gid);
             // TODO Logic for when game start
             // io.to(gid).emit('startGame');
@@ -19,25 +19,25 @@ export default function init(server) {
             if (!game) return false;
             for (let action of game.history) {
                 // TODO transfer entire state instead of entire history
-                socket.emit("updateAction", action);
+                socket.emit('updateAction', action);
             }
-            socket.on("intendAction", ({ action }) => {
+            socket.on('intendAction', ({ action }) => {
                 if (game.validateAction(action)) {
                     // Send to the room
                     game.apply(action);
-                    io.to(gid).emit("updateAction", action);
-                    // io.to(gid).emit("updateState", game.state);
+                    io.to(gid).emit('updateAction', action);
+                    // io.to(gid).emit('updateState', game.state);
                 } else {
                     // Respond only to sender
                     return false;
                 }
             })
 
-            socket.on("chatMessage", (message) => {
-                io.to(gid).emit("chatMessage", message);
+            socket.on('chatMessage', (message) => {
+                io.to(gid).emit('chatMessage', message);
             })
         });
-        socket.on("createGame", (gid) => {
+        socket.on('createGame', (gid) => {
             manager.create(gid);
         });
     });

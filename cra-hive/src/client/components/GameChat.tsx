@@ -5,11 +5,16 @@ export default function GameChat({ socket }) {
     const [text, setText] = useState("");
 
     useEffect(() => {
-        socket.on('chatMessage', message => {
-            messages.push(message);
-            setMessages(messages);
-        })
-    }, []);
+        const messageListener = (message) => {
+            setMessages((prevMsgs) => {
+                return [...prevMsgs, message]
+            });
+        }
+        socket.on('chatMessage', messageListener)
+        return () => {
+            socket.off('chatMessage', messageListener)
+        }
+    }, [socket]);
 
     const handleSubmit = (event) => {
         const message = {text, sender: socket.ID, time: Date.now()};
