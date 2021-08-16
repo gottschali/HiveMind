@@ -17,10 +17,9 @@ export default function GameChat({ socket }) {
     }, [socket]);
 
     const handleSubmit = (event) => {
-        const message = {text, sender: socket.ID, time: Date.now()};
-        setText("");
-        socket.emit('chatMessage', message)
+        socket.emit('chatMessage', text)
         event.preventDefault();
+        setText("");
     }
     return (
         <div>

@@ -33,7 +33,8 @@ export default function init(server) {
                 }
             })
 
-            socket.on('chatMessage', (message) => {
+            socket.on('chatMessage', (text) => {
+                const message = {text, sender: socket.id, time: Date.now()};
                 io.to(gid).emit('chatMessage', message);
             })
         });
