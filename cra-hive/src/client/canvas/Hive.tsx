@@ -37,7 +37,7 @@ export default ({ hive, handleClick=()=>console.log("No click handler given"), h
     });
 
     return (
-        <div style={{ position: "relative", width: "600px", height: "600px"}}>
+        <div style={{ position: "relative", height: '50vw' }}>
             <button onClick={() => setLayout(layout === layoutFlat ? layoutPointy : layoutFlat)}> Toggle Layout </button>
             <Canvas camera={{ near: 0.1, far: 100 }} >
                 <TrackballControls />

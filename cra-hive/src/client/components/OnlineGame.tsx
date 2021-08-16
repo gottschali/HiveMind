@@ -9,6 +9,8 @@ import socketIOClient from "socket.io-client";
 import useHiveGame from '../game/useHiveGame';
 import useForceUpdate from '../utils/useForceUpdate';
 
+import { Grid, Segment } from 'semantic-ui-react'
+
 
 export default function OnlineGameManager({ gid, team }) {
     const [socket, setSocket] = useState(null);
@@ -35,10 +37,16 @@ export default function OnlineGameManager({ gid, team }) {
     return (
         <div>
             {socket ?  
-            <>
-                <OnlineGame socket={socket} gid={gid} p1={p1} p2={p2} />
-                <GameChat socket={socket} />
-            </>
+            <Grid columns={2} divided>
+                <Grid.Row stretched>
+                    <Grid.Column>
+                        <OnlineGame socket={socket} gid={gid} p1={p1} p2={p2} />
+                    </Grid.Column>
+                    <Grid.Column>
+                        <GameChat socket={socket} />
+                    </Grid.Column>
+                </Grid.Row>
+            </Grid>
             : 'Not Connected' }
         </div>
     )
