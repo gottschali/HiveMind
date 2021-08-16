@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import {  Container, Segment, Divider, Input, Button } from 'semantic-ui-react'
 
 export default function GameChat({ socket }) {
     const [messages, setMessages] = useState([]);
@@ -17,21 +18,47 @@ export default function GameChat({ socket }) {
     }, [socket]);
 
     const handleSubmit = (event) => {
-        socket.emit('chatMessage', text)
+        if (text) {
+            socket.emit('chatMessage', text)
+            setText("");
+        }
         event.preventDefault();
-        setText("");
     }
     return (
         <div>
-            <form onSubmit={handleSubmit}>
-                <input type="text" value={text} onChange={(event)=>setText(event.target.value)} />
-                <input type="submit" value="Submit" />
-            </form>
-            <ul>
+            <Container fluid>
+            <Segment.Group size='small' style={{
+                height: '500px',
+                overflow: 'auto'
+            }}>
                 { messages.map( ({text, sender, time}) => {
-                    return <li key={time}>{sender} ({time}): {text} </li>
+                    return (
+                        <>
+                        <Segment inverted key={time} 
+                            floated={sender === socket.id ? 'left' : 'right'}
+                            color={sender === socket.id ? 'yellow' : 'green'}
+                            style={{
+                                borderRadius: sender === socket.id ? '25px 25px 25px 0px' : '25px 25px 0px 25px'
+                            }}
+                            >
+                            {text}
+                        </Segment>
+                        <Divider hidden clearing/>
+                        </>
+                    )
                 })}
-            </ul>
+            </Segment.Group>
+
+            <form onSubmit={handleSubmit}>
+                <Input fluid focus type="text" value={text}
+                    onChange={(event)=>setText(event.target.value)}
+                    placeholder='Type something'
+                    action={{
+                        icon: 'send',
+                        color: 'primary'
+                     }} />
+            </form>
+            </Container>
         </div>
     )
 }
