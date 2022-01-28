@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "start": "tsc && node --unhandled-rejections=strict ./dist/app.js",
+    "start": "tsc && node --unhandled-rejections=strict ./dist/backend/src/app.js",
     "debug": "export DEBUG=* && nodemon"
   },
   "dependencies": {
