@@ -7,7 +7,7 @@
     "scripts": {
         "client": "cd cra-hive && npm start",
         "server": "cd backend && npm start",
-        "dev": "npm run server&; npm run client"
+        "dev": "(npm run server&) && npm run client"
     },
     "dependencies": {},
     "devDependencies": {}
