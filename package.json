@@ -1,0 +1,14 @@
+{
+    "name": "HiveMind",
+    "description": "description",
+    "version": "1.0.0",
+    "author": "Ali Gottschall",
+    "main": "app/main.js",
+    "scripts": {
+        "client": "cd cra-hive && npm start",
+        "server": "cd backend && npm start",
+        "dev": "npm run server&; npm run client"
+    },
+    "dependencies": {},
+    "devDependencies": {}
+}
