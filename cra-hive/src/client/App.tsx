@@ -25,6 +25,9 @@ export default function App() {
                 <TestHive />
               </Route>
               <Route exact path="/join" component={GameList} />
+              <Route exact path="/about">
+                <iframe src="/README.html" title="Readme" style={{width: "100%", height: "100%", position: "absolute", border: "none"}} />
+              </Route>
           </Switch>
         </Suspense>
       </Layout>
