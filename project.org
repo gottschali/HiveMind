@@ -1,85 +1,94 @@
 #+TITLE: HiveMind
+* Tasks
+- Model
+  - Game Over!
+  - Pass when no options
+  - gamemanager housekeeping
+- Modals
+  - Forfeit -> new event
+  - Game over -> new event
+- Validators:
+  - game existing
+  - side selection
+  - player names
+- Features
+  - Invite button
+  - Time control
+  - Reconnect to sockets
+  - AUTO mode kills browser
+  - Reset camera
+  - Add mosquito
+  - Add ladybug
+  - Tutorial
+- Appearance
+  - Landing page
+  - Resize the window
+  - Hover tooltips with help
+  - animate moves
+  - fix 3d models
+  - infinite floor? fog?
+  - threejs fundas
+  - lights?
+  - Life game views
+- Code quality
+  - Unified style -> linter
+  - es6 vs node modules
+  - JSON.stringify ...
+  - Typescript
+  - How to check for instances (at the moment "stones" in action )
+  - Tests!
+      mocha?
+      Move from hexlib
+- chat room with messages(informational and social)
+- Lobby
+  - option private/public game
+- Deploy
+  - how to handle debug and production
+- Mobile?
+  - ... design
+  - touch events?
+
+Future
+- player profiles, account...
+- store game in db
+- stats
+- game history
+- notation
+- board editor
+- elo system
+
+- ai
+  Inspiration from chess
+  - alpha beta
+  - heuristics
+
 * Moving to react
 End goal: Single Page application
 
 Port components
 Make everything as declerative as possible
 
+Create small components, move up
+In the end all the logic there
+
 First: bare bones
 -> modularise
 
-Logic:
-- Select Stones
-- Drop Selection
-- Websockets
-  - Chat
 
-Backend
-- Validator
+* AI
+Monte-Carlo-Tree-Search
+Tree lookahead with heuristics
 
-- Life game view
-- update state / update actions
-- websockets redirect
-- Open rooms -> join
+surround count of enemy - own surround count
+unpinned insects
+unpinning insects
+move distance to queen (may be difficult for hoppers, could happen that it calculates to the same hex)
+pinning count (how many enemy insects, how valuable the insects are)
 
-Profile -> passportjs
-profile page, stats
+placeable hexes count
 
-elo system
+avoid queen move
 
-notation?
-
-time control
-
-reset Camera Button
-
-* Techs
-- Create-react-app
-- Typescript
-- react
-  + react-spring
-  + three-fiber
-  + Formik
-- Socket.IO
-- Express
-
-* Content
-Tutorial: The rules
-How the stones can move
-
-Add
-- Fix beetle
-- mosquito
-- marienkäfer
-
-
-* Styling
-** Use components framework
-Bootstrap? semantic?
-Brutalistic
-** Animations
-on-hover -> show all possible
-Drag stones ?
-*** * React spring
-
-** Customize style
-
-* Dev practices
-** Use git more
-** Add tests
-
-* Wishlist
-** AI
-*** Steal from chess?
-
-
-* Log
-** <2021-08-09 Mon>
-:LOGBOOK:
-CLOCK: [2021-08-09 Mon 16:56]--[2021-08-09 Mon 19:53] =>  2:57
-CLOCK: [2021-08-09 Mon 16:49]--[2021-08-09 Mon 16:53] =>  0:04
-CLOCK: [2021-08-09 Mon 16:13]--[2021-08-09 Mon 16:49] =>  0:36
-:END:
-- Canvas size
-- DropMenu
-  - State -> stones for each team
+incentive beetle mount
+-> Value-Function
+-> use Alpha-Beta-Pruning
