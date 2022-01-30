@@ -1,0 +1,27 @@
+#+Title: HiveMind
+* Introduction
+Hive is a strategic boardgame. You can read up on it [[https://boardgamegeek.com/wiki/page/Hive_FAQ][here]].
+The one-hive rule is especially interesting with its connection to graph theory:
+Pieces that may not move are [[https://www.geeksforgeeks.org/articulation-points-or-cut-vertices-in-a-graph/][articulation points]] in the graph.
+
+* Preview
+[[file:screen.png]]
+
+* Techs
+- SocketIO
+- Three
+- Node
+- Express
+- React
+
+
+* Architecture
+We can reuse the code that is run in the client on the server-side.
+This means a client can play offline but if they want to plan online the
+server runs the same code to validate the moves.
+Code is split in
+
+* Running it
+#+begin_src bash
+npm run dev
+#+end_src
