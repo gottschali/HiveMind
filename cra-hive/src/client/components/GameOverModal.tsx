@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 export default function GameOverModal({ open, result }) {
     const [whiteDone, blackDone] = result;
     const tie = whiteDone && blackDone;
-    const whiteWin = blackDone && blackDone != whiteDone;
+    const whiteWin = blackDone && blackDone !== whiteDone;
     return (
         <Modal
             dimmer='blurring'

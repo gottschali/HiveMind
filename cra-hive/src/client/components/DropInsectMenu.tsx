@@ -38,7 +38,7 @@ export function DropInsect({ insect, selected }) {
 
 export function DropInsectMenuTeam({ stones, active, handleClick, allowedToDrop = (i) => true }) {
     // Get the numbers out
-    const [selected, setSelected] = useState(null);
+    const [, setSelected] = useState(null);
     const counts = {};
     let teamThis;
     for (const { insect, team } of stones) {

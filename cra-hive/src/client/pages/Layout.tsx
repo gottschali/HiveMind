@@ -1,4 +1,4 @@
-import { Button, Icon, Container, Divider, Grid, Header, Image, Menu, Segment } from 'semantic-ui-react'
+import { Button, Icon, Container, Menu, Segment } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import {useState} from 'react'
 import CreateGameModal from '../components/CreateGameModal'
@@ -12,7 +12,7 @@ export default function Layout(props) {
             <Segment inverted>
                 <Menu compact inverted stackable pointing secondary>
                     <Menu.Item header as={Link} to="/" name='HiveMind'>
-                        <img src='/favicon/android-chrome-512x512.png' />
+                        <img src='/favicon/android-chrome-512x512.png' alt="logo" />
                     </Menu.Item>
                     <Menu.Item as={Link} to="/" name='Home' onClick={handleClick} active={active === 'Home'} />
                     <Menu.Item as={Link} to='/about' name='About' onClick={handleClick} active={active==='About'} />

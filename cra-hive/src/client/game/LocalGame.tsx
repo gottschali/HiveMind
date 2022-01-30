@@ -13,7 +13,7 @@ export default function LocalGame({ p1, p2 }) {
             return false;
     };
 
-    const player = ((state.turnNumber % 2 == 0) ? p1 : p2)(submitAction, state)
+    const player = ((state.turnNumber % 2 === 0) ? p1 : p2)(submitAction, state)
     return <GenericGame 
         state={state}
         controller={player} />

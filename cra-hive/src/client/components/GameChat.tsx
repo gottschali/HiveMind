@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import {  Container, Segment, Divider, Input, Button } from 'semantic-ui-react'
+import {  Container, Segment, Divider, Input} from 'semantic-ui-react'
 
 export default function GameChat({ socket }) {
     const [messages, setMessages] = useState([]);

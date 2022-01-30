@@ -23,7 +23,7 @@ export default function SocketGame( {socket, gid, p1, p2} ) {
 }    
 
 function Wrapped({state, p1, p2, submitAction}) {
-    const player = ((state.turnNumber % 2 == 0) ? p1 : p2)(submitAction, state)
+    const player = ((state.turnNumber % 2 === 0) ? p1 : p2)(submitAction, state)
     return (
         <GenericGame controller={player} state={state} />
     )
