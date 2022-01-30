@@ -7,6 +7,7 @@ import {
   Route,
 } from "react-router-dom";
 import GameList from './components/GameList';
+import WelcomeInsect from './components/WelcomeInsect';
 import 'semantic-ui-css/semantic.min.css'
 
 import Layout from './pages/Layout'
@@ -19,6 +20,9 @@ export default function App() {
         <Layout>
           <Suspense fallback={<div>Loading...</div>} >
             <Switch>
+              <Route exact path="/">
+                <WelcomeInsect />
+              </Route>
               <Route path="/play/:gid" component={GameManager} />
               <Route exact path="/debug">
                 <TestGame />
