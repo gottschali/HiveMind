@@ -74,6 +74,9 @@ In the end all the logic there
 First: bare bones
 -> modularise
 
+** Rendered to few hooks
+Problem if you play against randomController that is starting.
+Otherwise it works
 
 * AI
 Monte-Carlo-Tree-Search

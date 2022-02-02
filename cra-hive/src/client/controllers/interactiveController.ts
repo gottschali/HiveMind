@@ -6,7 +6,6 @@ import Stone from '../../shared/model/stone';
 export function useInteractiveController(submitAction, state): any {
     const [actionType, setActionType] = useState(null);
     const [selected, setSelected] = useState(null);
-
     const handleBoardClick = (hex) => {
         console.log("Clicked on the board", hex)
         if (selected) {

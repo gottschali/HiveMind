@@ -13,7 +13,7 @@ const layoutFlat = HEX.Layout(HEX.layout_flat, HEX.Point(1, 1), HEX.Point(0, 0))
 const layoutPointy = HEX.Layout(HEX.layout_pointy, HEX.Point(1, 1), HEX.Point(0, 0))
 
 
-const Hive = ({ hive, handleClick=()=>console.log("No click handler given"), highlighted=[], team=null }) => {
+const Hive = ({ hive, handleClick=()=>console.log("No click handler given"), highlighted=[], team=null, interactive=true }) => {
     const [layout, setLayout] = useState(layoutFlat)
     let stones = [];
     for (const hex of hive.map.keys()) {
@@ -41,7 +41,7 @@ const Hive = ({ hive, handleClick=()=>console.log("No click handler given"), hig
     return (
         <div style={{ position: "relative", height: '50vw' }}>
             <Canvas camera={{ near: 0.1, far: 100 }} >
-                <TrackballControls />
+                {  interactive ? <TrackballControls /> : null}
                 <ambientLight />
                 <pointLight position={[10, 10, 10]} />
                 {stones}

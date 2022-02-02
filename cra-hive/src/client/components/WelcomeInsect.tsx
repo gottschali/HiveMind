@@ -1,12 +1,14 @@
 import Stone from '../canvas/Stone'
 import { Canvas } from '@react-three/fiber'
 import * as HEX from '../../shared/hexlib'
+import AutoGame from '../lab/AutoGame'
 
 export default function WelcomeInsect() {
 
     return (
         <div style={{ position: "relative", height: '50vw' }}>
             <h1> Welcome to HiveMind </h1>
+            <AutoGame />
             <Canvas camera={{ near: 0.1, far: 100 }} >
                 <ambientLight />
                 <pointLight position={[10, 10, 10]} />
