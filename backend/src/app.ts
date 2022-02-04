@@ -1,5 +1,6 @@
 import express from 'express';
 import * as http from 'http';
+import path from 'path';
 
 import * as winston from 'winston';
 import * as expressWinston from 'express-winston';
@@ -50,6 +51,22 @@ const runningMessage = `Server running at http://localhost:${port}`;
 app.get('/', (req: express.Request, res: express.Response) => {
     res.status(200).send(runningMessage)
 });
+
+ app.use(express.static(path.join(__dirname, 'build')));
+
+
+if (!process.env.DEBUG) {
+    app.use(express.static(path.join(__dirname, '..', '..', '..', '..', 'cra-hive', 'build')))
+    app.get('/*', function (req, res) {
+        res.sendFile(path.join(__dirname, '..', '..', '..', '..', 'cra-hive', 'build', 'index.html'));
+    });
+} else {
+    app.use(express.static(path.join(__dirname, '..', '..', 'cra-hive', 'build')))
+    app.get('/*', function (req, res) {
+        res.sendFile(path.join(__dirname, '..', 'dist', 'build', 'index.html'));
+    });
+}
+
 server.listen(port, () => {
     console.log(runningMessage);
 });
