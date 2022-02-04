@@ -5,7 +5,6 @@ export default function LocalGame({ p1, p2 }) {
     const {state, apply} = useHiveGame();
 
     const submitAction = (action) => {
-            console.log(`Submitting ${action}`)
             if (state.isLegal(action)) {
                 apply(action);
                 return true;

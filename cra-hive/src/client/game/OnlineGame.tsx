@@ -14,9 +14,9 @@ export default function OnlineGame({ gid, team }) {
     useEffect( () => {
         const newSocket = socketIOClient()
         setSocket(newSocket);
-        newSocket.onAny((...args) => {
-            console.log(args)
-        })
+        // newSocket.onAny((...args) => {
+            // console.log(args)
+        // })
         return () => {
             newSocket.close()
         }

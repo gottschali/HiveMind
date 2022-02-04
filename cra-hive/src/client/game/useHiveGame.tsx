@@ -9,7 +9,6 @@ export default function useHiveGame() {
     const [index, setIndex] = useState(0);
 
     const apply = (action: Action) => {
-        console.log('Applying...')
         history[index] = action;
         setHistory(history);
         setState(state.apply(action));

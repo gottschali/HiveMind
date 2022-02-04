@@ -12,7 +12,6 @@ export default function SocketGame( {socket, gid, p1, p2} ) {
         const actionListener = (action) => {
             apply(action);
             forceUpdate();
-            console.log("updating ", action)
         }
         socket.on('updateAction', actionListener)
         return () => {

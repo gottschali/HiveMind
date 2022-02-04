@@ -70,17 +70,17 @@ export class State {
         const dropStones = Array.from(uniqueInsects)
                                 .map(insect => new Stone(insect, this.team));
         if (this.turnNumber >= 6 && !this.moveAllowed) {
-            console.log("Forced bee drop")
+            // Forced bee drop
             this.hive.generateDrops(this.team)
                 .forEach(d => opts.push(new Drop(new Stone(Insect.BEE, this.team), d)))
         } else if (dropStones.length) {
-            console.log("Drops allowed")
+            // Drops are allowed
             this.generateDrops()
                 .forEach(dropHex => dropStones
                     .forEach(dropInsect => opts.push(new Drop(dropInsect, dropHex))))
         }
         if (this.moveAllowed) {
-            console.log("Moves allowed")
+            // Moves allowed
             this.hive.generateMoves(this.team).forEach(([origin, dest]) => {
                 opts.push(new Move(origin, dest))
             })
@@ -95,7 +95,6 @@ export class State {
 
     isLegal(action: Action): boolean {
         const res = this.actions.some(otherAction => compareAction(action, otherAction))
-        console.log(`isLegal: ${res}`);
         return res;
     }
     apply(action: Action): State {
@@ -104,7 +103,6 @@ export class State {
         // So maybe just create new instance with the data as arguments
         // let newState = Object.assign(Object.create(Object.getPrototypeOf(this)), this)
         // State is mutable now, apply updates inplace instead of returning a new instance
-        console.log(`Applying ${JSON.stringify(action)}`)
         let stone
         if ('origin' in action) {
             // Remove the stone from the old position and add it at the new one
@@ -132,7 +130,6 @@ export class State {
     }
 
     undo(action: Action): State {
-        console.log(`Undoing ${JSON.stringify(action)}`)
         let stone
         if ('origin' in action) {
             // Remove the stone from the new position and add it at the old one
