@@ -48,9 +48,6 @@ app.use(expressWinston.logger(loggerOptions));
 
 // this is a simple route to make sure everything is working properly
 const runningMessage = `Server running at http://localhost:${port}`;
-app.get('/', (req: express.Request, res: express.Response) => {
-    res.status(200).send(runningMessage)
-});
 
  app.use(express.static(path.join(__dirname, 'build')));
 
