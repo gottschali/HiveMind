@@ -1,13 +1,12 @@
 import { lazy, Suspense } from 'react';
-import TestHive from './lab/TestHive';
-import TestGame from './lab/TestGame';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
 } from "react-router-dom";
-import GameList from './components/GameList';
-import WelcomeInsect from './components/WelcomeInsect';
+import WelcomePage from './pages/WelcomePage';
+import AboutPage from './pages/AboutPage';
+import DebugPage from './pages/DebugPage';
 import 'semantic-ui-css/semantic.min.css'
 
 import Layout from './pages/Layout'
@@ -20,18 +19,10 @@ export default function App() {
         <Layout>
           <Suspense fallback={<div>Loading...</div>} >
             <Switch>
-              <Route exact path="/">
-                <WelcomeInsect />
-              </Route>
+              <Route exact path="/" component={WelcomePage} />
               <Route path="/play/:gid" component={GameManager} />
-              <Route exact path="/debug">
-                <TestGame />
-                <TestHive />
-              </Route>
-              <Route exact path="/join" component={GameList} />
-              <Route exact path="/about">
-                <iframe src="/README.html" title="Readme" style={{width: "100%", height: "100%", position: "absolute", border: "none"}} />
-              </Route>
+              <Route exact path="/debug" component={DebugPage} />
+              <Route exact path="/about" component={AboutPage} />
           </Switch>
         </Suspense>
       </Layout>

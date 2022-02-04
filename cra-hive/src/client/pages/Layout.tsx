@@ -11,13 +11,11 @@ export default function Layout(props) {
         <Container >
             <Segment inverted>
                 <Menu compact inverted stackable pointing secondary>
-                    <Menu.Item header as={Link} to="/" name='HiveMind'>
+                    <Menu.Item header as={Link} to="/debug" name='HiveMind'>
                         <img src='/favicon/android-chrome-512x512.png' alt="logo" />
                     </Menu.Item>
                     <Menu.Item as={Link} to="/" name='Home' onClick={handleClick} active={active === 'Home'} />
                     <Menu.Item as={Link} to='/about' name='About' onClick={handleClick} active={active==='About'} />
-                    <Menu.Item as={Link} to='/debug' name='Debug' onClick={handleClick} active={active==='Debug'} />
-                    <Menu.Item as={Link} to='/join' name='Join' onClick={handleClick} active={active==='Join'} />
                     <Menu.Item name='play'>
                         <Button inverted icon labelPosition='left' onClick={() => setCreateGameModalOpen(true)} >
                             <Icon name="plus square outline" />
