@@ -5,7 +5,7 @@ import * as HEX from '../../shared/hexlib'
 import { GLTFModel } from './GLTFModel'
 import Team from '../../shared/model/teams'
 
-export default function Stone({stone, layout, hex, handleClick, height}) {
+export default function Stone({stone, layout=HEX.layoutFlat, hex, handleClick=()=>{}, height=0}) {
     const teamColor = stone.team === Team.WHITE ? 'red' : 'blue';
     const mesh = useRef(null);
     const [hovered, setHover] = useState(false)
@@ -21,7 +21,7 @@ export default function Stone({stone, layout, hex, handleClick, height}) {
         <Suspense fallback={null}>
             <group
                 position={[x, y, height]}
-                rotation={[Math.PI / 2, orientation === HEX.layout_flat ? Math.PI / 6 : 0, 0]}
+                rotation={[Math.PI / 2, orientation === HEX.orientation_flat ? Math.PI / 6 : 0, 0]}
                 onClick={() => {handleClick(hex)}}
             >
                 <animated.mesh

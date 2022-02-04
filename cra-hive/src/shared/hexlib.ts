@@ -220,8 +220,8 @@ export function Layout(orientation, size, origin) {
   return { orientation: orientation, size: size, origin: origin };
 }
 
-export const layout_pointy = Orientation(Math.sqrt(3.0), Math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, Math.sqrt(3.0) / 3.0, -1.0 / 3.0, 0.0, 2.0 / 3.0, 0.5);
-export const layout_flat = Orientation(3.0 / 2.0, 0.0, Math.sqrt(3.0) / 2.0, Math.sqrt(3.0), 2.0 / 3.0, 0.0, -1.0 / 3.0, Math.sqrt(3.0) / 3.0, 0.0);
+export const orientation_pointy = Orientation(Math.sqrt(3.0), Math.sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, Math.sqrt(3.0) / 3.0, -1.0 / 3.0, 0.0, 2.0 / 3.0, 0.5);
+export const orientation_flat = Orientation(3.0 / 2.0, 0.0, Math.sqrt(3.0) / 2.0, Math.sqrt(3.0), 2.0 / 3.0, 0.0, -1.0 / 3.0, Math.sqrt(3.0) / 3.0, 0.0);
 
 export function hex_to_pixel(layout, h) {
   const M = layout.orientation;
@@ -259,7 +259,8 @@ export function polygon_corners(layout, h) {
   return corners;
 }
 
-
+export const layoutFlat = Layout(orientation_flat, Point(1, 1), Point(0, 0))
+export const layoutPointy = Layout(orientation_pointy, Point(1, 1), Point(0, 0))
 
 
 // Tests
@@ -341,9 +342,9 @@ function test_hex_linedraw() {
 
 function test_layout() {
   const h = Hex(3, 4, -7);
-  const flat = Layout(layout_flat, Point(10.0, 15.0), Point(35.0, 71.0));
+  const flat = Layout(orientation_flat, Point(10.0, 15.0), Point(35.0, 71.0));
   equal_hex("layout", h, hex_round(pixel_to_hex(flat, hex_to_pixel(flat, h))));
-  const pointy = Layout(layout_pointy, Point(10.0, 15.0), Point(35.0, 71.0));
+  const pointy = Layout(orientation_pointy, Point(10.0, 15.0), Point(35.0, 71.0));
   equal_hex("layout", h, hex_round(pixel_to_hex(pointy, hex_to_pixel(pointy, h))));
 }
 
