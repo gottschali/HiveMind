@@ -5,7 +5,6 @@ import GameChat from '../components/GameChat'
 import { useState, useEffect } from 'react';
 import socketIOClient from "socket.io-client";
 
-import { Grid } from 'semantic-ui-react'
 import SocketGame from './SocketGame';
 
 
@@ -33,17 +32,11 @@ export default function OnlineGame({ gid, team }) {
 
     return (
         <div>
-            {socket ?  
-            <Grid columns={2} divided>
-                <Grid.Row stretched>
-                    <Grid.Column>
-                        <SocketGame socket={socket} gid={gid} p1={p1} p2={p2} />
-                    </Grid.Column>
-                    <Grid.Column>
-                        <GameChat socket={socket} />
-                    </Grid.Column>
-                </Grid.Row>
-            </Grid>
+            {socket ?
+             <div>
+                <SocketGame socket={socket} gid={gid} p1={p1} p2={p2} />
+                <GameChat socket={socket} />
+             </div>
             : 'Not Connected' }
         </div>
     )
