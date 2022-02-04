@@ -57,6 +57,7 @@ app.get('/', (req: express.Request, res: express.Response) => {
 
 if (!process.env.DEBUG) {
     app.use(express.static(path.join(__dirname, '..', '..', '..', '..', 'cra-hive', 'build')))
+    app.use("favicon", express.static(path.join(__dirname, '..', '..', '..', '..', 'cra-hive', 'build', 'favicon')))
     app.get('/*', function (req, res) {
         res.sendFile(path.join(__dirname, '..', '..', '..', '..', 'cra-hive', 'build', 'index.html'));
     });
