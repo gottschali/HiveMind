@@ -8,6 +8,15 @@ import { Button, Container, Label } from 'semantic-ui-react'
 
 import { useSpring } from '@react-spring/three'
 
+
+export const iconMap = {
+    beetle: 'bug',
+    bee: 'chess queen',
+    spider: 'chess pawn',
+    grasshopper: 'chess knight',
+    ant: 'chess bishop'
+}
+
 export function DropInsect({ insect, selected }) {
     const mesh = useRef<THREE.Mesh>(null!)
     const { rotation, scale } = useSpring({
@@ -36,7 +45,7 @@ export function DropInsect({ insect, selected }) {
     )
 }
 
-export function DropInsectMenuTeam({ stones, active, handleClick, allowedToDrop = (i) => true }) {
+export function DropInsectMenuTeam({ stones, active, handleClick=(insect)=>{}, allowedToDrop = (i) => true }) {
     // Get the numbers out
     const [, setSelected] = useState(null);
     const counts = {};
@@ -46,33 +55,26 @@ export function DropInsectMenuTeam({ stones, active, handleClick, allowedToDrop 
         if (counts.hasOwnProperty(insect)) counts[insect]++;
         else counts[insect] = 1;
     }
-    const iconMap = {
-        beetle: 'bug',
-        bee: 'chess queen',
-        spider: 'chess pawn',
-        grasshopper: 'chess knight',
-        ant: 'chess bishop'
-    }
     return (<>
         {Array.from(Object.values(Insect)).map((insect, i) => {
             const count = counts[insect];
             const isActive = active && allowedToDrop(insect)
             const color = teamThis === 'white' ? 'red' : 'blue'
             return (
-                        <Button as='div'
-                            key={insect}
-                            disabled={!isActive}
-                            labelPosition='right'
-                            onClick={() => {
-                                handleClick(insect)
-                                setSelected(insect)
-                            }}
-                        >
-                            <Button color={color} icon={iconMap[insect]} />
-                            <Label as='a' basic pointing='left'>
-                             {count || 0}
-                            </Label>
-                        </Button>
+                <Button as='div'
+                        key={insect}
+                        disabled={!isActive}
+                        labelPosition='right'
+                        onClick={() => {
+                            handleClick(insect)
+                            setSelected(insect)
+                        }}
+                >
+                    <Button color={color} icon={iconMap[insect]} />
+                    <Label as='a' basic pointing='left'>
+                        {count || 0}
+                    </Label>
+                </Button>
             )
         })
         }
@@ -82,7 +84,7 @@ export function DropInsectMenuTeam({ stones, active, handleClick, allowedToDrop 
 
 export function DropInsectMenu({ stones, team, handleClick = () => console.log("No click handler given"), allowedToDrop }) {
     return (
-        <Container>
+        <Container textAlign='center'>
             <Button.Group size='tiny'>
                 <DropInsectMenuTeam
                     active={team === Team.BLACK}
