@@ -1,10 +1,9 @@
 import { Button, Modal } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
+import { getResult } from '../utils/utils'
 
 export default function GameOverModal({ open, result }) {
-    const [whiteDone, blackDone] = result;
-    const tie = whiteDone && blackDone;
-    const whiteWin = blackDone && blackDone !== whiteDone;
+    const resultText = getResult(result);
     return (
         <Modal
             dimmer='blurring'
@@ -21,6 +20,9 @@ export default function GameOverModal({ open, result }) {
                     Leave
                 </Button>
             </Modal.Actions>
+                <Modal.Header>
+                    <Header inverted as='h1'>Game over: {resultText} </Header>
+                </Modal.Header>
                     <CreateGameButton content="Play another round" />
         </Modal>
     )
