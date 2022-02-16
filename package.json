@@ -6,7 +6,7 @@
     "main": "app/main.js",
     "scripts": {
         "client": "cd cra-hive && npm start",
-        "server": "cd backend && npm start",
+        "server": "cd backend && npm run debug",
         "dev": "(npm run server&) && npm run client"
     },
     "dependencies": {},
