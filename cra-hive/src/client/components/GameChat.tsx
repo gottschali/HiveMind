@@ -28,7 +28,7 @@ export default function GameChat({ socket }) {
         <div>
             <Container fluid>
             <Segment.Group size='small' style={{
-                height: '500px',
+                height: '30vw',
                 overflow: 'auto'
             }}>
                 { messages.map( ({text, sender, time}) => {
@@ -55,7 +55,7 @@ export default function GameChat({ socket }) {
                     placeholder='Type something'
                     action={{
                         icon: 'send',
-                        color: 'primary'
+                        color: 'blue'
                      }} />
             </form>
             </Container>
