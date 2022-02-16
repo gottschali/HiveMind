@@ -12,6 +12,7 @@ export class State {
     _stones: Map<Team, Array<Stone>>;
     _beeMove: Map<Team, boolean>;
     _actions: Array<Action>;
+    _surrender: Team
 
     startingInsects: Array<Insect> = [
         Insect.BEE,
@@ -53,7 +54,15 @@ export class State {
         return false;
     }
     get result(): Array<boolean> {
+        if (this._surrender === Team.WHITE) {
+            return [true, false];
+        } else if (this._surrender === Team.BLACK) {
+            return [false, true];
+        }
         return this.hive.gameResult()
+    }
+    surrender(team: Team) {
+        this._surrender = team;
     }
     get moveAllowed(): boolean {
         return this._beeMove.get(this.team)

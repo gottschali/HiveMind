@@ -37,6 +37,14 @@ export default function init(server) {
                 const message = {text, sender: socket.id, time: Date.now()};
                 io.to(gid).emit('chatMessage', message);
             })
+
+            socket.on('surrender', () => {
+                io.to(gid).emit('surrender', {team: team});
+            });
+
+            if (game.playerConnected()) {
+                io.to(gid).emit('startGame');
+            }
         });
         socket.on('createGame', (gid) => {
             manager.create(gid);

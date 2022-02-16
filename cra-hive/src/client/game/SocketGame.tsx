@@ -7,13 +7,19 @@ export default function SocketGame( {socket, gid, p1, p2} ) {
     const forceUpdate = useForceUpdate();
     const {apply, state} = useHiveGame();
     const submitAction = (action) => socket.emit("intendAction", {action: action})
+    const surrender = () => socket.emit("surrender");
+
     useEffect( () => {
         socket.emit('joinGame', gid)
         const actionListener = (action) => {
             apply(action);
             forceUpdate();
         }
-        socket.on('updateAction', actionListener)
+        socket.on('updateAction', actionListener);
+        socket.on('surrender', ({team}) => {
+            state.surrender(team);
+            forceUpdate();
+        });
         return () => {
             socket.off('updateAction', actionListener)
         }
