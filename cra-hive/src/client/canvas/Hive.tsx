@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { TrackballControls } from '@react-three/drei'
 
@@ -7,11 +6,9 @@ import * as HEX from '../../shared/hexlib'
 import Stone from './Stone'
 import HighlightStone from './HighlightStone'
 
-import { Button } from 'semantic-ui-react'
-
 const Hive = ({ hive, handleClick=()=>console.log("No click handler given"), highlighted=[], team=null, interactive=true }) => {
-    const [layout, setLayout] = useState(HEX.layoutFlat)
     let stones = [];
+    const layout = HEX.layoutFlat;
     for (const hex of hive.map.keys()) {
         hive.map.get(hex).forEach((stone, height) => {
             stones.push(
@@ -43,7 +40,6 @@ const Hive = ({ hive, handleClick=()=>console.log("No click handler given"), hig
                 {stones}
                 {highlights}
             </Canvas>
-            <Button onClick={() => setLayout(layout === HEX.layoutFlat ? HEX.layoutPointy : HEX.layoutFlat)}> Toggle Layout </Button>
         </div>
     )
 }
