@@ -16,6 +16,6 @@ export function OnlineGameObserver({ gid }) {
     const p1 = remoteDummy;
     const p2 = remoteDummy;
     return <>
-        {socket ? <SocketGame socket={socket} gid={gid} p1={p1} p2={p2} /> : 'Loading...'}
+        {socket ? <SocketGame socket={socket} gid={gid} p1={p1} p2={p2} team='spectator' /> : 'Loading...'}
         </>
 }

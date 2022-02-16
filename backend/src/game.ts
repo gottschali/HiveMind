@@ -4,10 +4,15 @@ class Game {
     id;
     state;
     history = [];
+    playerWhite;
+    playerBlack;
     constructor(gid) {
         this.id = gid;
         this.history = [];
         this.state = new State();
+    }
+    playerConnected() {
+        return this.playerWhite && this.playerBlack;
     }
     apply(action) {
         this.history.push(action);

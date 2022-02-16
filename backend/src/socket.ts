@@ -10,13 +10,17 @@ export default function init(server) {
             console.log('DEBUG', event, args);
         });
 
-        socket.on('joinGame', (gid) => {
+        socket.on('joinGame', ({gid, team}) => {
             socket.join(gid);
-            // TODO Logic for when game start
-            // io.to(gid).emit('startGame');
-            // TODO check that game exists
             const game = manager.get(gid)
             if (!game) return false;
+            if (team == 'white') {
+                game.playerWhite = socket;
+            } else if (team == 'black') {
+                game.playerBlack = socket;
+            } else {
+                console.error("Unknown team type joined: " + team);
+            }
             for (let action of game.history) {
                 // TODO transfer entire state instead of entire history
                 socket.emit('updateAction', action);
