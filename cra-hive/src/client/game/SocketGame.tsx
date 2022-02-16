@@ -2,6 +2,7 @@ import GenericGame from "./GenericGame";
 import useForceUpdate from "../utils/useForceUpdate";
 import useHiveGame from "./useHiveGame";
 import { useEffect } from "react";
+import InformationMenu from '../components/InformationMenu'
 
 export default function SocketGame( {socket, gid, p1, p2, team} ) {
     const forceUpdate = useForceUpdate();
@@ -24,7 +25,10 @@ export default function SocketGame( {socket, gid, p1, p2, team} ) {
             socket.off('updateAction', actionListener)
         }
     }, [socket])
-    return <Wrapped state={state} p1={p1} p2={p2} submitAction={submitAction} />
+    return <>
+            <InformationMenu team={team} state={state} surrender={surrender}/>
+            <Wrapped state={state} p1={p1} p2={p2} submitAction={submitAction} />
+            </>
 }    
 
 function Wrapped({state, p1, p2, submitAction}) {
