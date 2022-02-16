@@ -21,6 +21,7 @@ export default function GameOverModal({ open, result }) {
                     Leave
                 </Button>
             </Modal.Actions>
+                    <CreateGameButton content="Play another round" />
         </Modal>
     )
 }

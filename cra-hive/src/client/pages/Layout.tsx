@@ -1,11 +1,10 @@
-import { Button, Icon, Container, Menu, Segment } from 'semantic-ui-react'
+import { Container, Menu, Segment } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import {useState} from 'react'
-import CreateGameModal from '../components/CreateGameModal'
+import CreateGameButton from '../components/CreateGameButton'
 
 export default function Layout(props) {
     const [active, setActive] = useState('Home');
-    const [createGameModalOpen, setCreateGameModalOpen] = useState(false);
     const handleClick = (e, {name}) => setActive(name);
     return (
         <Container >
@@ -17,15 +16,11 @@ export default function Layout(props) {
                     <Menu.Item as={Link} to="/" name='Home' onClick={handleClick} active={active === 'Home'} />
                     <Menu.Item as={Link} to='/about' name='About' onClick={handleClick} active={active==='About'} />
                     <Menu.Item name='play'>
-                        <Button inverted icon labelPosition='left' onClick={() => setCreateGameModalOpen(true)} >
-                            <Icon name="plus square outline" />
-                            Create a Game
-                        </Button>
+                        <CreateGameButton content="Create a game"/>
                     </Menu.Item>
                     <Menu.Item as={Link} to='/play/test' name='Quick Play' onClick={handleClick} active={active==='Quick Play'} />
                 </Menu>
             </Segment>
-            <CreateGameModal open={createGameModalOpen} setOpen={setCreateGameModalOpen} />
             {props.children}
 
         </Container>
