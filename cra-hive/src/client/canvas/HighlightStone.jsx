@@ -15,7 +15,7 @@ export default function HighlightStone({ layout, hex, team, height, handleClick=
                 <mesh
                     position={[x, y, height - .5]}
                     rotation={[Math.PI / 2, orientation === HEX.orientation_flat ? Math.PI / 6 : 0, 0]}
-                    onClick={() => {handleClick(hex)}}
+                    onPointerDown={() => {handleClick(hex)}}
                     ref={mesh}
                     onPointerOver={(event) => setHover(true)}
                     onPointerOut={(event) => setHover(false)}

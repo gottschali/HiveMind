@@ -22,14 +22,12 @@ export default function Stone({stone, layout=HEX.layoutFlat, hex, handleClick=()
             <group
                 position={[x, y, height]}
                 rotation={[Math.PI / 2, orientation === HEX.orientation_flat ? Math.PI / 6 : 0, 0]}
-                onClick={() => {handleClick(hex)}}
-            >
+                onPointerDown={() => {handleClick(hex)}} >
                 <animated.mesh
                     position={[0, -.5, 0]}
                     ref={mesh}
                     onPointerOver={(event) => setHover(true)}
-                    onPointerOut={(event) => setHover(false)}
-                >
+                    onPointerOut={(event) => setHover(false)} >
                     <cylinderBufferGeometry args={[1, 1, 0.25, 6]} />
                         <animated.meshStandardMaterial color={spring.color} />
                 </animated.mesh>
