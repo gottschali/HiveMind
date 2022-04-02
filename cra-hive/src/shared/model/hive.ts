@@ -60,13 +60,13 @@ export class Hive {
 
     generateSingleWalks(hex: HEX.Hex, ignore = null): Array<HEX.Hex> {
         let result = []
-        for (const [a, b, c] of HEX.hex_circle_iterator(hex)) {
+        for (const [a, b, c] of hex.circleIterator()) {
             if (this.map.has(b)) continue
             if (ignore === null) {
                 if (this.map.has(a) !== this.map.has(c)) result.push(b)
             } else {
                 // ignore was probably not working because object comparison
-                if ((this.map.has(a) && !HEX.hex_compare(a, ignore)) !== (this.map.has(c) && !HEX.hex_compare(c, ignore))) {
+                if ((this.map.has(a) && !a.compareTo(ignore)) !== (this.map.has(c) && !c.compareTo(ignore))) {
                     result.push(b)
                 }
             }
@@ -88,7 +88,7 @@ export class Hive {
                 distance.set(n, distance.get(vertex) + 1)
                 queue.push(n)
             }
-            if (target === -1 && !HEX.hex_compare(vertex, start)) {
+            if (target === -1 && !vertex.compareTo(start)) {
                 result.push(vertex)
             } else {
                 let d = distance.get(vertex)
@@ -105,10 +105,10 @@ export class Hive {
     generateJumps(hex: HEX.Hex): Array<HEX.Hex> {
         let result = []
         for (const offset of HEX.hex_directions) {
-            if (this.map.has(HEX.hex_add(hex, offset))) {
+            if (this.map.has(hex.add(offset))) {
                 let i = 2
-                while (this.map.has(HEX.hex_add(hex, HEX.hex_scale(offset, i)))) i++
-                result.push(HEX.hex_add(hex, HEX.hex_scale(offset, i)))
+                while (this.map.has(hex.add(offset.scale(i)))) i++
+                result.push(hex.add(offset.scale(i)))
             }
         }
         return result
@@ -117,13 +117,13 @@ export class Hive {
         let result = []
         let hh = this.height(hex)
         if (hh > 1) {
-            for (const [a, b, c] of HEX.hex_circle_iterator(hex)) {
+            for (const [a, b, c] of hex.circleIterator()) {
                 if (this.height(b) < hh) {
                     if ((this.height(a) < hh) || (this.height(c) < hh)) result.push(b)
                 }
             }
         } else result.concat(this.generateSingleWalks(hex))
-        for (const [a, b, c] of HEX.hex_circle_iterator(hex)) {
+        for (const [a, b, c] of hex.circleIterator()) {
             let ha = this.height(a)
             let hb = this.height(b)
             let hc = this.height(c)
@@ -158,7 +158,7 @@ export class Hive {
             lowLink.set(node, counter)
             let children = 0
             for (const n of this.neighbors(node)) {
-                if (parent && HEX.hex_compare(n, parent)) continue
+                if (parent && n.compareTo(parent)) continue
                 if (visited.has(n)) lowLink.set(node, Math.min(lowLink.get(node), index.get(n)))
                 else {
                     dfs(n, node, counter)

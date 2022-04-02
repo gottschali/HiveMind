@@ -10,9 +10,9 @@ export default function WelcomeInsect() {
                 <ambientLight />
                 <pointLight position={[10, 10, 10]} />
                 <Stone
-                    hex={HEX.Hex(0, 0)}
-                    stone={ {"team": "white", "insect": "bee"}}
-                    />
+                    hex={new HEX.Hex(0, 0)}
+                    stone={{ "team": "white", "insect": "bee" }}
+                />
             </Canvas>
         </div>
     )

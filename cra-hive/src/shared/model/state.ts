@@ -68,8 +68,8 @@ export class State {
         return this._beeMove.get(this.team)
     }
     generateDrops(): Array<HEX.Hex> {
-        if (this.turnNumber === 0) return [HEX.Hex(0, 0)];
-        else if (this.turnNumber === 1) return [HEX.Hex(0, -1)];
+        if (this.turnNumber === 0) return [new HEX.Hex(0, 0)];
+        else if (this.turnNumber === 1) return [new HEX.Hex(0, -1)];
         return this.hive.generateDrops(this.team)
     }
     _getActions(): Array<Action> {
@@ -167,7 +167,7 @@ export class State {
         if (this.moveAllowed) {
             for (const action of this.actions) {
                 if (action instanceof Move) {
-                    if (HEX.hex_compare(action.origin, hex)) {
+                    if (action.origin.compareTo(hex)) {
                         return true;
                     }
                 }

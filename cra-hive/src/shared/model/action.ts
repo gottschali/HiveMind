@@ -1,4 +1,4 @@
-import { Hex, hex_compare } from '../hexlib';
+import { Hex } from '../hexlib';
 import Stone from './stone';
 
 export abstract class Action {
@@ -17,7 +17,7 @@ export class Move extends Action {
     compareTo(action: Action): boolean {
         if (!(action instanceof Move))
             return false
-        return hex_compare(this.origin, action.origin) && hex_compare(this.destination, action.destination)
+        return this.origin.compareTo(action.origin) && this.destination.compareTo(action.destination)
     }
 }
 
@@ -34,7 +34,7 @@ export class Drop extends Action {
     compareTo(action: Action): boolean {
         if (!(action instanceof Drop))
             return false
-        return this.stone.team === action.stone.team && this.stone.insect === action.stone.insect && hex_compare(this.destination, action.destination)
+        return this.stone.team === action.stone.team && this.stone.insect === action.stone.insect && this.destination.compareTo(action.destination)
     }
 }
 

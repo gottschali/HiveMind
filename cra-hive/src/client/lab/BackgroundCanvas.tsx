@@ -4,7 +4,7 @@ import { State } from '../../shared/model/state'
 
 
 const orientation = HEX.orientation_pointy;
-const layout = HEX.Layout(orientation, HEX.Point(10, 10), HEX.Point(500, 250))
+const layout = HEX.Layout(orientation, new HEX.Point(10, 10), new HEX.Point(500, 250))
 
 export default function BackgroundCanvas() {
     const state = new State();
@@ -17,7 +17,7 @@ export default function BackgroundCanvas() {
             ctx.beginPath()
             const corners = HEX.polygon_corners(layout, hex);
             ctx.moveTo(corners[5].x + 50, corners[5].y + 50);
-            corners.forEach( p => {
+            corners.forEach(p => {
                 ctx.lineTo(p.x + 50, p.y + 50);
             })
             ctx.fill();
