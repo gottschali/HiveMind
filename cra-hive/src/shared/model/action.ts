@@ -1,7 +1,8 @@
 import { Hex, hex_compare } from '../hexlib';
 import Stone from './stone';
 
-export class Action {
+export abstract class Action {
+    abstract compareTo(action: Action): boolean;
 }
 
 export class Move extends Action {
@@ -12,6 +13,11 @@ export class Move extends Action {
         super();
         this.origin = origin;
         this.destination = destination;
+    }
+    compareTo(action: Action): boolean {
+        if (!(action instanceof Move))
+            return false
+        return hex_compare(this.origin, action.origin) && hex_compare(this.destination, action.destination)
     }
 }
 
@@ -24,15 +30,18 @@ export class Drop extends Action {
         this.stone = stone;
         this.destination = destination;
     }
+
+    compareTo(action: Action): boolean {
+        if (!(action instanceof Drop))
+            return false
+        return this.stone.team === action.stone.team && this.stone.insect === action.stone.insect && hex_compare(this.destination, action.destination)
+    }
 }
 
-export function compareAction(a: Action, b: Action): boolean {
-    if (a instanceof Move && b instanceof Move) {
-        return hex_compare(a.origin, b.origin) && hex_compare(a.destination, b.destination)
-    } else if (a instanceof Drop && b instanceof Drop) {
-        return a.stone.team === b.stone.team && a.stone.insect === b.stone.insect && hex_compare(a.destination, b.destination)
-    } else if (a instanceof Pass && b instanceof Pass) return true;
-    else return false;
-}
+export class Pass extends Action {
+    compareTo(action: Action): boolean {
+        return action instanceof Pass;
+    }
+};
 
-export class Pass extends Action { };
+export const PassAction = new Pass();

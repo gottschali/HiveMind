@@ -2,7 +2,7 @@ import Insect from "./insects";
 import Stone from "./stone";
 import Team from "./teams";
 import * as HEX from "../hexlib";
-import { Move, Drop, Pass, Action, compareAction } from "./action";
+import { Move, Drop, PassAction, Action } from "./action";
 import { Hive } from "./hive";
 
 
@@ -95,7 +95,7 @@ export class State {
             })
         }
         if (opts.length) return opts
-        else return [Pass]
+        else return [PassAction]
     }
     get actions(): Array<Action> {
         if (!this._actions) this._actions = this._getActions()
@@ -103,7 +103,7 @@ export class State {
     }
 
     isLegal(action: Action): boolean {
-        const res = this.actions.some(otherAction => compareAction(action, otherAction))
+        const res = this.actions.some(otherAction => action.compareTo(otherAction))
         return res;
     }
     apply(action: Action): State {
