@@ -6,11 +6,13 @@ import { HashMap, HashSet } from '../hashmap';
 
 
 export class Hive {
-    map: HashMap;
-    root: HEX.Hex;
+    map: HashMap; // Should be maybe made private and only allowed read only copies to the outside
+    private root: HEX.Hex;
+
     constructor() {
         this.map = new HashMap();
     }
+
     at(hex: HEX.Hex) {
         const ar = this.map.get(hex)
         return ar[ar.length - 1]
@@ -36,7 +38,8 @@ export class Hive {
             const stone = this.map.get(hex)[0]
             if (stone.insect === Insect.BEE) {
                 if (this.neighbors(hex).length === 6) {
-                    if (stone.team === Team.WHITE) whiteLost = true
+                    if (stone.team === Team.WHITE)
+                        whiteLost = true
                     else blackLost = true
                 }
             }
@@ -47,11 +50,15 @@ export class Hive {
     neighbors(hex: HEX.Hex): Array<HEX.Hex> {
         return HEX.hex_neighbors(hex).filter(n => this.map.has(n))
     }
+
     height(hex: HEX.Hex): number {
-        if (this.map.has(hex)) return this.map.get(hex).length
+        if (this.map.has(hex)) {
+            return this.map.get(hex).length
+        }
         return 0
     }
-    generateSingleWalks(hex: HEX.Hex, ignore=null): Array<HEX.Hex> {
+
+    generateSingleWalks(hex: HEX.Hex, ignore = null): Array<HEX.Hex> {
         let result = []
         for (const [a, b, c] of HEX.hex_circle_iterator(hex)) {
             if (this.map.has(b)) continue
@@ -59,13 +66,14 @@ export class Hive {
                 if (this.map.has(a) !== this.map.has(c)) result.push(b)
             } else {
                 // ignore was probably not working because object comparison
-                if ((this.map.has(a) && !HEX.hex_compare(a, ignore)) !== (this.map.has(c) && !HEX.hex_compare(c, ignore))) {      result.push(b)
+                if ((this.map.has(a) && !HEX.hex_compare(a, ignore)) !== (this.map.has(c) && !HEX.hex_compare(c, ignore))) {
+                    result.push(b)
                 }
             }
         }
         return result
     }
-    generateWalks(start: HEX.Hex, target=-1): Array<HEX.Hex> {
+    generateWalks(start: HEX.Hex, target = -1): Array<HEX.Hex> {
         let visited = new HashSet()
         let distance = new HashMap()
         let queue = []
@@ -81,13 +89,13 @@ export class Hive {
                 queue.push(n)
             }
             if (target === -1 && !HEX.hex_compare(vertex, start)) {
-              result.push(vertex)
+                result.push(vertex)
             } else {
                 let d = distance.get(vertex)
                 if (d > target) continue
                 if (d === target) result.push(vertex)
             }
-            
+
         }
         return result
     }
@@ -99,8 +107,8 @@ export class Hive {
         for (const offset of HEX.hex_directions) {
             if (this.map.has(HEX.hex_add(hex, offset))) {
                 let i = 2
-                while (this.map.has(HEX.hex_add(hex, HEX.hex_scale(offset,i)))) i++
-                result.push(HEX.hex_add(hex, HEX.hex_scale(offset,i)))
+                while (this.map.has(HEX.hex_add(hex, HEX.hex_scale(offset, i)))) i++
+                result.push(HEX.hex_add(hex, HEX.hex_scale(offset, i)))
             }
         }
         return result
@@ -109,7 +117,7 @@ export class Hive {
         let result = []
         let hh = this.height(hex)
         if (hh > 1) {
-            for (const [a, b, c] of HEX.hex_circle_iterator(hex)){
+            for (const [a, b, c] of HEX.hex_circle_iterator(hex)) {
                 if (this.height(b) < hh) {
                     if ((this.height(a) < hh) || (this.height(c) < hh)) result.push(b)
                 }
@@ -131,8 +139,8 @@ export class Hive {
         let candidates = new HashSet()
         for (const hex of this.map.keys()) {
             HEX.hex_neighbors(hex)
-              .filter(e => !this.map.has(e))
-              .forEach(e => candidates.add(e))
+                .filter(e => !this.map.has(e))
+                .forEach(e => candidates.add(e))
         }
         const dropos: HEX.Hex[] = candidates.values()
         return dropos.filter(e => this._checkNeighborTeam(e, team))
@@ -161,14 +169,14 @@ export class Hive {
             }
             if (parent === null && children >= 2) articulation_points.add(node)
         }
-        // Need call because otherwise this is not bound in the nested function>
-        if (this.root !== undefined) dfs.call(this, this.root, null, 0)
+        if (this.root !== undefined) {
+            // Need call because otherwise this is not bound in the nested function>
+            dfs.call(this, this.root, null, 0)
+        }
         return articulation_points
     }
 
     generateMovesFrom(hex: HEX.Hex): Array<HEX.Hex> {
-        // insects.BEE ... instead of 0 ... causes error. Why?
-        //
         if (this.map.has(hex)) {
             const moveMap = new Map([
                 [Insect.BEE, this.generateSingleWalks],
@@ -179,8 +187,7 @@ export class Hive {
             ]);
             return moveMap.get(this.at(hex).insect).call(this, hex)
         } else {
-            console.log(`Cannot generate moves: no stones at ${hex}`)
-            return [];
+            throw new Error(`Cannot generate moves: no stones at ${hex}`);
         }
     }
 
