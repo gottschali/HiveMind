@@ -6,7 +6,7 @@ import { HashMap, HashSet } from '../hashmap';
 
 
 export class Hive {
-    map: HashMap; // Should be maybe made private and only allowed read only copies to the outside
+    map: HashMap<HEX.Hex, Array<Stone>>; // Should be maybe made private and only allowed read only copies to the outside
     private root: HEX.Hex;
 
     constructor() {
@@ -74,8 +74,8 @@ export class Hive {
         return result
     }
     generateWalks(start: HEX.Hex, target = -1): Array<HEX.Hex> {
-        let visited = new HashSet()
-        let distance = new HashMap()
+        let visited = new HashSet<HEX.Hex>()
+        let distance = new HashMap<HEX.Hex, number>()
         let queue = []
         let result = []
         queue.push(start)
@@ -136,21 +136,21 @@ export class Hive {
         return this.neighbors(hex).every(n => this.at(n).team === team)
     }
     generateDrops(team: Team): Array<HEX.Hex> {
-        let candidates = new HashSet()
+        let candidates = new HashSet<HEX.Hex>()
         for (const hex of this.map.keys()) {
             HEX.hex_neighbors(hex)
                 .filter(e => !this.map.has(e))
                 .forEach(e => candidates.add(e))
         }
-        const dropos: HEX.Hex[] = candidates.values()
-        return dropos.filter(e => this._checkNeighborTeam(e, team))
+        const drops: HEX.Hex[] = [...candidates.values()];
+        return drops.filter(e => this._checkNeighborTeam(e, team))
     }
 
-    _oneHive(): HashSet {
-        let lowLink = new HashMap()
-        let visited = new HashSet()
-        let index = new HashMap()
-        let articulation_points = new HashSet()
+    _oneHive(): HashSet<HEX.Hex> {
+        let lowLink = new HashMap<HEX.Hex, number>()
+        let visited = new HashSet<HEX.Hex>()
+        let index = new HashMap<HEX.Hex, number>()
+        let articulation_points = new HashSet<HEX.Hex>()
         const dfs = (node: HEX.Hex, parent: HEX.Hex, counter: number) => {
             visited.add(node)
             counter++
@@ -187,7 +187,8 @@ export class Hive {
             ]);
             return moveMap.get(this.at(hex).insect).call(this, hex)
         } else {
-            throw new Error(`Cannot generate moves: no stones at ${hex}`);
+            // throw new Error(`Cannot generate moves: no stones at ${hex}`);
+            return [];
         }
     }
 

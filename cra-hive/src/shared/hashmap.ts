@@ -1,54 +1,44 @@
-class HashMap {
-    map = new Map();
-    get(key){
+export class HashMap<K, V> {
+    private map: Map<string, V>;
+
+    constructor() {
+        this.map = new Map<string, V>();
+    }
+
+    get(key: K): V {
         return this.map.get(JSON.stringify(key));
     }
-    set(key, value){
+
+    set(key: K, value: V) {
         return this.map.set(JSON.stringify(key), value);
     }
-    delete(key){
+
+    delete(key: K) {
         return this.map.delete(JSON.stringify(key));
     }
-    has(key){
-      return this.map.has(JSON.stringify(key));
+
+    has(key: K) {
+        return this.map.has(JSON.stringify(key));
     }
-    hiveHeight(key) {
-        if (this.map.has(key)) {
-            return this.get(key).length
-        } else {
-            return 0
+
+    *keys(): Generator<K> {
+        for (const key of this.map.keys()) {
+            yield JSON.parse(key);
         }
-    }
-    hivePush(key, value){
-        if (this.map.has(key)) {
-            return this.map.get(key).push(value)
-        } else {
-            return this.map.set(key, [value])
-        }
-    }
-    hivePop(key){
-        let arr = this.map.get(key)
-        const res = arr.pop()
-        if (arr.length === 0) {
-            this.map.delete(key)
-        }
-        return res
-    }
-    keys() {
-        return Array.from(this.map.keys()).map(k => JSON.parse(k))
     }
 }
-class HashSet {
-    set: Set<string> = new Set();
-    add(value) {
+export class HashSet<V> {
+    private set: Set<string> = new Set();
+    add(value: V) {
         return this.set.add(JSON.stringify(value));
     }
-    has(value) {
-      return this.set.has(JSON.stringify(value));
+    has(value: V) {
+        return this.set.has(JSON.stringify(value));
     }
-    values() {
-      return Array.from(this.set.values()).map(val => JSON.parse(val))
+    *values(): Generator<V> {
+        for (const value of this.set.values()) {
+            yield JSON.parse(value);
+        }
     }
 }
 
-export {HashMap, HashSet}
