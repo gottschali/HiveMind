@@ -5,6 +5,16 @@ export abstract class Action {
     abstract compareTo(action: Action): boolean;
 }
 
+export function deserializeAction(json) {
+    if ('stone' in json) {
+        return new Drop(json.stone, json.destination);
+    } else if ('origin' in json) {
+        return new Move(json.origin, json.destination);
+    } else {
+        return new Pass();
+    }
+}
+
 export class Move extends Action {
     origin: Hex;
     destination: Hex;
