@@ -3,6 +3,7 @@ import useForceUpdate from "../utils/useForceUpdate";
 import useHiveGame from "./useHiveGame";
 import { useEffect } from "react";
 import InformationMenu from '../components/InformationMenu'
+import { deserializeAction } from "../../shared/model/action";
 
 export default function SocketGame( {socket, gid, p1, p2, team} ) {
     const forceUpdate = useForceUpdate();
@@ -12,7 +13,8 @@ export default function SocketGame( {socket, gid, p1, p2, team} ) {
 
     useEffect( () => {
         socket.emit('joinGame', {gid: gid, team: team})
-        const actionListener = (action) => {
+        const actionListener = (json) => {
+            const action = deserializeAction(json);
             apply(action);
             forceUpdate();
         }

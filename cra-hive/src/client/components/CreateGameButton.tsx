@@ -37,7 +37,7 @@ function CreateGameModal({ open, setOpen }) {
                             <Button.Group>
                                 <Button onClick={() => setGameMode('local')}>Yourself </Button>
                                 <Button.Or />
-                                <Button onClick={() => setGameMode('ai')}>AI </Button>
+                                <Button onClick={() => setGameMode('ai')}>A very stupid computer </Button>
                                 <Button.Or />
                                 <Button onClick={() => setGameMode('online')}>Friend </Button>
                             </Button.Group>

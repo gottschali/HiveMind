@@ -1,5 +1,6 @@
 import manager from './GameManager';
 import { Server } from 'socket.io'
+import { deserializeAction } from '../../cra-hive/src/shared/model/action';
 
 export default function init(server) {
     const io = new Server(server);
@@ -25,7 +26,8 @@ export default function init(server) {
                 // TODO transfer entire state instead of entire history
                 socket.emit('updateAction', action);
             }
-            socket.on('intendAction', ({ action }) => {
+            socket.on('intendAction', (json) => {
+                const action = deserializeAction(json.action)
                 if (game.validateAction(action)) {
                     // Send to the room
                     game.apply(action);

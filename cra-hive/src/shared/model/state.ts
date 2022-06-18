@@ -2,8 +2,8 @@ import Insect from "./insects";
 import Stone from "./stone";
 import Team from "./teams";
 import * as HEX from "../hexlib";
-import {Move, Drop, Pass, Action, compareAction} from "./action";
-import {Hive} from "./hive";
+import { Move, Drop, PassAction, Action } from "./action";
+import { Hive } from "./hive";
 
 
 export class State {
@@ -48,7 +48,7 @@ export class State {
         return this.turnNumber % 2 === 0 ? Team.WHITE : Team.BLACK
     }
     get gameOver(): boolean {
-        if (this.result.some( (x) => x)) {
+        if (this.result.some((x) => x)) {
             return true;
         }
         return false;
@@ -74,10 +74,10 @@ export class State {
     }
     _getActions(): Array<Action> {
         let opts = []
-        const dropStonesForTeam = this.stones.map( stone => stone.insect );
+        const dropStonesForTeam = this.stones.map(stone => stone.insect);
         const uniqueInsects = new Set(dropStonesForTeam);
         const dropStones = Array.from(uniqueInsects)
-                                .map(insect => new Stone(insect, this.team));
+            .map(insect => new Stone(insect, this.team));
         if (this.turnNumber >= 6 && !this.moveAllowed) {
             // Forced bee drop
             this.hive.generateDrops(this.team)
@@ -95,7 +95,7 @@ export class State {
             })
         }
         if (opts.length) return opts
-        else return [Pass]
+        else return [PassAction]
     }
     get actions(): Array<Action> {
         if (!this._actions) this._actions = this._getActions()
@@ -103,7 +103,7 @@ export class State {
     }
 
     isLegal(action: Action): boolean {
-        const res = this.actions.some(otherAction => compareAction(action, otherAction))
+        const res = this.actions.some(otherAction => action.compareTo(otherAction))
         return res;
     }
     apply(action: Action): State {
@@ -112,13 +112,13 @@ export class State {
         // So maybe just create new instance with the data as arguments
         // let newState = Object.assign(Object.create(Object.getPrototypeOf(this)), this)
         // State is mutable now, apply updates inplace instead of returning a new instance
-        let stone
-        if ('origin' in action) {
+        let stone: Stone;
+        if (action instanceof Move) {
             // Remove the stone from the old position and add it at the new one
             stone = this.hive.at(action.origin)
             this.hive.removeStone(action.origin)
             this.hive.addStone(action.destination, stone)
-        } else if ('stone' in action) {
+        } else if (action instanceof Drop) {
             stone = action.stone
             if (stone.insect === Insect.BEE) {
                 // Update that the bee is dropped
@@ -128,7 +128,7 @@ export class State {
             // TODO the stone is not removed because objects do not compare equal for values
             let index = -1;
             this.stones.forEach((s, i) => {
-              if (stone.insect === s.insect) index = i
+                if (stone.insect === s.insect) index = i
             })
             this.stones.splice(index, 1)
             this.hive.addStone(action.destination, stone)
@@ -139,13 +139,13 @@ export class State {
     }
 
     undo(action: Action): State {
-        let stone
-        if ('origin' in action) {
+        let stone: Stone;
+        if (action instanceof Move) {
             // Remove the stone from the new position and add it at the old one
             stone = this.hive.at(action.destination)
             this.hive.removeStone(action.destination)
             this.hive.addStone(action.origin, stone)
-        } else if ('stone' in action) {
+        } else if (action instanceof Drop) {
             stone = action.stone
             if (stone.insect === Insect.BEE) {
                 this._beeMove.set(this.team, false)
@@ -158,7 +158,7 @@ export class State {
         return this;
     }
 
-    step(policy=randomPolicy): State {
+    step(policy = randomPolicy): State {
         return this.apply(policy(this.actions))
     }
 
@@ -179,7 +179,7 @@ export class State {
     allowedToDrop(insect: Insect): boolean {
         // Only needed for Fronted
         for (const action of this.actions) {
-            if ("stone" in action) {
+            if (action instanceof Drop) {
                 if (action.stone.insect === insect) {
                     return true;
                 }
@@ -188,7 +188,7 @@ export class State {
         return false;
     }
 
-    getDestinations(action: (Move | Drop), src): Array<[HEX.Hex, number]> {
+    getDestinations(action: (Move | Drop), src: HEX.Hex): Array<[HEX.Hex, number]> {
         let opts = [];
         if (action instanceof Move) {
             opts = this.hive.generateMovesFrom(src)
