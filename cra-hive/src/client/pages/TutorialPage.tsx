@@ -26,7 +26,8 @@ export default function TutorialPage () {
     // One hive rule
     return <div>
         <h1> Learn how to play! </h1>
-
+        This page was created rather in a hurry.
+        Therefore please consult the <a href='https://www.gen42.com/download/rules/hive/Hive_English_Rules.pdf'> official rules </a> if something is not clear.
         <Introduction />
         <GoalOfGame />
         <Dropping />
@@ -230,7 +231,8 @@ function ExplainOneHive() {
 
     const right = <Segment>
         <Hive hive={hive} canvasHeight="200px" interactive={false} cameraOpts={{ position: [1, 1, 4] }} lookAt={[1, 1, 0]} />;
-        <Label attached='bottom'>In this scenario the red player could only move his bee.</Label>
+        <Label attached='bottom'>In this scenario the red player could only move his bee. His other insects would disconnect the hive into two parts.
+        The blue player on the other hand could move either his ant or queen.</Label>
     </Segment>
 
 

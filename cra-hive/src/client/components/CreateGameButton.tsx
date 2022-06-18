@@ -8,13 +8,17 @@ function CreateGameModal({ open, setOpen }) {
     const [team, setTeam] = useState('red');
     const createGame = (location) => {
         const gid = uuid();
-        if (team === 'random') {
-            setTeam(Math.random() > 0.5 ? 'white' : 'black');
-        }
         if (gameMode === 'online') {
             fetch(`/game/${gid}`, {
                 method: 'POST'
             }).catch( err => console.log("Failed to create game", err))
+        }
+        // Somehow react complains if the AI goes first.
+        if (gameMode === 'ai') {
+            return {
+                pathname: `/play/${gid}`,
+                search: `?team=white&mode=${gameMode}`
+            }
         }
         return {
             pathname: `/play/${gid}`,
@@ -49,7 +53,7 @@ function CreateGameModal({ open, setOpen }) {
                             <Button.Group >
                                 <Button onClick={() => setTeam('white')} color="red">red </Button>
                                 <Button.Or />
-                                <Button onClick={() => setTeam('random')} color="violet">random </Button>
+                                {/*                                 <Button onClick={() => setTeam('random')} color="violet">random </Button> */}
                                 <Button.Or inverted />
                                 <Button onClick={() => setTeam('black')} color="blue">blue </Button>
                             </Button.Group>

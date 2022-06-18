@@ -7,7 +7,6 @@ import ShareButton from './ShareButton'
 export default function InformationMenu({team, state, surrender}) {
     const message = state.team === team ? "It's your turn" : "It's your opponents turn"
     const result = getResult(state.result);
-    console.log(state);
     return  (
         <Container>
             <Label color={getColor(team)}>

@@ -39,7 +39,7 @@ export default function OnlineGame({ gid, team }) {
             {socket ?
              <div>
                 <SocketGame socket={socket} gid={gid} p1={p1} p2={p2} team={team} />
-                <GameChat socket={socket} />
+                    {/* <GameChat socket={socket} /> */}
              </div>
             : 'Not Connected' }
 
