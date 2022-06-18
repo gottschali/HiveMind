@@ -8,7 +8,7 @@
         "client": "cd cra-hive && npm start",
         "server": "cd backend && npm run debug",
         "dev": "(npm run server&) && npm run client",
-        "deploy": "git switch heroku && cd cra-hive && npm run build && git add build && git commit && git push && git switch master"
+        "deploy": "git switch heroku && git merge master && && cd cra-hive && npm run build && git add build && git commit && git push && git switch master"
     },
     "dependencies": {},
     "devDependencies": {}
