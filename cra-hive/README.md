@@ -1,3 +1,7 @@
+export NODE_OPTIONS=--openssl-legacy-provider
+npm install --legacy-peer-deps
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
