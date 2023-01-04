@@ -31,7 +31,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install and Build 🔧
-        run:
+        run: |
           cd cra-hive
           npm run build
       - name: Setup Pages
