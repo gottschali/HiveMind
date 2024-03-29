@@ -9,7 +9,8 @@ function CreateGameModal({ open, setOpen }) {
     const createGame = (location) => {
         const gid = uuid();
         if (gameMode === 'online') {
-            fetch(`/game/${gid}`, {
+            // TODO not hardcoded
+            fetch(`http://localhost:4000/game/${gid}`, {
                 method: 'POST'
             }).catch( err => console.log("Failed to create game", err))
         }

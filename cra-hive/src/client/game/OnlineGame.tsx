@@ -3,7 +3,7 @@ import remoteDummy from '../controllers/remoteDummyController'
 import GameChat from '../components/GameChat'
 import ShareGameModal from '../components/ShareGameModal'
 import { useState, useEffect } from 'react'
-import socketIOClient from "socket.io-client"
+import socketIOClient, { io } from "socket.io-client"
 
 import SocketGame from './SocketGame'
 
@@ -12,7 +12,7 @@ export default function OnlineGame({ gid, team }) {
     const [socket, setSocket] = useState(null);
     const [shareGameModalOpen, setShareGameModalOpen] = useState(true);
     useEffect( () => {
-        const newSocket = socketIOClient()
+        const newSocket = io("ws://localhost:4000")
         setSocket(newSocket);
         // newSocket.onAny((...args) => {
             // console.log(args)
