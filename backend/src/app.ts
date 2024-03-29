@@ -49,21 +49,21 @@ app.use(expressWinston.logger(loggerOptions));
 // this is a simple route to make sure everything is working properly
 const runningMessage = `Server running at http://localhost:${port}`;
 
- app.use(express.static(path.join(__dirname, 'build')));
+//  app.use(express.static(path.join(__dirname, 'build')));
 
 
-if (!process.env.DEBUG) {
-    app.use(express.static(path.join(__dirname, '..', '..', '..', '..', 'cra-hive', 'build')))
-    app.use("favicon", express.static(path.join(__dirname, '..', '..', '..', '..', 'cra-hive', 'build', 'favicon')))
-    app.get('/*', function (req, res) {
-        res.sendFile(path.join(__dirname, '..', '..', '..', '..', 'cra-hive', 'build', 'index.html'));
-    });
-} else {
-    app.use(express.static(path.join(__dirname, '..', '..', 'cra-hive', 'build')))
-    app.get('/*', function (req, res) {
-        res.sendFile(path.join(__dirname, '..', 'dist', 'build', 'index.html'));
-    });
-}
+// if (!process.env.DEBUG) {
+//     app.use(express.static(path.join(__dirname, '..', '..', '..', '..', 'cra-hive', 'build')))
+//     app.use("favicon", express.static(path.join(__dirname, '..', '..', '..', '..', 'cra-hive', 'build', 'favicon')))
+//     app.get('/*', function (req, res) {
+//         res.sendFile(path.join(__dirname, '..', '..', '..', '..', 'cra-hive', 'build', 'index.html'));
+//     });
+// } else {
+//     app.use(express.static(path.join(__dirname, '..', '..', 'cra-hive', 'build')))
+//     app.get('/*', function (req, res) {
+//         res.sendFile(path.join(__dirname, '..', 'dist', 'build', 'index.html'));
+//     });
+// }
 
 server.listen(port, () => {
     console.log(runningMessage);
