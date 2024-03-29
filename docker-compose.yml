@@ -1,0 +1,8 @@
+services:
+  web:
+    build:
+      dockerfile: ./cra-hive/Dockerfile
+  
+  backend:
+    build:
+      dockerfile: ./backend/Dockerfile
