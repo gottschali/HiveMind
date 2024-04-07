@@ -12,7 +12,6 @@ export default function SocketGame( {socket, gid, p1, p2, team} ) {
     const surrender = () => socket.emit("surrender");
 
     useEffect( () => {
-        console.log(`Joining game ${gid}`)
         socket.emit('joinGame', {gid: gid, team: team})
         const actionListener = (json) => {
             const action = deserializeAction(json);
