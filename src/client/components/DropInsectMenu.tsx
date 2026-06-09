@@ -1,4 +1,5 @@
 import { useRef, Suspense, useState } from 'react'
+import { Mesh } from 'three'
 import Team from '../../shared/model/teams'
 import Insect from '../../shared/model/insects'
 import { Canvas } from '@react-three/fiber'
@@ -18,7 +19,7 @@ export const iconMap = {
 }
 
 export function DropInsect({ insect, selected }) {
-    const mesh = useRef<THREE.Mesh>(null!)
+    const mesh = useRef<Mesh>(null!)
     const { rotation, scale } = useSpring({
         rotation: selected ? [0, 0, 0] : [Math.PI / 2, 0, 0],
         scale: selected ? 4 : 2

@@ -2,6 +2,7 @@
   "name": "cra-hive",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "proxy": "http://localhost:4000",
   "dependencies": {
     "@react-spring/three": "^9.7.3",
