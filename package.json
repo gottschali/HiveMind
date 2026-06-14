@@ -27,7 +27,7 @@
     "three": "^0.163.0",
     "ts-node": "^10.9.2",
     "typescript": "^4.9.5",
-    "vite": "^6.4.2",
+    "vite": "^8.0.16",
     "vite-plugin-svgr": "^5.0.0"
   },
   "scripts": {
